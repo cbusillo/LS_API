@@ -2,4 +2,8 @@
 /.vscode
 /__init__.py
 /__pycache__
-/config
+/config/secret.py
+/config/__pycache__
+/config/__init__
+/modules/__init__
+/modules/__pycache__
