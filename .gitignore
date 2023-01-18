@@ -4,6 +4,6 @@
 /__pycache__
 /config/secret.py
 /config/__pycache__
-/config/__init__
-/modules/__init__
+/config/__init__.py
+/modules/__init__.py
 /modules/__pycache__
