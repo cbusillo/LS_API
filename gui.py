@@ -1,3 +1,4 @@
+import threading
 import tkinter as tk
 import customtkinter as ctk  # <- import the CustomTkinter module
 import updateItemPrice
@@ -20,18 +21,18 @@ label1 = tk.StringVar()
 label1.set("test")
 
 # Use CTkButton instead of tkinter Button
-updateCustomerPhoneButton = ctk.CTkButton(master=root_tk, corner_radius=10, text="Format Customer Phone Numbers", command=updateCustomerPhoneButtonfn)
-updateCustomerPhoneButton.place(x=25, rely=0.1, anchor=tk.W)
+updateCustomerPhoneButton = ctk.CTkButton(master=root_tk, corner_radius=10, text="Format Customer Phone Numbers", command=threading.Thread(target=updateCustomerPhoneButtonfn).start)
+updateCustomerPhoneButton.pack(pady=20)
 
 updateItemPriceButton = ctk.CTkButton(master=root_tk, corner_radius=10, text="Update iPhone/iPad Prices from Apple and Table", command=updateItemPriceButtonfn)
-updateItemPriceButton.place(x=25, rely=0.25, anchor=tk.W)
+updateItemPriceButton.pack(pady=20)
 
 updateItemPriceTableButton = ctk.CTkButton(master=root_tk, corner_radius=10, text="Edit Price Table", command=updateItemPriceTableButtonfn)
-updateItemPriceTableButton.place(x=400, rely=0.25, anchor=tk.W)
+updateItemPriceTableButton.pack(pady=20)
 
 line1Label = ctk.CTkLabel(master=root_tk, textvariable=label1)
-line1Label.place(x=25, y=400, anchor=tk.CENTER)
-line1Label.pack()
+line1Label.pack(pady=20)
+label1.set("test2")
 
 
 
