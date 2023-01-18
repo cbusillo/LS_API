@@ -191,6 +191,7 @@ class Customer:
     contact_id: str
     credit_account_id: str
     customer_type_id: str
+
     discount_id: str
     tax_category_id: str
     contact: Contact
