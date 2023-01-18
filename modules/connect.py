@@ -28,7 +28,7 @@ def generate_access():
     accessHeader["Authorization"] = "Bearer " + response.json()["access_token"]
 
 
-def get_data(currenturl, current_params):
+def get_data(currenturl, current_params=""):
     """Get requested data from LS API"""
     response = requests.get(currenturl, headers=accessHeader, params=current_params, timeout=60)
 

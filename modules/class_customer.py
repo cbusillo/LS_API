@@ -270,7 +270,6 @@ class Customer:
             _is_modified,
         )
 
-    # passing label
     @staticmethod
     def get_customers(label: tk.StringVar) -> "List[Customer]":
         """API call to get all items.  Walk through categories and pages.
@@ -294,3 +293,11 @@ class Customer:
             )
         print()
         return customer_list
+
+    @staticmethod
+    def get_customer(customer_id):
+        """Get single customer from LS API into Customer object"""
+        generate_access()
+        response = get_data(ls_urls["customerPut"].format(customerID=customer_id), {"load_relations": '["Contact"]'})
+
+        return Customer.from_dict(response.json().get("Customer"))
