@@ -1,8 +1,10 @@
 import modules.classCustomer as classCustomer
 import re
+import tkinter as tk
 
-def runUpdateCustomerPhone():
-    customers = classCustomer.Customer.get_customers()
+def runUpdateCustomerPhone(label: tk.StringVar):
+    label.set("Running")
+    customers = classCustomer.Customer.get_customers(label)
     customersUpdated = 0
     for index, customer in enumerate(customers):
         if customer.Contact.Phones:
@@ -16,5 +18,6 @@ def runUpdateCustomerPhone():
                     customer.isModified = True
         if customer.isModified == True:
             customersUpdated += 1
-            print(f"{customersUpdated}: Updating Customer #{index} out of {len(customers)}                         ", end='\r')
+            print(f"{customersUpdated}: Updating Customer #{index} out of {len(customers)}                         ", end='\r')        
+            label.set(f"{customersUpdated}: Updating Customer #{index} out of {len(customers)}")
             customer.update_phones()

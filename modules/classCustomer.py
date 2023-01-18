@@ -2,6 +2,7 @@ import os
 import json
 from typing import List, Any
 from dataclasses import dataclass
+import tkinter as tk
 
 from modules.connect import urls, accessHeader, generate_access, get_data, put_data
 
@@ -185,8 +186,9 @@ class Customer:
         _isModified = False
         return Customer(_customerID, _firstName, _lastName, _title, _company, _createTime, _timeStamp, _archived, _contactID, _creditAccountID, _customerTypeID, _discountID, _taxCategoryID, _Contact, _isModified)
 
+    #passing label 
     @staticmethod
-    def get_customers() -> 'List[Customer]':
+    def get_customers(label: tk.StringVar) -> 'List[Customer]':
         #Run API auth
         generate_access()
         #API call to get all items.  Walk through categories and pages.  Convert from json dict to Item object and add to itemList list.
@@ -200,6 +202,7 @@ class Customer:
             currentURL = response.json()["@attributes"]["next"]
             #debug to limit time
             pages += 1
+            label.set(f"Loading page: {pages}")
             print(f"Loading page: {pages}                                                  ", end='\r')
         print()
         return customerList

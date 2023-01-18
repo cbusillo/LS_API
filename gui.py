@@ -8,7 +8,7 @@ root_tk.geometry("600x400")
 root_tk.title("Shiny Computers")
 
 def updateCustomerPhoneButtonfn():
-    updateCustomerPhone.runUpdateCustomerPhone()
+    updateCustomerPhone.runUpdateCustomerPhone(label1)
     
 def updateItemPriceButtonfn():
     updateItemPrice.runUpdateItemPrice()
@@ -32,7 +32,6 @@ updateItemPriceTableButton.place(x=400, rely=0.25, anchor=tk.W)
 line1Label = ctk.CTkLabel(master=root_tk, textvariable=label1)
 line1Label.place(x=25, y=400, anchor=tk.CENTER)
 line1Label.pack()
-label1.set("test2")
 
 
 
