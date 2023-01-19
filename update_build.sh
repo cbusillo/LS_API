@@ -1,3 +1,4 @@
 git pull https://github.com/cbusillo/LS_API
-pip install -r requirements.txt
+brew install python-tk@3.11
+pip3.11 install -r requirements.txt
 #make binary on desktop
