@@ -1,7 +1,7 @@
 """Module to clean customer phone numbers."""
 import re
 import tkinter as tk
-from modules import class_customer
+from classes import class_customer
 
 
 def run_update_customer_phone(label: tk.StringVar):

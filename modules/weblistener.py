@@ -1,9 +1,8 @@
 """Run webserver to listen for LS requests."""
 import datetime
 from flask import Flask, request
-from modules import class_customer
+from classes import class_customer
 from modules import label_print
-
 
 app = Flask(__name__)
 
@@ -23,6 +22,3 @@ def web_hd_label():
 def start_weblistener():
     """Start the listener"""
     app.run(host="0.0.0.0", port=8000)
-
-
-start_weblistener()

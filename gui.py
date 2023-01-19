@@ -2,6 +2,7 @@
 import threading
 import tkinter as tk
 import customtkinter as ctk  # <- import the CustomTkinter module
+from modules import weblistener
 import update_item_price
 import update_customer_phone
 
@@ -53,5 +54,7 @@ updateItemPriceTableButton.pack(pady=20)
 
 line1Label = ctk.CTkLabel(master=root_tk, textvariable=label1)
 line1Label.pack(pady=20)
+
+threading.Thread(target=weblistener.start_weblistener).start()
 
 root_tk.mainloop()

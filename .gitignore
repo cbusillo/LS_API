@@ -5,5 +5,11 @@
 /config/secret.py
 /config/__pycache__
 /config/__init__.py
+/config/.DS_Store
 /modules/__init__.py
 /modules/__pycache__
+/modules/.DS_Store
+/classes/__init__.py
+/classes/__pycache__
+/classes/.DS_Store
+/.pylintrc

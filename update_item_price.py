@@ -4,7 +4,7 @@ import datetime
 import tkinter as tk
 from selenium import webdriver
 
-import modules.class_item as class_item
+from classes import class_item
 
 
 def run_update_item_price(label: tk.StringVar):
@@ -61,8 +61,7 @@ def run_update_item_price(label: tk.StringVar):
                     browser.minimize_window()
                     json_price = json_price.split("[[")
                     json_price = json_price[0] + "}}"
-                    json_price = json_price.replace(
-                        ',"sectionEngagement":', "")
+                    json_price = json_price.replace(',"sectionEngagement":', "")
                     json_price = json_price.replace('"}]}}}}', '"}]}}')
                     json_price = json_price.replace('"shop"}}}}', '"shop"}}')
                     json_price = json.loads(json_price)
@@ -83,10 +82,7 @@ def run_update_item_price(label: tk.StringVar):
                 # generate price from base price, side and age multipliers
                 else:
                     device_price = device_base_price + (size_mult * age_mult)
-                debug_output = (
-                    "{description} Size:{sizeMult} Age:{deviceAge}"
-                    + "Base:{deviceBasePrice} Item Price: {price}"
-                )
+                debug_output = "{description} Size:{sizeMult} Age:{deviceAge}" + "Base:{deviceBasePrice} Item Price: {price}"
                 print(
                     debug_output.format(
                         description=item.description,
