@@ -15,7 +15,7 @@ def web_hd_label():
         today = datetime.date.today()
         print(f"{customer.first_name} {customer.last_name}")
         print(f"{today.month}.{today.day}.{today.year}")
-        label_print.print_text(f"{customer.first_name} {customer.last_name}\n{today.month}.{today.day}.{today.year}")
+        label_print.print_text(f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}")
     return "<html></html>"
 
 
