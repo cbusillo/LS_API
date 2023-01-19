@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Main GUI File"""
 import threading
 import tkinter as tk
