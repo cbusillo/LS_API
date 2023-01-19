@@ -1,6 +1,6 @@
 #!/bin/bash
 killall Python &> /dev/null
-if git diff --quiet
+if git diff -- update_build.py --quiet
 then
     echo "test"
     exit
