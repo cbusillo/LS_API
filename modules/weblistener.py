@@ -9,20 +9,36 @@ app = Flask(__name__)
 
 print(f"Importing {os.path.basename(__file__)}...")
 
+HTML_RETURN = """<html><script type="text/javascript">
+open(location, '_self').close(); 
+</script>
+<a id='close_button' href="javascript:window.open('','_self').close();">Close Tab</a></html>"""
+
 
 @app.route("/hdd_label", methods=["GET"])
 def web_hd_label():
     """Print customer HDD label"""
-    if request.method == "GET":
-        customer = class_customer.Customer.get_customer(request.args.get("customerID"))
-        today = datetime.date.today()
-        print(f"{customer.first_name} {customer.last_name}")
-        print(f"{today.month}.{today.day}.{today.year}")
-        label_print.print_text(f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}")
-    return """<html><script type="text/javascript">
-open(location, '_self').close(); 
-</script>
-<a id='close_button' href="javascript:window.open('','_self').close();">Close Tab</a></html>"""
+
+    customer = class_customer.Customer.get_customer(request.args.get("customerID"))
+    today = datetime.date.today()
+    print(f"{customer.first_name} {customer.last_name}")
+    print(f"{today.month}.{today.day}.{today.year}")
+    label_print.print_text(f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}")
+    return HTML_RETURN
+
+
+@app.route("/in_process_label", methods=["GET"])
+def web_in_process_label():
+    """Print customer name and workorder number barcode to label printer"""
+    customer = class_customer.Customer.get_customer(request.args.get("customerID"))
+    today = datetime.date.today()
+    print(f"{customer.first_name} {customer.last_name}")
+    label_print.print_text(
+        f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}\\&{request.args.get('workOrderID')}",
+        barcode=request.args.get("workOrderID"),
+        qty=request.args.get("qty"),
+    )
+    return HTML_RETURN
 
 
 def start_weblistener():
