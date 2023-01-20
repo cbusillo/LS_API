@@ -23,11 +23,11 @@ def take_serial_image():
 
             result, serial_image = capture.read()
             serial_image = cv2.cvtColor(serial_image, cv2.COLOR_BGR2GRAY)
-            (thresh, blackAndWhiteImage) = cv2.threshold(serial_image, 127, 255, cv2.THRESH_BINARY)
+            (_, black_and_white_image) = cv2.threshold(serial_image, 127, 255, cv2.THRESH_BINARY)
 
             if result:
                 serial_image_data = pytesseract.image_to_data(
-                    blackAndWhiteImage, config="--psm 12", output_type=pytesseract.Output.DICT
+                    black_and_white_image, config="--psm 12", output_type=pytesseract.Output.DICT
                 )
 
         for conf, word in zip(serial_image_data["conf"], serial_image_data["text"]):
@@ -35,7 +35,7 @@ def take_serial_image():
                 if word[0:1] == "D":
                     print(word)
 
-        cv2.imshow("Serial Image", blackAndWhiteImage)
+        cv2.imshow("Serial Image", black_and_white_image)
         if cv2.waitKey(1000) & 0xFF == ord("q"):
             quit()
         cv2.destroyAllWindows()
