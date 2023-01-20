@@ -4,8 +4,8 @@ import threading
 import tkinter as tk
 import customtkinter as ctk  # <- import the CustomTkinter module
 from modules import weblistener
-import update_item_price
-import update_customer_phone
+import modules.update_item_price as update_item_price
+import modules.update_customer_phone as update_customer_phone
 
 
 def update_customer_phone_button_fn():
