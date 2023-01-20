@@ -7,6 +7,7 @@ from modules import weblistener
 from modules import update_item_price
 from modules import update_customer_phone
 from modules import json_editor
+from modules import camera
 
 
 def update_customer_phone_button_fn():
@@ -22,6 +23,11 @@ def update_item_price_button_fn():
 def open_json_editor_button_fn():
     """Open the price table JSON editor"""
     json_editor.open_json_editor("config/devices.json")
+
+
+def open_get_serials_button_fn():
+    """Open the serial number scanner"""
+    camera.take_serial_image()
 
 
 root_tk = tk.Tk()  # create the Tk window like you normally do
@@ -47,14 +53,6 @@ updateItemPriceButton = ctk.CTkButton(
 )
 updateItemPriceButton.pack(pady=20)
 
-updateItemPriceTableButton = ctk.CTkButton(
-    master=root_tk,
-    corner_radius=10,
-    text="Edit Price Table",
-    command=update_item_price_button_fn,
-)
-updateItemPriceTableButton.pack(pady=20)
-
 open_json_editor_button = ctk.CTkButton(
     master=root_tk,
     corner_radius=10,
@@ -62,6 +60,14 @@ open_json_editor_button = ctk.CTkButton(
     command=open_json_editor_button_fn,
 )
 open_json_editor_button.pack(pady=20)
+
+open_get_serials_button = ctk.CTkButton(
+    master=root_tk,
+    corner_radius=10,
+    text="Load Serial Number Scanner",
+    command=open_get_serials_button_fn,
+)
+open_get_serials_button.pack(pady=20)
 
 line1Label = ctk.CTkLabel(master=root_tk, textvariable=label1)
 line1Label.pack(pady=20)

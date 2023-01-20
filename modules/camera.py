@@ -38,4 +38,5 @@ def take_serial_image():
         cv2.destroyAllWindows()
 
 
-take_serial_image()
+if __name__ == "__main__":
+    take_serial_image()
