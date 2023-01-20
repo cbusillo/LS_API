@@ -6,8 +6,9 @@ then
     git pull https://github.com/cbusillo/LS_API
     echo "Restarting script."
     $(basename $0) && exit     
+else
+    git pull https://github.com/cbusillo/LS_API
 fi
-
 if [[ $(uname -m) == 'arm64' ]]; then
     arch -arm64 brew upgrade python-tk@3.11
 else
