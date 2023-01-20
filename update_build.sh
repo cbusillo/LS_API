@@ -1,6 +1,6 @@
 #!/bin/bash
 killall Python &> /dev/null
-if ! git diff -- update_build.py --quiet
+if ! git diff -- update_build.sh --quiet
 then
     echo "Updating files."
     git pull https://github.com/cbusillo/LS_API
