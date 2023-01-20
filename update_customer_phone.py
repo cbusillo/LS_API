@@ -21,9 +21,6 @@ def run_update_customer_phone(label: tk.StringVar):
                     customer.is_modified = True
         if customer.is_modified:
             customers_updated += 1
-            print(
-                f"{customers_updated}: Updating Customer #{index} out of {len(customers)}" + "                         ",
-                end="\r",
-            )
+            print(f"{customers_updated}: Updating Customer #{index} out of {len(customers): >60}", end="\r")
             label.set(f"{customers_updated}: Updating Customer #{index} out of {len(customers)}")
             customer.update_phones()

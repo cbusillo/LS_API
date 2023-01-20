@@ -6,43 +6,39 @@ import pytesseract
 # TODO get info from serial number api
 print(f"Importing {os.path.basename(__file__)}...")
 
-CAM_PORT = 2
-
-cam = cv2.VideoCapture(CAM_PORT)
-
-result, serial_image = cam.read()
-
-if result:
-    print("Got Image")
-    cv2.imshow("Test", serial_image)
-    cv2.waitKey(0)
-    cv2.destroyWindow("test")
-else:
-    print("No image")
+CAM_PORT = 0
+WIDTH = 1920
+HEIGHT = 1080
 
 
-cv2.imshow("test", serial_image)
-cv2.waitKey(0)
-gray = cv2.cvtColor(serial_image, cv2.COLOR_BGR2GRAY)
-ret, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
-rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (18, 18))
-dilation = cv2.dilate(thresh1, rect_kernel, iterations=1)
-contours, hierarchy = cv2.findContours(dilation, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+def take_serial_image():
+    """Take image from document camera and return string of serial number."""
+    capture = cv2.VideoCapture(CAM_PORT)
+    capture.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
+    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
 
-cv2.imshow("test", gray)
-cv2.waitKey(0)
+    while True:
+        result = False
+        while not result:
 
-im2 = serial_image.copy()
+            result, serial_image = capture.read()
+            serial_image = cv2.cvtColor(serial_image, cv2.COLOR_BGR2GRAY)
+            (thresh, blackAndWhiteImage) = cv2.threshold(serial_image, 127, 255, cv2.THRESH_BINARY)
 
-for cnt in contours:
-    x, y, w, h = cv2.boundingRect(cnt)
+            if result:
+                serial_image_data = pytesseract.image_to_data(
+                    blackAndWhiteImage, config="--psm 12", output_type=pytesseract.Output.DICT
+                )
 
-    # Drawing a rectangle on copied image
-    rect = cv2.rectangle(im2, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        for conf, word in zip(serial_image_data["conf"], serial_image_data["text"]):
+            if conf > 5:
+                if word[0:1] == "D":
+                    print(word)
 
-    # Cropping the text block for giving input to OCR
-    cropped = im2[y : y + h, x : x + w]
+        cv2.imshow("Serial Image", blackAndWhiteImage)
+        if cv2.waitKey(1000) & 0xFF == ord("q"):
+            quit()
+        cv2.destroyAllWindows()
 
-    # Apply OCR on the cropped image
-    text = pytesseract.image_to_string(cropped)
-    print(text)
+
+take_serial_image()

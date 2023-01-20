@@ -287,10 +287,7 @@ class Customer:
             # debug to limit time
             pages += 1
             label.set(f"Loading page: {pages}")
-            print(
-                f"Loading page: {pages}                                                  ",
-                end="\r",
-            )
+            print(f"Loading page: {pages: >60}", end="\r")
         print()
         return customer_list
 
