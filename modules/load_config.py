@@ -25,3 +25,7 @@ accessHeader = {"Authorization": ""}
 CAM_PORT = config_values["cam_port"]
 CAM_WIDTH = config_values["cam_width"]
 CAM_HEIGHT = config_values["cam_height"]
+
+SICK_URL = config_values["sick_url"]
+SICK_API_KEY = config_values["sick_api_key"]
+SICK_URL = SICK_URL.replace("SICK_API_KEY", SICK_API_KEY)
