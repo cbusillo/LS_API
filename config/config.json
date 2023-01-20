@@ -1,0 +1,17 @@
+{ 
+    "host" : "192.168.1.240",
+    "port" : 9100,
+    "account_id" : 111082,
+    "device_categories_for_price" : [173, 171], 
+    "cam_port" : 0,
+    "cam_width" : 1920,
+    "cam_height" : 1080,
+    "ls_urls" : {
+        "access": "https://cloud.lightspeedapp.com/oauth/access_token.php",
+        "item": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Item.json",
+        "itemPut": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Item/{itemID}.json",
+        "itemMatrix": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/ItemMatrix.json",
+        "customer": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Customer.json",
+        "customerPut": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Customer/{customerID}.json"
+    }
+}
