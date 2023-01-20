@@ -4,8 +4,8 @@ import json
 from typing import List, Any
 from dataclasses import dataclass
 import tkinter as tk
-
-from modules.connect import ls_urls, generate_access, get_data, put_data
+from modules.connect import generate_access, get_data, put_data
+from modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -206,8 +206,7 @@ class Customer:
             mobile_number = ""
             fax_number = ""
             pager_number = ""
-            if self.first_name.lower() == "chuck":
-                pass
+
             for number in self.contact.phones.contact_phone:
                 if number.use_type == "Home":
                     home_number = number.number
@@ -232,7 +231,7 @@ class Customer:
                     }
                 }
             }
-            put_data(ls_urls["customerPut"].format(customerID=self.customer_id), put_customer)
+            put_data(config.LS_URLS["customerPut"].format(customerID=self.customer_id), put_customer)
 
     @staticmethod
     def from_dict(obj: Any) -> "Customer":
@@ -277,7 +276,7 @@ class Customer:
         # Run API auth
         generate_access()
         customer_list: List[Customer] = []
-        current_url = ls_urls["customer"]
+        current_url = config.LS_URLS["customer"]
         pages = 0
         while current_url:
             response = get_data(current_url, {"load_relations": '["Contact"]', "limit": 100})
@@ -287,7 +286,7 @@ class Customer:
             # debug to limit time
             pages += 1
             label.set(f"Loading page: {pages}")
-            print(f"Loading page: {pages: >60}", end="\r")
+            print(f"Loading page: {pages: <60}", end="\r")
         print()
         return customer_list
 
@@ -295,6 +294,6 @@ class Customer:
     def get_customer(customer_id):
         """Get single customer from LS API into Customer object"""
         generate_access()
-        response = get_data(ls_urls["customerPut"].format(customerID=customer_id), {"load_relations": '["Contact"]'})
+        response = get_data(config.LS_URLS["customerPut"].format(customerID=customer_id), {"load_relations": '["Contact"]'})
 
         return Customer.from_dict(response.json().get("Customer"))

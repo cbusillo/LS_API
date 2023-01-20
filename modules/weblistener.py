@@ -5,9 +5,9 @@ from flask import Flask, request
 from classes import class_customer
 from modules import label_print
 
-app = Flask(__name__)
-
 print(f"Importing {os.path.basename(__file__)}...")
+
+app = Flask(__name__)
 
 HTML_RETURN = """<html><script type="text/javascript">
 open(location, '_self').close(); 

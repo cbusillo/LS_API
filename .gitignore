@@ -2,6 +2,7 @@
 /.vscode
 /__pycache__
 /config/secret.py
+/config/secret.json
 /config/__pycache__
 /config/.DS_Store
 /modules/__pycache__

@@ -2,20 +2,17 @@
 import os
 import cv2
 import pytesseract
+from modules import load_config as config
 
 # TODO get info from serial number api
 print(f"Importing {os.path.basename(__file__)}...")
 
-CAM_PORT = 0
-WIDTH = 1920
-HEIGHT = 1080
-
 
 def take_serial_image():
     """Take image from document camera and return string of serial number."""
-    capture = cv2.VideoCapture(CAM_PORT)
-    capture.set(cv2.CAP_PROP_FRAME_WIDTH, WIDTH)
-    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
+    capture = cv2.VideoCapture(config.CAM_PORT)
+    capture.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAM_WIDTH)
+    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAM_HEIGHT)
 
     while True:
         result = False

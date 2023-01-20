@@ -4,12 +4,10 @@ import re
 import json
 from typing import List, Any
 from dataclasses import dataclass
-
-from modules.connect import ls_urls, generate_access, get_data, put_data
+from modules.connect import generate_access, get_data, put_data
+from modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
-
-categories = [173, 171]  # iterate through categories 171 iPads 173 iPhones
 
 
 def atoi(text):
@@ -64,7 +62,7 @@ class SizeAttributes:
     @staticmethod
     def get_size_attributes():
         """Get data from API and return a dict."""
-        current_url = ls_urls["itemMatrix"]
+        current_url = config.LS_URLS["itemMatrix"]
         item_matrix: List[SizeAttributes] = []
         while current_url:
             response = get_data(current_url, {"load_relations": '["ItemAttributeSet"]', "limit": 100})
@@ -252,7 +250,7 @@ class Item:
                 ]
             }
         }
-        put_data(ls_urls["itemPut"].format(itemID=item.itemID), put_item)
+        put_data(config.LS_URLS["itemPut"].format(itemID=item.itemID), put_item)
 
     @staticmethod
     def get_items() -> "List[Item]":
@@ -261,8 +259,8 @@ class Item:
         # API call to get all items.  Walk through categories and pages.
         # Convert from json dict to Item object and add to itemList list.
         item_list: List[Item] = []
-        for category in categories:
-            current_url = ls_urls["item"]
+        for category in config.DEVICE_CATEGORIES_FOR_PRICE:
+            current_url = config.LS_URLS["item"]
             while current_url:
                 response = get_data(
                     current_url,

@@ -1,10 +1,12 @@
 """call and iterate Item class do update pricing"""
+import os
 import json
 import datetime
 import tkinter as tk
 from selenium import webdriver
-
 from classes import class_item
+
+print(f"Importing {os.path.basename(__file__)}...")
 
 
 def run_update_item_price(label: tk.StringVar):
