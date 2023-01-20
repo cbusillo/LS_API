@@ -33,10 +33,13 @@ def web_in_process_label():
     customer = class_customer.Customer.get_customer(request.args.get("customerID"))
     today = datetime.date.today()
     print(f"{customer.first_name} {customer.last_name}")
+    quantity = 1
+    if "qty" in request.args:
+        quantity = request.args["qty"]
     label_print.print_text(
         f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}\\&{request.args.get('workOrderID')}",
         barcode=request.args.get("workOrderID"),
-        qty=request.args.get("qty"),
+        qty=quantity,
     )
     return HTML_RETURN
 
