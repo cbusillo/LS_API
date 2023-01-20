@@ -1,11 +1,11 @@
 #!/bin/bash
 killall Python &> /dev/null
+cd "$(dirname "$0")"
 if ! git diff -- update_build.sh --quiet
 then
     echo "Updating files."
     git pull https://github.com/cbusillo/LS_API
     echo "Restarting script."
-    cd "$(dirname "$0")"
     $(basename $0) && exit     
 else
     git pull https://github.com/cbusillo/LS_API
