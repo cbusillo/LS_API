@@ -1,10 +1,12 @@
 /.DS_Store
 /.vscode
 /__pycache__
+/build
 /config/secret.py
 /config/secret.json
 /config/__pycache__
 /config/.DS_Store
+/dist
 /modules/__pycache__
 /modules/.DS_Store
 /classes/__pycache__
