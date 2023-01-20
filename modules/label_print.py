@@ -8,16 +8,16 @@ print(f"Importing {os.path.basename(__file__)}...")
 
 def print_text(text: str, barcode=None, quantity=None):
     """Open socket to printer and send text"""
-    label_string = b"^XA^A0N,50,50^FO0,50^FB450,4,,C,^FD" + bytes(text, "utf-8")
+    label_string = b"^XA^A0N,50,50^FO0,20^FB450,4,,C,^FD" + bytes(text, "utf-8")
     if barcode:
-        label_string += b"^B3N,N,100,Y,N" + bytes(barcode, "utf-8")
+        label_string += b"^FS^FO125,130^FB450,4,,C,^BCN,40,Y,N,N^FD" + bytes(barcode, "utf-8")
     label_string += b"^FS^XZ"
     if not quantity:
         quantity = 1
 
     mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    if socket.gethostname().lower() != "chris-mbp":
+    if socket.gethostname().lower() != False:  # "chris-mbp":
         mysocket.connect((config.PRINTER_HOST, config.PRINTER_PORT))  # connecting to host
         for _ in range(quantity):
             mysocket.send(label_string)  # using bytes

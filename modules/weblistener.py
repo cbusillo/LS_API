@@ -34,7 +34,7 @@ def web_in_process_label():
     today = datetime.date.today()
     print(f"{customer.first_name} {customer.last_name}")
     label_print.print_text(
-        f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}\\&{request.args.get('workOrderID')}",
+        f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}",
         barcode=request.args.get("workorderID"),
         quantity=request.args.get("qty"),
     )
