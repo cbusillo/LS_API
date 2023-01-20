@@ -4,8 +4,9 @@ import threading
 import tkinter as tk
 import customtkinter as ctk  # <- import the CustomTkinter module
 from modules import weblistener
-import modules.update_item_price as update_item_price
-import modules.update_customer_phone as update_customer_phone
+from modules import update_item_price
+from modules import update_customer_phone
+from modules import json_editor
 
 
 def update_customer_phone_button_fn():
@@ -18,8 +19,9 @@ def update_item_price_button_fn():
     update_item_price.run_update_item_price(label1)
 
 
-def update_item_price_table_button_fn():
+def open_json_editor_button_fn():
     """Open the price table JSON editor"""
+    json_editor.open_json_editor("config/devices.json")
 
 
 root_tk = tk.Tk()  # create the Tk window like you normally do
@@ -49,9 +51,17 @@ updateItemPriceTableButton = ctk.CTkButton(
     master=root_tk,
     corner_radius=10,
     text="Edit Price Table",
-    command=update_item_price_table_button_fn,
+    command=update_item_price_button_fn,
 )
 updateItemPriceTableButton.pack(pady=20)
+
+open_json_editor_button = ctk.CTkButton(
+    master=root_tk,
+    corner_radius=10,
+    text="Edit Price Table",
+    command=open_json_editor_button_fn,
+)
+open_json_editor_button.pack(pady=20)
 
 line1Label = ctk.CTkLabel(master=root_tk, textvariable=label1)
 line1Label.pack(pady=20)
