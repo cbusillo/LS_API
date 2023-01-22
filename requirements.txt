@@ -4,3 +4,4 @@ opencv_python==4.7.0.68
 pytesseract==0.3.10
 requests==2.28.1
 selenium==4.7.2
+setuptools==65.6.3
