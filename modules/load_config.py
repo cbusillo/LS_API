@@ -10,8 +10,6 @@ with open("config/config.json", encoding="utf8") as file:
 # load secret keys from secret.json
 with open("config/secret.json", encoding="utf8") as file:
     secret_file = json.load(file)
-    ACCESS_TOKEN = secret_file["ls_api_access"]
-    SICKW_API_KEY = secret_file["sickw_api_key"]
 
 PRINTER_HOST = config_values["host"]
 PRINTER_PORT = config_values["port"]
@@ -30,3 +28,8 @@ CAM_WIDTH = config_values["cam_width"]
 CAM_HEIGHT = config_values["cam_height"]
 
 SICKW_URL = config_values["sickw_url"]
+
+"""Secret section"""
+DB_ACCESS = secret_file["sql_access"]
+ACCESS_TOKEN = secret_file["ls_api_access"]
+SICKW_API_KEY = secret_file["sickw_api_key"]
