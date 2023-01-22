@@ -8,6 +8,7 @@ from modules import update_item_price
 from modules import update_customer_phone
 from modules import json_editor
 from modules import camera
+from modules import get_ipsws
 
 
 def update_customer_phone_button_fn():
@@ -25,9 +26,14 @@ def open_json_editor_button_fn():
     json_editor.open_json_editor("config/devices.json")
 
 
-def open_get_serials_button_fn():
+def open_serial_scanner_button_fn():
     """Open the serial number scanner"""
     camera.take_serial_image()
+
+
+def open_ipsw_downloader_button_fn():
+    """Run the IPSW downloader"""
+    get_ipsws.download_ipsw(label1)
 
 
 root_tk = tk.Tk()  # create the Tk window like you normally do
@@ -61,13 +67,21 @@ open_json_editor_button = ctk.CTkButton(
 )
 open_json_editor_button.pack(pady=20)
 
-open_get_serials_button = ctk.CTkButton(
+open_serial_scanner_button = ctk.CTkButton(
     master=root_tk,
     corner_radius=10,
     text="Load Serial Number Scanner",
-    command=open_get_serials_button_fn,
+    command=open_serial_scanner_button_fn,
 )
-open_get_serials_button.pack(pady=20)
+open_serial_scanner_button.pack(pady=20)
+
+open_ipsw_downloader_button = ctk.CTkButton(
+    master=root_tk,
+    corner_radius=10,
+    text="Load IPSW downloader",
+    command=threading.Thread(target=open_ipsw_downloader_button_fn).start,
+)
+open_ipsw_downloader_button.pack(pady=20)
 
 line1Label = ctk.CTkLabel(master=root_tk, textvariable=label1)
 line1Label.pack(pady=20)
