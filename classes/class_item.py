@@ -4,7 +4,7 @@ import re
 import json
 from typing import List, Any
 from dataclasses import dataclass
-from modules.connect import generate_access, get_data, put_data
+from modules.connect_ls import generate_ls_access, get_data, put_data
 from modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
@@ -65,7 +65,7 @@ class SizeAttributes:
         current_url = config.LS_URLS["itemMatrix"]
         item_matrix: List[SizeAttributes] = []
         while current_url:
-            response = get_data(current_url, {"load_relations": '["ItemAttributeSet"]', "limit": 100})
+            response = get_data(current_url, current_params={"load_relations": '["ItemAttributeSet"]', "limit": 100})
             for matrix in response.json().get("ItemMatrix"):
                 if matrix["ItemAttributeSet"]["attributeName2"]:
                     for attribute in matrix["attribute2Values"]:
@@ -255,7 +255,7 @@ class Item:
     @staticmethod
     def get_items() -> "List[Item]":
         """Run API auth."""
-        generate_access()
+        generate_ls_access()
         # API call to get all items.  Walk through categories and pages.
         # Convert from json dict to Item object and add to itemList list.
         item_list: List[Item] = []

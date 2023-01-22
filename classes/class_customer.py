@@ -4,7 +4,7 @@ import json
 from typing import List, Any
 from dataclasses import dataclass
 import tkinter as tk
-from modules.connect import generate_access, get_data, put_data
+from modules.connect_ls import generate_ls_access, get_data, put_data
 from modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
@@ -274,7 +274,7 @@ class Customer:
         """API call to get all items.  Walk through categories and pages.
         Convert from json dict to Item object and add to itemList list."""
         # Run API auth
-        generate_access()
+        generate_ls_access()
         customer_list: List[Customer] = []
         current_url = config.LS_URLS["customer"]
         pages = 0
@@ -293,7 +293,7 @@ class Customer:
     @staticmethod
     def get_customer(customer_id):
         """Get single customer from LS API into Customer object"""
-        generate_access()
+        generate_ls_access()
         response = get_data(config.LS_URLS["customerPut"].format(customerID=customer_id), {"load_relations": '["Contact"]'})
 
         return Customer.from_dict(response.json().get("Customer"))
