@@ -3,6 +3,8 @@ import os
 import cv2
 import pytesseract
 from modules import load_config as config
+from classes.google_mysql import Database
+from classes.apl_serial import Serial
 
 # TODO get info from serial number api
 print(f"Importing {os.path.basename(__file__)}...")
@@ -38,5 +40,11 @@ def take_serial_image():
         cv2.destroyAllWindows()
 
 
-if __name__ == "__main__":
-    take_serial_image()
+def testing():
+    """Launch testing debug"""
+    api_db = Database()
+    api_db.add_serial("12345")
+    serials = api_db.get_all(Serial)
+    for serial in serials:
+        print(serial.serial_number)
+    print(api_db.exists(Serial, "12345"))

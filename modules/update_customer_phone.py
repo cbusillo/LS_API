@@ -2,7 +2,7 @@
 import os
 import re
 import tkinter as tk
-from classes import class_customer
+from classes import ls_customer
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -10,7 +10,7 @@ print(f"Importing {os.path.basename(__file__)}...")
 def run_update_customer_phone(label: tk.StringVar):
     """Load and iterate through customers, updating formatting on phone numbers."""
     label.set("Running")
-    customers = class_customer.Customer.get_customers(label)
+    customers = ls_customer.Customer.get_customers(label)
     customers_updated = 0
     for index, customer in enumerate(customers):
         if customer.contact.phones:
@@ -24,6 +24,9 @@ def run_update_customer_phone(label: tk.StringVar):
                     customer.is_modified = True
         if customer.is_modified:
             customers_updated += 1
-            print(f"{customers_updated}: Updating Customer #{index} out of {len(customers): <60}", end="\r")
+            print(
+                f"{customers_updated}: Updating Customer #{index} out of {len(customers): <60}",
+                end="\r",
+            )
             label.set(f"{customers_updated}: Updating Customer #{index} out of {len(customers)}")
             customer.update_phones()

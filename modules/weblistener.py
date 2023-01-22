@@ -2,7 +2,7 @@
 import os
 import datetime
 from flask import Flask, request
-from classes import class_customer
+from classes import ls_customer
 from modules import label_print
 
 print(f"Importing {os.path.basename(__file__)}...")
@@ -19,18 +19,20 @@ open(location, '_self').close();
 def web_hd_label():
     """Print customer HDD label"""
 
-    customer = class_customer.Customer.get_customer(request.args.get("customerID"))
+    customer = ls_customer.Customer.get_customer(request.args.get("customerID"))
     today = datetime.date.today()
     print(f"{customer.first_name} {customer.last_name}")
     print(f"{today.month}.{today.day}.{today.year}")
-    label_print.print_text(f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}")
+    label_print.print_text(
+        f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}"
+    )
     return HTML_RETURN
 
 
 @app.route("/in_process_label", methods=["GET"])
 def web_in_process_label():
     """Print customer name and workorder number barcode to label printer"""
-    customer = class_customer.Customer.get_customer(request.args.get("customerID"))
+    customer = ls_customer.Customer.get_customer(request.args.get("customerID"))
     today = datetime.date.today()
     print(f"{customer.first_name} {customer.last_name}")
     label_print.print_text(

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3.11
 """Main GUI File"""
+import platform
 import threading
 import tkinter as tk
 import customtkinter as ctk  # <- import the CustomTkinter module
@@ -9,7 +10,9 @@ from modules import update_customer_phone
 from modules import json_editor
 from modules import camera
 from modules import get_ipsws
-from modules import connect_google
+
+if platform.node() == "Chris-MBP":
+    DEBUG = True
 
 
 def update_customer_phone_button_fn():
@@ -87,6 +90,8 @@ open_ipsw_downloader_button.pack(pady=20)
 line1Label = ctk.CTkLabel(master=root_tk, textvariable=label1)
 line1Label.pack(pady=20)
 
-##threading.Thread(target=weblistener.start_weblistener).start()
-
-# root_tk.mainloop()
+if not DEBUG:
+    threading.Thread(target=weblistener.start_weblistener).start()
+    root_tk.mainloop()
+else:
+    camera.testing()

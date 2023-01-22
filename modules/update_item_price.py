@@ -4,7 +4,7 @@ import json
 import datetime
 import tkinter as tk
 from selenium import webdriver
-from classes import class_item
+from classes import ls_item
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -25,7 +25,7 @@ def run_update_item_price(label: tk.StringVar):
     # call LS API to load all items and return a list of Item objects
     print("Loading items")
     label.set("Loading items")
-    items = class_item.Item.get_items()
+    items = ls_item.Item.get_items()
     for item in items:
         # interate through items to generate pricing and save to LS
         # Generate pricing from devices.json and apple website by item from LS
@@ -84,7 +84,10 @@ def run_update_item_price(label: tk.StringVar):
                 # generate price from base price, side and age multipliers
                 else:
                     device_price = device_base_price + (size_mult * age_mult)
-                debug_output = "{description} Size:{sizeMult} Age:{deviceAge}" + "Base:{deviceBasePrice} Item Price: {price}"
+                debug_output = (
+                    "{description} Size:{sizeMult} Age:{deviceAge}"
+                    + "Base:{deviceBasePrice} Item Price: {price}"
+                )
                 print(
                     debug_output.format(
                         description=item.description,
@@ -102,5 +105,5 @@ def run_update_item_price(label: tk.StringVar):
                 # Item fucntion to make API put call and save price
                 if item.is_modified:
                     print(f"    Updating {item.description}")
-                    class_item.Item.save_item_price(item)
+                    ls_item.Item.save_item_price(item)
                 break

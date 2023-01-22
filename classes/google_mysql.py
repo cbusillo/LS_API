@@ -1,28 +1,11 @@
 """connect to Google's MySQL DB"""
 import os
-from sqlalchemy import create_engine, Column
+from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from sqlalchemy.types import Integer, String, DateTime
-from sqlalchemy.sql import func
-from sqlalchemy.ext.declarative import declarative_base
 from modules.load_config import DB_ACCESS as config
-
+from classes.apl_serial import Serial
 
 print(f"Importing {os.path.basename(__file__)}...")
-
-
-class Serial(declarative_base()):
-    """Class to describe db table serial_scanner"""
-
-    __tablename__ = "serial_scanner"
-    id = Column(Integer, primary_key=True)
-    serial_number = Column(String(20), unique=True, nullable=False)
-    create_time = Column(DateTime(timezone=True), server_default=func.now())
-    file_location = Column((String(255)))
-
-    def __repr__(self):
-        """Return basic string"""
-        return f"<Serial {self.serial_number} {self.create_time} {self.file_location}"
 
 
 class Database:
@@ -45,6 +28,7 @@ class Database:
                 print("Connection established")
 
     def get_all(self, obj: object):
+        """Get all serial numbers from table"""
         return self.session.query(obj).all()
 
     def exists(self, obj: object, search_string) -> bool:
@@ -53,17 +37,10 @@ class Database:
         return bool(response)
 
     def add_serial(self, serial):
+        """Add serial number if not exist"""
         if not self.exists(Serial, serial):
             print(f"Adding serial {serial} to db.")
             self.session.add(Serial(serial_number=serial))
             self.session.commit()
         else:
             print(f"Serial number {serial} already in db.")
-
-
-db = Database()
-db.add_serial("12345")
-serials = db.get_all(Serial)
-for serial in serials:
-    print(serial.serial_number)
-print(db.exists(Serial, "12345"))
