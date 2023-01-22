@@ -7,8 +7,11 @@ print(f"Importing {os.path.basename(__file__)}...")
 with open("config/config.json", encoding="utf8") as file:
     config_values = json.load(file)
 
+# load secret keys from secret.json
 with open("config/secret.json", encoding="utf8") as file:
-    ACCESS_TOKEN = json.load(file)
+    secret_file = json.load(file)
+    ACCESS_TOKEN = secret_file["ls_api_access"]
+    SICKW_API_KEY = secret_file["sickw_api_key"]
 
 PRINTER_HOST = config_values["host"]
 PRINTER_PORT = config_values["port"]
@@ -26,6 +29,4 @@ CAM_PORT = config_values["cam_port"]
 CAM_WIDTH = config_values["cam_width"]
 CAM_HEIGHT = config_values["cam_height"]
 
-SICK_URL = config_values["sick_url"]
-SICK_API_KEY = config_values["sick_api_key"]
-SICK_URL = SICK_URL.replace("SICK_API_KEY", SICK_API_KEY)
+SICKW_URL = config_values["sickw_url"]
