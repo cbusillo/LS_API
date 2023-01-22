@@ -6,8 +6,7 @@
     "cam_port" : 0,
     "cam_width" : 1920,
     "cam_height" : 1080,
-    "sick_api_key" : "TID-KRV-MKT-P1F-RDS-QL7-86Q-RHO",
-    "sick_url" : "https://sickw.com/api.php?format=JSON-or-HTML&key={SICK_API_KEY}imei={IMEI-OR-SN}&service={SERVICE-ID}",
+    "sickw_url" : "https://sickw.com/api.php",
     "ls_urls" : {
         "access": "https://cloud.lightspeedapp.com/oauth/access_token.php",
         "item": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Item.json",
