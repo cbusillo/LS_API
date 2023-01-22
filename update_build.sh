@@ -11,9 +11,9 @@ else
     git pull https://github.com/cbusillo/LS_API
 fi
 if [[ $(uname -m) == 'arm64' ]]; then
-    arch -arm64 brew upgrade python-tk@3.11
+    arch -arm64 brew install python-tk@3.11
 else
-    brew upgrade python-tk@3.11
+    brew install python-tk@3.11
 fi
 
 pip3.11 install -r requirements.txt
