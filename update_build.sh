@@ -17,6 +17,6 @@ else
 fi
 brew install pip3.11
 
-pip3.11 install -r requirements.txt
+pip3.11 install -U -r requirements.txt
 #make binary on desktop
 ./gui.py
