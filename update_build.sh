@@ -16,7 +16,7 @@ if [[ $(uname -m) == 'arm64' ]]; then
 else
     brew install python-tk@3.11
 fi
-brew install pip3.11
+brew install pip@3.11
 
 pip3.11 install -U -r requirements.txt
 #make binary on desktop
