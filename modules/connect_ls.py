@@ -7,7 +7,7 @@ from modules import load_config as config
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-def generate_access():
+def generate_ls_access():
     """Generate access requirements."""
     response = requests.post(config.LS_URLS["access"], data=config.ACCESS_TOKEN, timeout=60)
     config.accessHeader["Authorization"] = "Bearer " + response.json()["access_token"]
@@ -27,7 +27,7 @@ def get_data(currenturl, current_params=""):
         response = requests.get(currenturl, headers=config.accessHeader, params=current_params, timeout=60)
 
     if response.status_code == 401:
-        generate_access()
+        generate_ls_access()
         response = requests.get(currenturl, headers=config.accessHeader, params=current_params, timeout=60)
 
     if response.status_code != 200:
@@ -48,7 +48,7 @@ def put_data(currenturl, current_data):
         response = requests.put(currenturl, headers=config.accessHeader, json=current_data, timeout=60)
 
     if response.status_code == 401:
-        generate_access()
+        generate_ls_access()
         response = requests.put(currenturl, headers=config.accessHeader, json=current_data, timeout=60)
 
     if response.status_code != 200:
