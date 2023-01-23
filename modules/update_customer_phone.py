@@ -1,13 +1,12 @@
 """Module to clean customer phone numbers."""
 import os
 import re
-import tkinter as tk
 from classes import ls_customer
 
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-def run_update_customer_phone(label: tk.StringVar):
+def run_update_customer_phone():
     """Load and iterate through customers, updating formatting on phone numbers."""
     label.set("Running")
     customers = ls_customer.Customer.get_customers(label)
@@ -28,5 +27,5 @@ def run_update_customer_phone(label: tk.StringVar):
                 f"{customers_updated}: Updating Customer #{index} out of {len(customers): <60}",
                 end="\r",
             )
-            label.set(f"{customers_updated}: Updating Customer #{index} out of {len(customers)}")
+            #label.set(f"{customers_updated}: Updating Customer #{index} out of {len(customers)}")
             customer.update_phones()
