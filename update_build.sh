@@ -10,14 +10,23 @@ then
 else
     git pull https://github.com/cbusillo/LS_API
 fi
-brew upgrade
-if [[ $(uname -m) == 'arm64' ]]; then
-    arch -arm64 brew install python-tk@3.11
+which -s brew
+if [[ $? != 0 ]] ; then
+    # Install Homebrew
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 else
-    brew install python-tk@3.11
+    brew update
+fi
+if [[ $(uname -m) == 'arm64' ]]; then
+    arch -arm64 brew install python@3.11
+else
+    brew install python@3.11
 fi
 brew install pip@3.11
+python -m pip install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
+python -m pip install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
 
+pip3.11 install pipreqs
 pip3.11 install -U -r requirements.txt
 #make binary on desktop
 ./gui.py
