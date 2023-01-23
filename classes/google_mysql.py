@@ -10,22 +10,21 @@ print(f"Importing {os.path.basename(__file__)}...")
 
 class Database:
     """Create Database class for Google mysql"""
-
-    connect_string = f'mysql+pymysql://{config["user"]}:{config["password"]}@{config["host"]}/{config["database"]}'
     engine = None
     session = None
 
     def __init__(self) -> None:
         """Init db connection"""
+        ssl_certs = {'ssl': {'sslrootcert': f'config/server-ca.pem',
+                             'sslcert': f'config/client-cert.pem',
+                             'sslkey': f'config/client-key.pem'}}
+        connect_string = f'mysql+pymysql://{config["user"]}:{config["password"]}@{config["host"]}/{config["database"]}'
         if Database.engine is None:
-            try:
-                Database.engine = create_engine(Database.connect_string, echo=False)
-                Database.session = Session(Database.engine)
 
-            except Exception as error:
-                print(f"Error: Connection not established {format(error)}")
-            else:
-                print("Connection established")
+            Database.engine = create_engine(connect_string, echo=False, connect_args=ssl_certs)
+            Database.session = Session(Database.engine)
+
+            print("Connection established")
 
     def get_all(self, obj: object):
         """Get all serial numbers from table"""
