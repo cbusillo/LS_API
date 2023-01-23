@@ -2,13 +2,14 @@
 import os
 import json
 import datetime
+from kivy.uix.button import Button
 from selenium import webdriver
 from classes import ls_item
 
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-def run_update_item_price():
+def run_update_item_price(caller: Button):
     """ "//device key": ["current model?", "year", "basePrice", "cellPrice", "store URL"]"""
     with open("config/devices.json", encoding="utf8") as file:
         devices = json.load(file)
@@ -22,8 +23,10 @@ def run_update_item_price():
     browser = webdriver.Safari()
 
     # call LS API to load all items and return a list of Item objects
-    print("Loading items")
-    #label.set("Loading items")
+    output = "Loading items"
+    caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
+    print(output)
+    # label.set("Loading items")
     items = ls_item.Item.get_items()
     for item in items:
         # interate through items to generate pricing and save to LS
@@ -83,19 +86,11 @@ def run_update_item_price():
                 # generate price from base price, side and age multipliers
                 else:
                     device_price = device_base_price + (size_mult * age_mult)
-                debug_output = (
-                    "{description} Size:{sizeMult} Age:{deviceAge}"
-                    + "Base:{deviceBasePrice} Item Price: {price}"
+                output = (
+                    f"{item.description} Size:{size_mult} Age:{device_age} Base:{device_base_price} Item Price: {device_price}"
                 )
-                print(
-                    debug_output.format(
-                        description=item.description,
-                        sizeMult=size_mult,
-                        deviceAge=device_age,
-                        deviceBasePrice=device_base_price,
-                        price=device_price,
-                    )
-                )
+                caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
+                print(output)
                 # load new price into all three LS item prices in Item object
                 for item_price in item.prices.item_price:
                     if float(item_price.amount) != float(device_price):
@@ -103,6 +98,10 @@ def run_update_item_price():
                         item.is_modified = True
                 # Item fucntion to make API put call and save price
                 if item.is_modified:
-                    print(f"    Updating {item.description}")
+                    output = f"Updating {item.description}"
+                    caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
+                    print(f"    {output}")
                     ls_item.Item.save_item_price(item)
                 break
+    caller.disabled = False
+    caller.text = caller.text.split("\n")[0]

@@ -3,13 +3,15 @@ import os
 import time
 import requests
 import logging
+from kivy.uix.button import Button
 from modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 
-if config.DEBUG_LOGGING ==False:
+if config.DEBUG_LOGGING == False:
     logging.getLogger("requests").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
+
 
 def generate_ls_access():
     """Generate access requirements."""
@@ -17,16 +19,18 @@ def generate_ls_access():
     config.accessHeader["Authorization"] = "Bearer " + response.json()["access_token"]
 
 
-def get_data(currenturl, current_params=""):
+def get_data(currenturl, current_params="", caller: Button = None):
     """Get requested data from LS API"""
     response = requests.get(currenturl, headers=config.accessHeader, params=current_params, timeout=60)
 
     while response.status_code == 429:
-        print(
-            f"\nDelaying for rate limit. Level:{response.headers['x-ls-api-bucket-level']} ",
-            "Retry After:{response.headers['retry-after']}",
-            end="\r",
+        output = (
+            f"\nDelaying for rate limit. Level:{response.headers['x-ls-api-bucket-level']} "
+            + f"Retry After:{response.headers['retry-after']}"
         )
+        if caller:
+            caller.text = f"{caller.text.split(chr(10))[0]}" + "\n" + f"{caller.text.split(chr(10))[1]}{output}"
+        print(output, end="\r")
         time.sleep(int(response.headers["retry-after"]) + 1)
         response = requests.get(currenturl, headers=config.accessHeader, params=current_params, timeout=60)
 
@@ -39,15 +43,17 @@ def get_data(currenturl, current_params=""):
     return response
 
 
-def put_data(currenturl, current_data):
+def put_data(currenturl, current_data, caller: Button = None):
     """Put requested data into LS API"""
     response = requests.put(currenturl, headers=config.accessHeader, json=current_data, timeout=60)
     while response.status_code == 429:
-        print(
-            f"\nDelaying for rate limit. Level:{response.headers['x-ls-api-bucket-level']} ",
-            "Retry After:{response.headers['retry-after']}",
-            end="\r",
+        output = (
+            f"\nDelaying for rate limit. Level:{response.headers['x-ls-api-bucket-level']} "
+            + f"Retry After:{response.headers['retry-after']}"
         )
+        if caller:
+            caller.text = f"{caller.text.split(chr(10))[0]}" + "\n" + f"{caller.text.split(chr(10))[1]}{output}"
+        print(output, end="\r")
         time.sleep(int(response.headers["retry-after"]) + 1)
         response = requests.put(currenturl, headers=config.accessHeader, json=current_data, timeout=60)
 

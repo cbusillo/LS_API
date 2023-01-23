@@ -3,6 +3,7 @@ import os
 import json
 from typing import List, Any
 from dataclasses import dataclass
+from kivy.uix.button import Label, Button
 from modules.connect_ls import generate_ls_access, get_data, put_data
 from modules import load_config as config
 
@@ -196,7 +197,7 @@ class Customer:
     contact: Contact
     is_modified: bool
 
-    def update_phones(self):
+    def update_phones(self, caller):
         """call API put to update pricing"""
         # TODO use generated payload instead of manual
         if self.contact.phones:
@@ -230,7 +231,7 @@ class Customer:
                     }
                 }
             }
-            put_data(config.LS_URLS["customerPut"].format(customerID=self.customer_id), put_customer)
+            put_data(config.LS_URLS["customerPut"].format(customerID=self.customer_id), put_customer, caller)
 
     @staticmethod
     def from_dict(obj: Any) -> "Customer":
@@ -269,7 +270,7 @@ class Customer:
         )
 
     @staticmethod
-    def get_customers() -> "List[Customer]":
+    def get_customers(caller: Button) -> "List[Customer]":
         """API call to get all items.  Walk through categories and pages.
         Convert from json dict to Item object and add to itemList list."""
         # Run API auth
@@ -278,14 +279,15 @@ class Customer:
         current_url = config.LS_URLS["customer"]
         pages = 0
         while current_url:
-            response = get_data(current_url, {"load_relations": '["Contact"]', "limit": 100})
+            response = get_data(current_url, {"load_relations": '["Contact"]', "limit": 100}, caller=caller)
             for customer in response.json().get("Customer"):
                 customer_list.append(Customer.from_dict(customer))
             current_url = response.json()["@attributes"]["next"]
             # debug to limit time
             pages += 1
-            #label.set(f"Loading page: {pages}")
-            print(f"Loading page: {pages: <60}", end="\r")
+            output = f"Loading page: {pages}"
+            caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
+            print(f"{output: <100}", end="\r")
         print()
         return customer_list
 

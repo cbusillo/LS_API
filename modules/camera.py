@@ -1,6 +1,7 @@
 """Take picture from webcam"""
 import os
 import cv2
+from kivy.uix.button import Button
 import pytesseract
 from modules import load_config as config
 from classes.google_mysql import Database
@@ -10,8 +11,9 @@ from classes.apl_serial import Serial
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-def take_serial_image():
+def take_serial_image(caller: Button):
     """Take image from document camera and return string of serial number."""
+
     capture = cv2.VideoCapture(config.CAM_PORT)
     capture.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAM_WIDTH)
     capture.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAM_HEIGHT)
@@ -32,11 +34,15 @@ def take_serial_image():
         for conf, word in zip(serial_image_data["conf"], serial_image_data["text"]):
             if conf > 5:
                 if word[0:1] == "D":
+                    caller.text = f"{caller.text.split(chr(10))[0]}\n{word}"
                     print(word)
 
         cv2.imshow("Serial Image", black_and_white_image)
         if cv2.waitKey(1000) & 0xFF == ord("q"):
-            quit()
+            cv2.destroyAllWindows()
+            caller.disabled = False
+            caller.text = caller.text.split("\n")[0]
+            break
         cv2.destroyAllWindows()
 
 

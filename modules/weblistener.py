@@ -2,6 +2,7 @@
 import os
 import datetime
 from flask import Flask, request
+from kivy.uix.button import Button
 from classes import ls_customer
 from modules import label_print
 
@@ -43,6 +44,9 @@ def web_in_process_label():
     return HTML_RETURN
 
 
-def start_weblistener():
+def start_weblistener(caller: Button):
     """Start the listener"""
+    caller.text = f"{caller.text.split(chr(10))[0]}\nListner Started"
     app.run(host="0.0.0.0", port=8000)
+    caller.disabled = False
+    caller.text = caller.text.split("\n")[0]
