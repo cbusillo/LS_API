@@ -5,31 +5,38 @@ import json
 print(f"Importing {os.path.basename(__file__)}...")
 
 with open("config/config.json", encoding="utf8") as file:
-    config_values = json.load(file)
+    config_file = json.load(file)
 
 # load secret keys from secret.json
 with open("config/secret.json", encoding="utf8") as file:
     secret_file = json.load(file)
 
-PRINTER_HOST = config_values["host"]
-PRINTER_PORT = config_values["port"]
+PRINTER_HOST = config_file["host"]
+PRINTER_PORT = config_file["port"]
 
-LS_ACCOUNT_ID = config_values["account_id"]
-LS_URLS = config_values["ls_urls"]
+LS_ACCOUNT_ID = config_file["account_id"]
+LS_URLS = config_file["ls_urls"]
 for urls in LS_URLS:
     LS_URLS[urls] = LS_URLS[urls].replace("{ACCOUNT_ID}", str(LS_ACCOUNT_ID))
 
-DEVICE_CATEGORIES_FOR_PRICE = config_values["device_categories_for_price"]
+DEVICE_CATEGORIES_FOR_PRICE = config_file["device_categories_for_price"]
 
 accessHeader = {"Authorization": ""}
 
-CAM_PORT = config_values["cam_port"]
-CAM_WIDTH = config_values["cam_width"]
-CAM_HEIGHT = config_values["cam_height"]
+CAM_PORT = config_file["cam_port"]
+CAM_WIDTH = config_file["cam_width"]
+CAM_HEIGHT = config_file["cam_height"]
 
-SICKW_URL = config_values["sickw_url"]
+SICKW_URL = config_file["sickw_url"]
 
 """Secret section"""
 DB_ACCESS = secret_file["sql_access"]
 ACCESS_TOKEN = secret_file["ls_api_access"]
 SICKW_API_KEY = secret_file["sickw_api_key"]
+
+DEBUG_CODE = True
+if config_file['debug_code'].lower() == 'false':
+    DEBUG_CODE = False
+DEBUG_LOGGING = True
+if config_file['debug_logging'].lower() == 'false':
+    DEBUG_LOGGING = False

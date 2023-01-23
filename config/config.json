@@ -7,6 +7,8 @@
     "cam_width" : 1920,
     "cam_height" : 1080,
     "sickw_url" : "https://sickw.com/api.php",
+    "debug_code" : "false",
+    "debug_logging" : "false",
     "ls_urls" : {
         "access": "https://cloud.lightspeedapp.com/oauth/access_token.php",
         "item": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Item.json",

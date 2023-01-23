@@ -2,10 +2,14 @@
 import os
 import time
 import requests
+import logging
 from modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 
+if config.DEBUG_LOGGING ==False:
+    logging.getLogger("requests").setLevel(logging.WARNING)
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 def generate_ls_access():
     """Generate access requirements."""
