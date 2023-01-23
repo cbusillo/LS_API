@@ -3,7 +3,6 @@ import os
 import json
 from typing import List, Any
 from dataclasses import dataclass
-import tkinter as tk
 from modules.connect_ls import generate_ls_access, get_data, put_data
 from modules import load_config as config
 
@@ -270,7 +269,7 @@ class Customer:
         )
 
     @staticmethod
-    def get_customers(label: tk.StringVar) -> "List[Customer]":
+    def get_customers() -> "List[Customer]":
         """API call to get all items.  Walk through categories and pages.
         Convert from json dict to Item object and add to itemList list."""
         # Run API auth
@@ -285,7 +284,7 @@ class Customer:
             current_url = response.json()["@attributes"]["next"]
             # debug to limit time
             pages += 1
-            label.set(f"Loading page: {pages}")
+            #label.set(f"Loading page: {pages}")
             print(f"Loading page: {pages: <60}", end="\r")
         print()
         return customer_list

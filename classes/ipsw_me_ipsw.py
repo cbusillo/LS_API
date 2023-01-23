@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
-import tkinter as tk
 import requests
 from modules.connect_ls import get_data
 
@@ -79,7 +78,7 @@ class Devices:
         return Devices(_name, _identifier, _boardconfig, _platform, _cpid, _bdid, _firmwares, "", _local_path)
 
     @staticmethod
-    def get_devices(label: tk.StringVar) -> "List[Devices]":
+    def get_devices() -> "List[Devices]":
         """Load Apple firmwares into IPSW list"""
         for path in IPSW_PATH:
             directory = str(Path.home()) + f"/Library/iTunes/{path}"
@@ -106,7 +105,7 @@ class Devices:
             for firmware in device.firmwares:
                 if firmware.upload_date == newest_firmware_date:
                     local_file = device.local_path + os.path.basename(urlparse(firmware.url).path)
-                    label.set(local_file)
+                    #label.set(local_file)
                     print(local_file, end="\r")
                     if not Path(local_file).exists():
                         with requests.get(firmware.url, stream=True, timeout=60) as response:

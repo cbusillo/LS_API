@@ -2,14 +2,13 @@
 import os
 import json
 import datetime
-import tkinter as tk
 from selenium import webdriver
 from classes import ls_item
 
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-def run_update_item_price(label: tk.StringVar):
+def run_update_item_price():
     """ "//device key": ["current model?", "year", "basePrice", "cellPrice", "store URL"]"""
     with open("config/devices.json", encoding="utf8") as file:
         devices = json.load(file)
@@ -24,7 +23,7 @@ def run_update_item_price(label: tk.StringVar):
 
     # call LS API to load all items and return a list of Item objects
     print("Loading items")
-    label.set("Loading items")
+    #label.set("Loading items")
     items = ls_item.Item.get_items()
     for item in items:
         # interate through items to generate pricing and save to LS
