@@ -5,7 +5,7 @@ from kivy.uix.button import Button
 import pytesseract
 from modules import load_config as config
 from classes.google_mysql import Database
-from classes.apl_serial import Serial
+from classes.api_serial import Serial
 
 # TODO get info from serial number api
 print(f"Importing {os.path.basename(__file__)}...")

@@ -3,19 +3,20 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from modules.load_config import DB_ACCESS as config
-from classes.apl_serial import Serial
+from classes.api_serial import Serial
 
 print(f"Importing {os.path.basename(__file__)}...")
 
 
 class Database:
     """Create Database class for Google mysql"""
+
     engine = None
     session = None
 
     def __init__(self) -> None:
         """Init db connection"""
-        ssl_certs = {'ssl_ca': f'config/server-ca.pem', 'ssl_cert': f'config/client-cert.pem', 'ssl_key': f'config/client-key.pem'}
+        ssl_certs = {"ssl_ca": "config/server-ca.pem", "ssl_cert": "config/client-cert.pem", "ssl_key": "config/client-key.pem"}
         connect_string = f'mysql+pymysql://{config["user"]}:{config["password"]}@{config["host"]}/{config["database"]}'
         if Database.engine is None:
 

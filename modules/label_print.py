@@ -17,7 +17,7 @@ def print_text(text: str, barcode=None, quantity=None):
 
     mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    if socket.gethostname().lower() != False:  # "chris-mbp":
+    if socket.gethostname().lower() is not False:  # "chris-mbp":
         mysocket.connect((config.PRINTER_HOST, config.PRINTER_PORT))  # connecting to host
         for _ in range(quantity):
             mysocket.send(label_string)  # using bytes

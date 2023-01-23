@@ -1,11 +1,11 @@
 """IPSW class for downloading firmwares from Apple"""
 import os
-import requests
 from typing import List, Any
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 from urllib.parse import urlparse
+import requests
 from kivy.uix.button import Button
 from modules.connect_ls import get_data
 
@@ -86,9 +86,7 @@ class Devices:
         response = get_data(f"https://api.ipsw.me/v4/device/{_identifier}")
         _firmwares = [Firmware.from_dict(y) for y in response.json()["firmwares"]]
         _local_path = str(obj.get("local_path"))
-        return Devices(
-            _name, _identifier, _boardconfig, _platform, _cpid, _bdid, _firmwares, "", _local_path
-        )
+        return Devices(_name, _identifier, _boardconfig, _platform, _cpid, _bdid, _firmwares, "", _local_path)
 
     @staticmethod
     def get_devices(caller: Button) -> "List[Devices]":
@@ -130,8 +128,6 @@ class Devices:
                                     ipsw_file.write(chunk)
                             Path(local_file + ".tmp").rename(local_file)
                 else:
-                    Path(device.local_path + os.path.basename(urlparse(firmware.url).path)).unlink(
-                        missing_ok=True
-                    )
+                    Path(device.local_path + os.path.basename(urlparse(firmware.url).path)).unlink(missing_ok=True)
 
         return devices

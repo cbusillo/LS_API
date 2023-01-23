@@ -35,8 +35,8 @@ ACCESS_TOKEN = secret_file["ls_api_access"]
 SICKW_API_KEY = secret_file["sickw_api_key"]
 
 DEBUG_CODE = True
-if config_file['debug_code'].lower() == 'false':
+if config_file["debug_code"].lower() == "false":
     DEBUG_CODE = False
 DEBUG_LOGGING = True
-if config_file['debug_logging'].lower() == 'false':
+if config_file["debug_logging"].lower() == "false":
     DEBUG_LOGGING = False

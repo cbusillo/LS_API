@@ -2,12 +2,10 @@
 """Main GUI File"""
 import platform
 import logging
-from kivy.logger import Logger, LOG_LEVELS
-
-Logger.setLevel(LOG_LEVELS["warning"])
 from threading import Thread
 from kivy.app import App
 from kivy.core.window import Window
+from kivy.logger import Logger, LOG_LEVELS
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from modules import weblistener
@@ -21,6 +19,7 @@ if platform.node() == "Chris-MBP":
     config.DEBUG_CODE = True
     config.DEBUG_LOGGING = False
 
+Logger.setLevel(LOG_LEVELS["warning"])
 logging.getLogger().setLevel(logging.WARNING)
 if config.DEBUG_LOGGING:
     logging.getLogger().setLevel(logging.DEBUG)

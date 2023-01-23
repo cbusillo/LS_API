@@ -1,14 +1,14 @@
 """Connect to LS API and handle rate limiter"""
 import os
 import time
-import requests
 import logging
+import requests
 from kivy.uix.button import Button
 from modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 
-if config.DEBUG_LOGGING == False:
+if config.DEBUG_LOGGING is False:
     logging.getLogger("requests").setLevel(logging.WARNING)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
 
