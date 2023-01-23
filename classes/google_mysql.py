@@ -15,9 +15,7 @@ class Database:
 
     def __init__(self) -> None:
         """Init db connection"""
-        ssl_certs = {'ssl': {'sslrootcert': f'config/server-ca.pem',
-                             'sslcert': f'config/client-cert.pem',
-                             'sslkey': f'config/client-key.pem'}}
+        ssl_certs = {'ssl_ca': f'config/server-ca.pem', 'ssl_cert': f'config/client-cert.pem', 'ssl_key': f'config/client-key.pem'}
         connect_string = f'mysql+pymysql://{config["user"]}:{config["password"]}@{config["host"]}/{config["database"]}'
         if Database.engine is None:
 
@@ -33,6 +31,7 @@ class Database:
     def exists(self, obj: object, search_string) -> bool:
         """Return True or False if serial exists"""
         response = self.session.query(obj).filter_by(serial_number=search_string).all()
+        print(response)
         return bool(response)
 
     def add_serial(self, serial):
