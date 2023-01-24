@@ -29,6 +29,7 @@ pip3.11 install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/
 pip3.11 install pyinstaller
 pip3.11 install opencv-python
 pip3.11 install pipreqs
+pip3.11 install git+https://github.com/SciTools/cartopy.git
 pip3.11 install -U -r requirements.txt
 #make binary on desktop
 ./gui.py
