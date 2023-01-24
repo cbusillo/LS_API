@@ -33,13 +33,12 @@ else
     pip3.11 install "kivy[base]"
 fi
 
-
-pip3.11 install Flask
+pip3.11 install git+https://github.com/SciTools/cartopy.git
+pip3.11 install flask
 pip3.11 install cython
 pip3.11 install pyinstaller
 pip3.11 install opencv-python
 pip3.11 install pipreqs
-pip3.11 install git+https://github.com/SciTools/cartopy.git
 pip3.11 install -U -r requirements.txt
 #make binary on desktop
 ./gui.py
