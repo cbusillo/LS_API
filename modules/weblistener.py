@@ -25,7 +25,8 @@ def web_hd_label():
     print(f"{customer.first_name} {customer.last_name}")
     print(f"{today.month}.{today.day}.{today.year}")
     label_print.print_text(
-        f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}"
+        f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}",
+        quantity=request.args.get("quantity"),
     )
     return HTML_RETURN
 
@@ -39,7 +40,7 @@ def web_in_process_label():
     label_print.print_text(
         f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}",
         barcode="2500000" + request.args.get("workorderID"),
-        quantity=request.args.get("qty"),
+        quantity=request.args.get("quantity"),
     )
     return HTML_RETURN
 
