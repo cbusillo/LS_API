@@ -22,10 +22,20 @@ if [[ $(uname -m) == 'arm64' ]]; then
 else
     brew install python@3.11
 fi
+brew upgrade
 
-pip3.11 install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
-pip3.11 install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
 
+if [[ $(uname -m) == 'arm64' ]]; then
+    pip3.11 install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
+    pip3.11 install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
+else
+    pip3.11 install kivy 
+    pip3.11 install "kivy[base]"
+fi
+
+
+pip3.11 install Flask
+pip3.11 install cython
 pip3.11 install pyinstaller
 pip3.11 install opencv-python
 pip3.11 install pipreqs
