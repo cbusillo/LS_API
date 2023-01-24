@@ -33,7 +33,7 @@ else
     #pip3.11 install -U git+https://github.com/kivy/kivy
     #pip3.11 install "kivy[base]"
 fi
-exit
+
 #pip3.11 install git+https://github.com/SciTools/cartopy.git
 pip3.11 install -U -r requirements-manual.txt
 pip3.11 install -U -r requirements.txt
