@@ -31,7 +31,7 @@ if [ ! -d "./.venv" ]; then
     python3.11 -m virtualenv .venv
 fi
 
-source ./.venv/bin/activate
+source .venv/bin/activate
 
 exit
 
