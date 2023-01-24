@@ -30,7 +30,7 @@ brew upgrade
 brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer
 pip3.11 install virtualenv
 
-if [ ! -d "./venv" ]; then 
+if [ ! -d "./.venv" ]; then 
     python3.11 -m virtualenv .venv
 fi
 
