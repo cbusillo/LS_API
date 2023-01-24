@@ -1,7 +1,4 @@
 #!/bin/bash
-activate () {
-  . ./.venv/bin/activate
-}
 
 killall Python &> /dev/null
 cd "$(dirname "$0")"
@@ -34,7 +31,7 @@ if [ ! -d "./.venv" ]; then
     python3.11 -m virtualenv .venv
 fi
 
-activate
+source ./.venv/bin/activate
 
 exit
 
