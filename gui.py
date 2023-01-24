@@ -4,6 +4,7 @@ import platform
 import logging
 from threading import Thread
 from kivy.app import App
+from kivy.config import Config
 from kivy.core.window import Window
 from kivy.logger import Logger, LOG_LEVELS
 from kivy.uix.button import Button
@@ -19,11 +20,14 @@ if platform.node() == "Chris-MBP":
     config.DEBUG_CODE = True
     config.DEBUG_LOGGING = False
 
+Config.set("kivy", "log_level", "warning")
 Logger.setLevel(LOG_LEVELS["warning"])
 logging.getLogger().setLevel(logging.WARNING)
 if config.DEBUG_LOGGING:
     logging.getLogger().setLevel(logging.DEBUG)
     Logger.setLevel(LOG_LEVELS["debug"])
+    Config.set("kivy", "log_level", "debug")
+Config.write()
 
 
 class MainGrid(GridLayout):
@@ -32,6 +36,7 @@ class MainGrid(GridLayout):
     def __init__(self, **kwargs):
         super(MainGrid, self).__init__(**kwargs)
         self.cols = 1
+        self.padding = 100
         self.update_customer_phone_btn = Button(text="Format Customer Phone Numbers", halign="center")
         self.update_customer_phone_btn.bind(on_press=self.update_customer_phone_fn)
         self.add_widget(self.update_customer_phone_btn)
