@@ -1,0 +1,7 @@
+flask
+selenium
+cython
+pyinstaller
+opencv-python
+pipreqs
+pytesseract
