@@ -23,13 +23,14 @@ else
     brew install python@3.11
 fi
 brew upgrade
-
+brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer
 
 if [[ $(uname -m) == 'arm64' ]]; then
     pip3.11 install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
     pip3.11 install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
 else
-    pip3.11 install -U git+https://github.com/kivy/kivy
+    pip3.11 install kivy
+    #pip3.11 install -U git+https://github.com/kivy/kivy
     #pip3.11 install "kivy[base]"
 fi
 exit
