@@ -107,8 +107,8 @@ class APIApp(App):
     """Initialize app settings"""
 
     def build(self):
-        Window.left = 220  # 0
-        Window.top = 100
+        # Window.left = 220  # 0
+        # Window.top = 100
 
         return MainGrid()
 
