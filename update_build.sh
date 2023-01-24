@@ -28,7 +28,7 @@ else
 fi
 brew upgrade
 brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer
-
+python3.11 -m virtualenv .venv
 [ ! -d "./venv" ] && python3.11 -m virtualenv .venv
 
 
@@ -52,6 +52,5 @@ fi
 
 #make binary on desktop
 source ~/.bashrc
-python3.11 -m virtualenv .venv
-source .venv/bin/activate
+
 ./gui.py
