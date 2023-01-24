@@ -6,8 +6,8 @@ if ! git diff -- update_build.sh --quiet
 then
     echo "Updating files."
     git pull https://github.com/cbusillo/LS_API
-    echo "Restarting script."
-    $(basename $0) && exit     
+    echo "Restart script."
+    exit     
 else
     git pull https://github.com/cbusillo/LS_API
 fi
