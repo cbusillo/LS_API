@@ -3,6 +3,7 @@
 import platform
 import logging
 from threading import Thread
+import subprocess
 from kivy.app import App
 from kivy.config import Config
 from kivy.core.window import Window
@@ -12,9 +13,9 @@ from kivy.uix.gridlayout import GridLayout
 from modules import weblistener
 from modules import update_item_price
 from modules import update_customer_phone
-from modules import camera
 from modules import get_ipsws
 from modules import load_config as config
+
 
 if platform.node() == "Chris-MBP":
     config.DEBUG_CODE = True
@@ -83,15 +84,15 @@ class MainGrid(GridLayout):
 
     #     get_ipsws.download_ipsw(label1)
 
-    def open_serial_scanner_fn(self, caller: Button):
+    def open_serial_scanner_fn(self, _):
         """Open the serial number scanner"""
-        caller.text = caller.text + "\nrunning..."
-        camera.take_serial_image(caller)
-        # thread = Thread(target=camera.take_serial_image, args=[caller])
-        # thread.daemon = True
         # caller.text = caller.text + "\nrunning..."
-        # caller.disabled = True
-        # thread.start()
+        subprocess.Popen("python3 ./camera.py", shell=True)
+        # scanner = camera.SerialCamera()
+        # popup_window = Popup(title="Serial Scanner", content=scanner, size_hint=(None, None), size=(1024, 768))
+        # popup_window.open()
+
+        # camera.take_serial_image(caller)
 
     def start_api_server_fn(self, caller: Button):
         """Start API Server for LS"""
@@ -106,7 +107,7 @@ class APIApp(App):
     """Initialize app settings"""
 
     def build(self):
-        Window.left = 2200
+        Window.left = 220  # 0
         Window.top = 100
 
         return MainGrid()
