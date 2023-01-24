@@ -23,7 +23,7 @@ genapi==0.0.8
 gobject==0.1.0
 greenlet==2.0.1
 HTMLParser==0.0.2
-hypothesis==6.64.0
+hypothesis==6.65.0
 ios==0.0.1
 ipython==8.8.0
 ipywidgets==8.0.4
