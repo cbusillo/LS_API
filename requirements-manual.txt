@@ -6,3 +6,5 @@ opencv-python
 pipreqs
 pytesseract
 sqlalchemy
+setuptools
+virtualenv
