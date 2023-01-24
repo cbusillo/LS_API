@@ -1,4 +1,8 @@
 #!/bin/bash
+activate () {
+  . ./.venv/bin/activate
+}
+
 killall Python &> /dev/null
 cd "$(dirname "$0")"
 if ! git diff -- update_build.sh --quiet
@@ -24,8 +28,11 @@ else
 fi
 brew upgrade
 brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer
-python3.11 -m virtualenv .venv
-source .venv/bin/activate
+
+[ ! -d "./venv" ] && python3.11 -m virtualenv .venv
+
+
+activate
 
 exit
 
