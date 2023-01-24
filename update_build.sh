@@ -33,8 +33,6 @@ fi
 
 source .venv/bin/activate
 
-exit
-
 
 #pip3.11 install git+https://github.com/SciTools/cartopy.git
 pip3.11 install -U -r requirements-manual.txt
@@ -50,6 +48,6 @@ else
 fi
 
 #make binary on desktop
-source ~/.bashrc
+#source ~/.bashrc
 
 ./gui.py
