@@ -23,8 +23,8 @@ else
     brew install python@3.11
 fi
 
-pip3 install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
-pip3 install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
+pip3.11 install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
+pip3.11 install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
 
 pip3.11 install pyinstaller
 pip3.11 install pipreqs
