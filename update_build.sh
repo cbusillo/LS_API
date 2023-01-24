@@ -27,7 +27,7 @@ pip3.11 install kivy --pre --no-deps --index-url  https://kivy.org/downloads/sim
 pip3.11 install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
 
 pip3.11 install pyinstaller
-pip3.11 install opencv
+pip3.11 install opencv-python
 pip3.11 install pipreqs
 pip3.11 install -U -r requirements.txt
 #make binary on desktop
