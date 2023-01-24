@@ -25,6 +25,12 @@ fi
 brew upgrade
 brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer
 
+
+
+#pip3.11 install git+https://github.com/SciTools/cartopy.git
+pip3.11 install -U -r requirements-manual.txt
+pip3.11 install -U -r requirements.txt
+
 if [[ $(uname -m) == 'arm64' ]]; then
     pip3.11 install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
     pip3.11 install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
@@ -34,9 +40,8 @@ else
     #pip3.11 install "kivy[base]"
 fi
 
-#pip3.11 install git+https://github.com/SciTools/cartopy.git
-pip3.11 install -U -r requirements-manual.txt
-pip3.11 install -U -r requirements.txt
 #make binary on desktop
 source ~/.bashrc
+python3.11 -m virtualenv .venv
+source .venv/bin/activate
 ./gui.py
