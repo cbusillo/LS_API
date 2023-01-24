@@ -24,7 +24,10 @@ else
 fi
 brew upgrade
 brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer
+python3.11 -m virtualenv .venv
+source .venv/bin/activate
 
+exit
 
 
 #pip3.11 install git+https://github.com/SciTools/cartopy.git
