@@ -90,7 +90,6 @@ tornado==6.2
 trove_classifiers==2023.1.20
 trustme==0.9.0
 truststore==0.5.0
-Twisted==22.10.0
 typed_ast==1.5.4
 unicodedata2==15.0.0
 urllib3_secure_extra==0.1.0
