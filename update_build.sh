@@ -35,6 +35,7 @@ fi
 
 pip3.11 install git+https://github.com/SciTools/cartopy.git
 pip3.11 install flask
+pip3.11 install selenium
 pip3.11 install cython
 pip3.11 install pyinstaller
 pip3.11 install opencv-python
