@@ -22,10 +22,11 @@ if [[ $(uname -m) == 'arm64' ]]; then
 else
     brew install python@3.11
 fi
-brew install pip@3.11
-python -m pip install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
-python -m pip install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
 
+pip3 install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
+pip3 install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
+
+pip3.11 install pyinstaller
 pip3.11 install pipreqs
 pip3.11 install -U -r requirements.txt
 #make binary on desktop
