@@ -37,4 +37,5 @@ pip3.11 install git+https://github.com/SciTools/cartopy.git
 pip3.11 install -U -r requirements-requirements.txt
 pip3.11 install -U -r requirements.txt
 #make binary on desktop
+source ~/.bashrc
 ./gui.py

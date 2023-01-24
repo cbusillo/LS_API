@@ -5,3 +5,4 @@ pyinstaller
 opencv-python
 pipreqs
 pytesseract
+sqlalchemy
