@@ -7,6 +7,7 @@ then
     echo "Updating files."
     git pull https://github.com/cbusillo/LS_API
     echo "Restart script."
+    exec $0
     exit     
 else
     git pull https://github.com/cbusillo/LS_API
@@ -40,9 +41,9 @@ pip3.11 install -U -r requirements.txt
 
 if [[ $(uname -m) == 'arm64' ]]; then
     pip3.11 install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
-    pip3.11 install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
+    #pip3.11 install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
 else
-    pip3.11 install kivy
+    USE_OSX_FRAMEWORKS=0 pip3.11 install https://github.com/kivy/kivy/zipball/master
     #pip3.11 install -U git+https://github.com/kivy/kivy
     #pip3.11 install "kivy[base]"
 fi
