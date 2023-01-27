@@ -1,5 +1,5 @@
 #!/bin/bash
-
+alias activate=". ./venv/bin/activate"
 killall Python &> /dev/null
 cd "$(dirname "$0")"
 if ! git diff -- update_build.sh --quiet
@@ -32,7 +32,7 @@ if [ ! -d "./.venv" ]; then
     python3.11 -m virtualenv .venv
 fi
 
-source .venv/bin/activate
+activate
 
 
 #pip3.11 install git+https://github.com/SciTools/cartopy.git
@@ -49,5 +49,5 @@ else
 fi
 
 #make binary on desktop
-source .venv/bin/activate
+activate
 ./gui.py
