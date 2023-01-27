@@ -12,7 +12,8 @@ def print_text(text: str, barcode=None, quantity=None):
     if barcode:
         label_string += b"^FS^FO40,130^FB450,4,,C,^B2N,40,Y,N,N^FD" + bytes(barcode, "utf-8")
     label_string += b"^FS^XZ"
-    if not quantity:
+    quantity = int(quantity)
+    if quantity < 1:
         quantity = 1
 
     mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
