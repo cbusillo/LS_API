@@ -37,7 +37,7 @@ fi
 activate
 
 
-#pip3.11 install git+https://github.com/SciTools/cartopy.git
+#pip3.11 install git+https://github.com/SciTools/cartopy.git test
 pip3.11 install -U -r requirements-manual.txt
 pip3.11 install -U -r requirements.txt
 
