@@ -28,11 +28,11 @@ brew upgrade
 brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer
 pip3.11 install virtualenv
 
-# if [ ! -d "./.venv" ]; then 
-#     python3.11 -m virtualenv .venv
-# fi
+if [ ! -d "./.venv" ]; then 
+    python3.11 -m virtualenv .venv
+fi
 
-# source .venv/bin/activate
+source .venv/bin/activate
 
 
 #pip3.11 install git+https://github.com/SciTools/cartopy.git
@@ -49,5 +49,5 @@ else
 fi
 
 #make binary on desktop
-#source ~/.bashrc
+source .venv/bin/activate
 ./gui.py
