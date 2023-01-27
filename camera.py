@@ -2,6 +2,7 @@
 import os
 import cv2
 import pytesseract
+import argparse
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -13,6 +14,9 @@ import numpy as np
 from modules import load_config as config
 from classes.google_mysql import Database
 from classes.api_serial import Serial
+from wand.image import Image as Imagew
+from wand.display import display
+from classes import google_sheets
 
 
 print(f"Importing {os.path.basename(__file__)}...")
@@ -33,39 +37,47 @@ class PhotoWindow(GridLayout):
         self.capture = cv2.VideoCapture(config.CAM_PORT)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAM_WIDTH)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAM_HEIGHT)
-        # cv2.namedWindow("Serial Capture")
+        self.texture1 = None
+
         Clock.schedule_interval(self.update, 0.1)
 
     def update(self, _):
         """Handle clock updates"""
         result, serial_image = self.capture.read()
+        serial_image = cv2.rotate(serial_image, cv2.ROTATE_180)
+        img = Imagew(serial_image)
+        img.deskew(0.4 * img.quantum_range)
+        serial_image = img
+        threshed = cv2.cvtColor(serial_image, cv2.COLOR_BGR2GRAY)
 
-        # bgray = serial_image[..., 0]
-        # blured1 = cv2.medianBlur(bgray, 3)
-        # blured2 = cv2.medianBlur(bgray, 51)
-        # divided = np.ma.divide(blured1, blured2).data
-        # normed = np.uint8(255 * divided / divided.max())
-        # _, threshed = cv2.threshold(normed, 100, 255, cv2.THRESH_OTSU)
-
-        serial_image = cv2.cvtColor(serial_image, cv2.COLOR_BGR2GRAY)
-        _, threshed = cv2.threshold(serial_image, 127, 255, cv2.THRESH_BINARY)
+        _, threshed = cv2.threshold(threshed, 127, 255, cv2.THRESH_BINARY)
 
         if result:
-            serial_image_data = pytesseract.image_to_data(threshed, output_type=pytesseract.Output.DICT)
+            serial_image_data = pytesseract.image_to_data(
+                threshed,
+                output_type=pytesseract.Output.DICT,
+                config="--psm 12",
+            )
         lines = ""
         for conf, word in zip(serial_image_data["conf"], serial_image_data["text"]):
-            if conf > 80:
-                if word[0:1].isalpha():
+            if conf > 50 and word[0:1].lower() == "d" and len(word) >= 8:
+                if word.lower().strip() == "dmpykq6vjf8j":
                     output = f"Conf: {conf} {word}"
                     print(output)
                     lines = lines + output + "\n"
+                else:
+                    print(f"{word} fail at {conf}")
 
+        print()
         self.status.text = lines
-        buf1 = cv2.flip(threshed, 0)
+
+        cv2.imshow("test", threshed)
+        buf1 = cv2.flip(serial_image, 0)
         buf = buf1.tobytes()
-        texture1 = Texture.create(size=(threshed.shape[1], threshed.shape[0]), colorfmt="luminance")
-        texture1.blit_buffer(buf, colorfmt="luminance", bufferfmt="ubyte")
-        self.scanned_image.texture = texture1
+        if self.texture1 is None:
+            self.texture1 = Texture.create(size=(serial_image.shape[1], serial_image.shape[0]), colorfmt="rgb")
+        self.texture1.blit_buffer(buf, colorfmt="rgb", bufferfmt="ubyte")
+        self.scanned_image.texture = self.texture1
 
 
 class SerialCamera(App):
@@ -78,6 +90,7 @@ class SerialCamera(App):
         return PhotoWindow()
 
 
+exit()
 SerialCamera().run()
 
 
