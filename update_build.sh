@@ -4,7 +4,8 @@ activate () {
 }
 killall Python &> /dev/null
 cd "$(dirname "$0")"
-if ! git diff -- update_build.sh --quiet
+git update
+if ! git diff origin/main --quiet update_build.sh
 then
     echo "Updating files."
     git pull https://github.com/cbusillo/LS_API
