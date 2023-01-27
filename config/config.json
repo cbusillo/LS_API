@@ -16,5 +16,6 @@
         "itemMatrix": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/ItemMatrix.json",
         "customer": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Customer.json",
         "customerPut": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Customer/{customerID}.json"
-    }
+    },
+    "google_sheets_serial_name" : "Shiny Testing"
 }

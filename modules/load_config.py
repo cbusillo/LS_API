@@ -33,6 +33,8 @@ SICKW_URL = config_file["sickw_url"]
 DB_ACCESS = secret_file["sql_access"]
 ACCESS_TOKEN = secret_file["ls_api_access"]
 SICKW_API_KEY = secret_file["sickw_api_key"]
+SHEETS_ACCESS = secret_file["sheets_access"]
+
 
 DEBUG_CODE = True
 if config_file["debug_code"].lower() == "false":
@@ -40,3 +42,5 @@ if config_file["debug_code"].lower() == "false":
 DEBUG_LOGGING = True
 if config_file["debug_logging"].lower() == "false":
     DEBUG_LOGGING = False
+
+GOOGLE_SHEETS_SERIAL_NAME = config_file["google_sheets_serial_name"]
