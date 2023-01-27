@@ -2,7 +2,6 @@
 import os
 import cv2
 import pytesseract
-import argparse
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -11,15 +10,35 @@ from kivy.uix.button import Label
 from kivy.uix.image import Image
 from kivy.uix.gridlayout import GridLayout
 import numpy as np
+from skimage.transform import rotate
+from skimage.color import rgb2gray
+from deskew import determine_skew
 from modules import load_config as config
 from classes.google_mysql import Database
 from classes.api_serial import Serial
-from wand.image import Image as Imagew
-from wand.display import display
-from classes import google_sheets
+
+# from classes import google_sheets
 
 
 print(f"Importing {os.path.basename(__file__)}...")
+
+
+def deskew(image):
+    """take image and return straight image"""
+    angle = determine_skew(image)
+    if angle is None:
+        angle = 0
+    rotated = rotate(image, angle, resize=True) * 255
+    return rotated.astype(np.uint8)
+
+
+def thresh_image(image):
+    """take grayscale image and return Threshholded image"""
+    image = cv2.rotate(image, cv2.ROTATE_180)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    image = deskew(image)
+    _, image = cv2.threshold(image, 200, 255, cv2.THRESH_BINARY)
+    return image
 
 
 class PhotoWindow(GridLayout):
@@ -34,6 +53,7 @@ class PhotoWindow(GridLayout):
         self.add_widget(self.scanned_image)
         self.status = Label()
         self.add_widget(self.status)
+
         self.capture = cv2.VideoCapture(config.CAM_PORT)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAM_WIDTH)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAM_HEIGHT)
@@ -44,15 +64,9 @@ class PhotoWindow(GridLayout):
     def update(self, _):
         """Handle clock updates"""
         result, serial_image = self.capture.read()
-        serial_image = cv2.rotate(serial_image, cv2.ROTATE_180)
-        img = Imagew(serial_image)
-        img.deskew(0.4 * img.quantum_range)
-        serial_image = img
-        threshed = cv2.cvtColor(serial_image, cv2.COLOR_BGR2GRAY)
-
-        _, threshed = cv2.threshold(threshed, 127, 255, cv2.THRESH_BINARY)
 
         if result:
+            threshed = thresh_image(serial_image)
             serial_image_data = pytesseract.image_to_data(
                 threshed,
                 output_type=pytesseract.Output.DICT,
@@ -75,7 +89,7 @@ class PhotoWindow(GridLayout):
         buf1 = cv2.flip(serial_image, 0)
         buf = buf1.tobytes()
         if self.texture1 is None:
-            self.texture1 = Texture.create(size=(serial_image.shape[1], serial_image.shape[0]), colorfmt="rgb")
+            self.texture1 = Texture.create()
         self.texture1.blit_buffer(buf, colorfmt="rgb", bufferfmt="ubyte")
         self.scanned_image.texture = self.texture1
 
@@ -90,8 +104,8 @@ class SerialCamera(App):
         return PhotoWindow()
 
 
-exit()
-SerialCamera().run()
+if __name__ == "__main__":
+    SerialCamera().run()
 
 
 def testing():
