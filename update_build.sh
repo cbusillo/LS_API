@@ -1,5 +1,7 @@
 #!/bin/bash
-alias activate=". ./venv/bin/activate"
+activate () { 
+    . ./.venv/bin/activate
+}
 killall Python &> /dev/null
 cd "$(dirname "$0")"
 if ! git diff -- update_build.sh --quiet
