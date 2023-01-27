@@ -49,5 +49,4 @@ else
 fi
 
 #make binary on desktop
-activate
 ./gui.py
