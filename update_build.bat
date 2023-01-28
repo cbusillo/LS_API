@@ -21,8 +21,8 @@ if %errorlevel% NEQ 0 (
 
 cl.exe
 if %errorlevel% NEQ 0 (
-	winget install Microsoft.VisualStudio.2022.BuildTools --silent
-	winget install Microsoft.VisualStudio.2022.Community --silent --override "--wait --quiet --add ProductLang En-us --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended"
+	winget install --id=Microsoft.VisualStudio.2019.BuildTools  -e
+	REM winget install Microsoft.VisualStudio.2022.Community --silent --override "--wait --quiet --add ProductLang En-us --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended"
 	echo "Restarting script."
 	%0
 	exit
