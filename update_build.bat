@@ -4,7 +4,7 @@ REM winget install --id Git.Git -e --source winget
 REM close window and open new
 REM git clone https://github.com/cbusillo/LS_API
 
-%PYTHONROOT%=%LOCALAPPDATA%\Programs\Python
+PYTHONROOT=%LOCALAPPDATA%\Programs\Python
 for /d %%d in (%PYTHONROOT%\*) do (set PYTHONVERSION=%%d & goto break)
 :break
 
