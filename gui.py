@@ -62,7 +62,7 @@ class MainGrid(GridLayout):
         """Run the Item Pricing Function"""
         thread = Thread(target=update_item_price.run_update_item_price, args=[caller])
         thread.daemon = True
-        caller.text = caller.text + "\nrunning..."
+        caller.text += "\nrunning..."
         caller.disabled = True
         thread.start()
 
@@ -70,7 +70,7 @@ class MainGrid(GridLayout):
         """Run the Customer Phone Number Formatting Function"""
         thread = Thread(target=update_customer_phone.run_update_customer_phone, args=[caller])
         thread.daemon = True
-        caller.text = caller.text + "\nrunning..."
+        caller.text += "\nrunning..."
         caller.disabled = True
         thread.start()
 
@@ -78,7 +78,7 @@ class MainGrid(GridLayout):
         """Run the IPSW downloader"""
         thread = Thread(target=get_ipsws.download_ipsw, args=[caller])
         thread.daemon = True
-        caller.text = caller.text + "\nrunning..."
+        caller.text += "\nrunning..."
         caller.disabled = True
         thread.start()
 
@@ -86,7 +86,7 @@ class MainGrid(GridLayout):
 
     def open_serial_scanner_fn(self, _):
         """Open the serial number scanner"""
-        # caller.text = caller.text + "\nrunning..."
+        # caller.text += "\nrunning..."
         subprocess.Popen("python3.11 ./camera.py", shell=True)
         # scanner = camera.SerialCamera()
         # popup_window = Popup(title="Serial Scanner", content=scanner, size_hint=(None, None), size=(1024, 768))
@@ -98,7 +98,7 @@ class MainGrid(GridLayout):
         """Start API Server for LS"""
         thread = Thread(target=weblistener.start_weblistener, args=[caller])
         thread.daemon = True
-        caller.text = caller.text + "\nrunning..."
+        caller.text += "\nrunning..."
         caller.disabled = True
         thread.start()
 

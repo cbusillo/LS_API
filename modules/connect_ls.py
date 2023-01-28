@@ -16,7 +16,7 @@ if config.DEBUG_LOGGING is False:
 def generate_ls_access():
     """Generate access requirements."""
     response = requests.post(config.LS_URLS["access"], data=config.ACCESS_TOKEN, timeout=60)
-    config.accessHeader["Authorization"] = "Bearer " + response.json()["access_token"]
+    config.accessHeader["Authorization"] = f'Bearer {response.json()["access_token"]}'
 
 
 def get_data(currenturl, current_params="", caller: Button = None):
@@ -29,7 +29,7 @@ def get_data(currenturl, current_params="", caller: Button = None):
             + f"Retry After:{response.headers['retry-after']}"
         )
         if caller:
-            caller.text = f"{caller.text.split(chr(10))[0]}" + "\n" + f"{caller.text.split(chr(10))[1]}{output}"
+            caller.text = f"{caller.text.split(chr(10))[0]}\n{caller.text.split(chr(10))[1]}{output}"
         print(output, end="\r")
         time.sleep(int(response.headers["retry-after"]) + 1)
         response = requests.get(currenturl, headers=config.accessHeader, params=current_params, timeout=60)
@@ -39,7 +39,7 @@ def get_data(currenturl, current_params="", caller: Button = None):
         response = requests.get(currenturl, headers=config.accessHeader, params=current_params, timeout=60)
 
     if response.status_code != 200:
-        print(f"Received bad status code {current_params}: " + response.text)
+        print(f"Received bad status code {current_params}: {response.text}")
     return response
 
 
@@ -52,7 +52,7 @@ def put_data(currenturl, current_data, caller: Button = None):
             + f"Retry After:{response.headers['retry-after']}"
         )
         if caller:
-            caller.text = f"{caller.text.split(chr(10))[0]}" + "\n" + f"{caller.text.split(chr(10))[1]}{output}"
+            caller.text = f"{caller.text.split(chr(10))[0]}\n{caller.text.split(chr(10))[1]}{output}"
         print(output, end="\r")
         time.sleep(int(response.headers["retry-after"]) + 1)
         response = requests.put(currenturl, headers=config.accessHeader, json=current_data, timeout=60)
@@ -62,4 +62,4 @@ def put_data(currenturl, current_data, caller: Button = None):
         response = requests.put(currenturl, headers=config.accessHeader, json=current_data, timeout=60)
 
     if response.status_code != 200:
-        print(f"Received bad status code on {current_data}: " + response.text)
+        print(f"Received bad status code on {current_data}: {response.text}")

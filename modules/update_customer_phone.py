@@ -19,7 +19,7 @@ def run_update_customer_phone(caller: Button):
                     each_number.number = cleaned_number
                     customer.is_modified = True
                 if len(each_number.number) == 7:
-                    each_number.number = "757" + each_number.number
+                    each_number.number = f"757{each_number.number}"
                     customer.is_modified = True
         if customer.is_modified:
             customers_updated += 1

@@ -78,7 +78,7 @@ class PhotoWindow(GridLayout):
                 if word.lower().strip() == "dmpykq6vjf8j":
                     output = f"Conf: {conf} {word}"
                     print(output)
-                    lines = lines + output + "\n"
+                    lines = f"{lines} {output}\n"
                 else:
                     print(f"{word} fail at {conf}")
 

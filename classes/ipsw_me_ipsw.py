@@ -92,7 +92,7 @@ class Devices:
     def get_devices(caller: Button) -> "List[Devices]":
         """Load Apple firmwares into IPSW list"""
         for path in IPSW_PATH:
-            directory = str(Path.home()) + f"/Library/iTunes/{path}"
+            directory = str(f"{Path.home()}/Library/iTunes/{path}")
             Path(directory).mkdir(parents=True, exist_ok=True)
             for file in Path(directory).glob("**/*.tmp"):
                 file.unlink()
@@ -104,7 +104,7 @@ class Devices:
             print(f"{output: <60}", end="\r")
             for path in IPSW_PATH:
                 if device["name"].split()[0].lower() in path.lower():
-                    device["local_path"] = str(Path.home()) + f"/Library/iTunes/{path}/"
+                    device["local_path"] = f"{str(Path.home())}/Library/iTunes/{path}/"
                     devices.append(Devices.from_dict(device))
 
         for device in devices:
@@ -113,7 +113,6 @@ class Devices:
                 if firmware.upload_date > newest_firmware_date:
                     device.newest_firmware_url = firmware.url
                     newest_firmware_date = firmware.upload_date
-                    # device.local_path = str(Path.home()) + device.local_path + os.path.basename(urlparse(device["url"]).path)
             for firmware in device.firmwares:
                 if firmware.upload_date == newest_firmware_date:
                     local_file = device.local_path + os.path.basename(urlparse(firmware.url).path)
