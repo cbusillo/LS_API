@@ -16,6 +16,7 @@ echo %PYTHON%
 tasklist | find /i "python3.exe" && taskkill /im "python3.exe" /F || echo process "python3.exe" not running
 cd /D %~dp0
 
+git remote update
 git diff origin/main --quiet update_build.bat
 if %errorlevel% NEQ 0 (
 	echo "Updating files."
