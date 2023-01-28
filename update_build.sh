@@ -20,6 +20,9 @@ which -s brew
 if [[ $? != 0 ]] ; then
     # Install Homebrew
     arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo "Restart script."
+    exec $0
+    exit     
 else
     brew update
 fi
