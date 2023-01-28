@@ -12,7 +12,6 @@ set "PIP=%PYTHONVERSION%\scripts\pip"
 set "PYTHON=%PYTHONVERSION%\python"
 echo %PIP%
 echo %PYTHON%
-pause
 
 tasklist | find /i "python3.exe" && taskkill /im "python3.exe" /F || echo process "python3.exe" not running
 cd /D %~dp0
@@ -28,7 +27,6 @@ if %errorlevel% NEQ 0 (
 	git pull https://github.com/cbusillo/LS_API
 )
 
-pause
 FOR /F "tokens=* USEBACKQ" %%F IN (`python --version`) DO (
 SET output=%%F
 )
