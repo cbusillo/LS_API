@@ -12,7 +12,7 @@ set PIP=%PYTHONVERSION%\scripts\pip
 set PYTHON=%PYTHONVERSION%\python
 echo %PIP%
 echo %PYTHON%
-exit
+pause
 
 tasklist | find /i "python3.exe" && taskkill /im "python3.exe" /F || echo process "python3.exe" not running
 cd /D %~dp0
