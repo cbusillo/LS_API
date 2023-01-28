@@ -4,7 +4,7 @@ REM winget install --id Git.Git -e --source winget
 REM close window and open new
 REM git clone https://github.com/cbusillo/LS_API
 
-set REQPYTHON="3.11"
+set REQPYTHON=3.11
 
 set "PYTHONROOT=%LOCALAPPDATA%\Programs\Python"
 for /d %%d in (%PYTHONROOT%\Python%REQPYTHON%*) 
