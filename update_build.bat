@@ -32,7 +32,8 @@ FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON% --version`) DO (
 SET output=%%F
 )
 
-if "%output%" NEQ "Python 3.11.1" (
+x%str1:bcd=%==x%str1%
+if "x%output%:Python 3.11=%==x%output%" (
 	winget install -h --silent -a X64 -e --id Python.Python.3.11
 	echo "Restarting script."
 	%0
