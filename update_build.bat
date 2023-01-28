@@ -4,10 +4,25 @@ REM winget install --id Git.Git -e --source winget
 REM close window and open new
 REM git clone https://github.com/cbusillo/LS_API
 
+
+cd /D %~dp0
+
+git remote update
+git diff origin/main --quiet update_build.bat
+if %errorlevel% NEQ 0 (
+	echo "Updating files."
+	git pull https://github.com/cbusillo/LS_API
+	echo "Restarting script."
+	%0
+	exit
+) else (
+	git pull https://github.com/cbusillo/LS_API
+)
+
 cl.exe
 if %errorlevel% NEQ 0 (
 	winget install Microsoft.VisualStudio.2022.BuildTools --silent
-	#winget install Microsoft.VisualStudio.2022.Community --silent --override "--wait --quiet --add ProductLang En-us --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended"
+	REM winget install Microsoft.VisualStudio.2022.Community --silent --override "--wait --quiet --add ProductLang En-us --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended"
 	echo "Restarting script."
 	%0
 	exit
@@ -24,19 +39,7 @@ echo %PIP%
 echo %PYTHON%
 
 tasklist | find /i "python3.exe" && taskkill /im "python3.exe" /F || echo process "python3.exe" not running
-cd /D %~dp0
 
-git remote update
-git diff origin/main --quiet update_build.bat
-if %errorlevel% NEQ 0 (
-	echo "Updating files."
-	git pull https://github.com/cbusillo/LS_API
-	echo "Restarting script."
-	%0
-	exit
-) else (
-	git pull https://github.com/cbusillo/LS_API
-)
 
 %PYTHON% --version
 if %errorlevel% NEQ 0 (
