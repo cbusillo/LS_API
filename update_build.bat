@@ -19,7 +19,7 @@ cd /D %~dp0
 
 git diff origin/main --quiet update_build.bat
 
-if %ERRORLEVEL% NEQ 0 (
+if ERRORLEVEL NEQ 0 (
 	echo "Updating files."
 	git pull https://github.com/cbusillo/LS_API
 	echo "Restarting script."
