@@ -33,6 +33,9 @@ SET output=%%F
 
 if "%output%" NEQ "Python 3.11.1" (
 	winget install -h --silent -a x86 -e --id Python.Python.3.11
+	echo "Restarting script."
+	%0
+	exit
 )
 %PIP% install virtualenv
 
