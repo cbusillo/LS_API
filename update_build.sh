@@ -34,18 +34,12 @@ fi
 
 activate
 
-
-#pip3.11 install git+https://github.com/SciTools/cartopy.git test
-pip3.11 install -U -r requirements-manual.txt
 pip3.11 install -U -r requirements.txt
 brew install tesseract
 if [[ $(uname -m) == 'arm64' ]]; then
     pip3.11 install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
-    #pip3.11 install "kivy[base]" --pre --extra-index-url https://kivy.org/downloads/simple/
 else
     USE_OSX_FRAMEWORKS=0 pip3.11 install https://github.com/kivy/kivy/zipball/master
-    #pip3.11 install -U git+https://github.com/kivy/kivy
-    #pip3.11 install "kivy[base]"
 fi
 
 #make binary on desktop
