@@ -62,7 +62,8 @@ REM .venv\scripts\activate.bat
 %PIP% install -U -r requirements.txt
 
 
-%PIP% install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
+%PIP% uninstall kivy
+%PIP% install "kivy[base] @ https://github.com/kivy/kivy/archive/master.zip"
 
 
 %PYTHON% gui.py
