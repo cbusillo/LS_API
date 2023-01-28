@@ -24,6 +24,7 @@ if %ERRORLEVEL% NEQ 0 (
 	git pull https://github.com/cbusillo/LS_API
 	echo "Restarting script."
 	%0
+	pause
 	exit
 ) else (
 	git pull https://github.com/cbusillo/LS_API
