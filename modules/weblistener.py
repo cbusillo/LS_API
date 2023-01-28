@@ -28,6 +28,7 @@ def web_hd_label():
     print(f"{today.month}.{today.day}.{today.year}")
     label_print.print_text(
         f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}",
+        barcode=f'2500000{request.args.get("workorderID")}',
         quantity=request.args.get("quantity"),
     )
     return HTML_RETURN
