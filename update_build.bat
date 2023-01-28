@@ -1,4 +1,4 @@
-@ECHO OFF
+REM @ECHO OFF
 REM run these two commands manually
 REM winget install --id Git.Git -e --source winget
 REM close window and open new
@@ -10,6 +10,9 @@ for /d %%d in (%PYTHONROOT%\*) do (set PYTHONVERSION=%%d & goto break)
 
 set PIP=%PYTHONVERSION%\scripts\pip
 set PYTHON=%PYTHONVERSION%\python
+echo %PIP%
+echo %PYTHON%
+exit
 
 tasklist | find /i "python3.exe" && taskkill /im "python3.exe" /F || echo process "python3.exe" not running
 cd /D %~dp0
