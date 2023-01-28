@@ -5,8 +5,8 @@ REM close window and open new
 REM git clone https://github.com/cbusillo/LS_API
 
 set REQVERSION=11
-set "PYTHONROOT=%LOCALAPPDATA%\Programs\Python\Python3%REQVERSION%"
-for /d %%d in (%PYTHONROOT%\Python311*) do (set "PYTHONVERSION=%%d" & goto break)
+set "PYTHONROOT=%LOCALAPPDATA%\Programs\Python"
+for /d %%d in (%PYTHONROOT%\Python3%REQVERSION%*) do (set "PYTHONVERSION=%%d" & goto break)
 :break
 
 set "PIP=%PYTHONVERSION%\scripts\pip"
