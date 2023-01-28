@@ -21,7 +21,7 @@ if %errorlevel% NEQ 0 (
 
 if not exist "%PROGRAMFILES%\Microsoft Visual Studio\2022\Community" (
 	winget install --id=Microsoft.VisualStudio.2022.BuildTools  -e
-	winget install Microsoft.VisualStudio.2022.Community --silent --override "--wait --quiet --add ProductLang En-us --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended"
+	winget install Microsoft.VisualStudio.2022.Community --silent --override "--wait --quiet --add ProductLang En-us --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Workload.NativeCrossPlat --add Microsoft.VisualStudio.Workload.VCTools --includeOptional"
 	echo "Restarting script."
 	%0
 	exit
@@ -61,8 +61,6 @@ REM .venv\scripts\activate.bat
 
 %PIP% install -U -r requirements.txt
 
-
-%PIP% uninstall kivy
 %PIP% install "kivy[base] @ https://github.com/kivy/kivy/archive/master.zip"
 
 
