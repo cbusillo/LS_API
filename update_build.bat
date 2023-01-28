@@ -40,7 +40,7 @@ if not exist .venv/ (
 	%PYTHON% -m virtualenv .venv
 )
 
-.venv\scripts\activate.bat
+REM .venv\scripts\activate.bat
 %PIP% install -U -r requirements.txt
 
 
