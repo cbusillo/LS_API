@@ -19,7 +19,8 @@ open(location, '_self').close();
 @app.route("/hdd_label", methods=["GET"])
 def web_hd_label():
     """Print customer HDD label"""
-    quantity = int(request.args.get("quantity"))
+    if request.args.get("quantity") is not None:
+        quantity = int(request.args.get("quantity"))
     if quantity < 1:
         quantity = 1
     customer = ls_customer.Customer.get_customer(request.args.get("customerID"))
