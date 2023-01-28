@@ -4,6 +4,11 @@ REM winget install --id Git.Git -e --source winget
 REM close window and open new
 REM git clone https://github.com/cbusillo/LS_API
 
+cl.exe
+if %errorlevel% NEQ 0 (
+	winget install Microsoft.VisualStudio.2022.Community --silent --override "--wait --quiet --add ProductLang En-us --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended"
+)
+
 set REQVERSION=11
 set "PYTHONROOT=%LOCALAPPDATA%\Programs\Python"
 for /d %%d in (%PYTHONROOT%\Python3%REQVERSION%*) do (set "PYTHONVERSION=%%d" & goto break)
