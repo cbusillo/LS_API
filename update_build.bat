@@ -3,8 +3,13 @@ REM run these two commands manually
 REM winget install --id Git.Git -e --source winget
 REM close window and open new
 REM git clone https://github.com/cbusillo/LS_API
-set PIP=%LOCALAPPDATA%\Programs\Python\Python311\scripts\pip
-set PYTHON=%LOCALAPPDATA%\Programs\Python\Python311\python
+
+%PYTHONROOT%=%LOCALAPPDATA%\Programs\Python
+for /d %%d in (%PYTHONROOT%\*) do (set PYTHONVERSION=%%d & goto break)
+:break
+
+set PIP=%PYTHONVERSION%\scripts\pip
+set PYTHON=%PYTHONVERSION%\python
 
 tasklist | find /i "python3.exe" && taskkill /im "python3.exe" /F || echo process "python3.exe" not running
 cd /D %~dp0
