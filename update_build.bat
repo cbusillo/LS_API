@@ -4,10 +4,9 @@ REM winget install --id Git.Git -e --source winget
 REM close window and open new
 REM git clone https://github.com/cbusillo/LS_API
 
-
-set REQVERSION=3.11
-set "PYTHONROOT=%LOCALAPPDATA%\Programs\Python"
-for /d %%d in (%PYTHONROOT%\Python%REQVERSION%*) do (set "PYTHONVERSION=%%d" & goto break)
+set REQVERSION=11
+set "PYTHONROOT=%LOCALAPPDATA%\Programs\Python\Python3%REQVERSION%"
+for /d %%d in (%PYTHONROOT%\Python311*) do (set "PYTHONVERSION=%%d" & goto break)
 :break
 
 set "PIP=%PYTHONVERSION%\scripts\pip"
@@ -32,7 +31,7 @@ if %errorlevel% NEQ 0 (
 
 %PYTHON% --version
 if %errorlevel% NEQ 0 (
-	winget install -h --silent -a X64 -e --id Python.Python.%REQVERSION%
+	winget install -h --silent -a X64 -e --id Python.Python.3.%REQVERSION%
 	echo "Restarting script."
 	%0
 	exit
