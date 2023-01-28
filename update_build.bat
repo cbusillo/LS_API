@@ -2,11 +2,13 @@
 REM run these two commands manually
 REM winget install --id Git.Git -e --source winget
 REM git clone https://github.com/cbusillo/LS_API
+PIP=%LOCALAPPDATA%\Programs\Python\Python311\scripts\pip
+PYTHON=%LOCALAPPDATA%\Programs\Python\Python311\python
 
 tasklist | find /i "python3.exe" && taskkill /im "python3.exe" /F || echo process "python3.exe" not running
-cd %~dp0/LS_API
+cd /D %~dp0
 
-git diff -- update_build.sh --quiet
+git diff origin/main --quiet update_build.bat
 
 if %ERRORLEVEL% NEQ 0 (
 	echo "Updating files."
@@ -22,13 +24,24 @@ SET output=%%F
 )
 
 if "%output%" NEQ "Python 3.11.1" (
-	winget install -h --silent -e --id Python.Python.3.11
+	winget install -h --silent -a x86 -e --id Python.Python.3.11
 )
-%LOCALAPPDATA%\Programs\Python\Python311\scripts\pip install --upgrade pip wheel setuptools
+%PIP% install virtualenv
 
-%LOCALAPPDATA%\Programs\Python\Python311\python -m pip install "kivy[base] @ https://github.com/kivy/kivy/archive/master.zip"
+if not exist .venv/ (
+	%PYTHON% -m virtualenv .venv
+)
 
-%LOCALAPPDATA%\Programs\Python\Python311\scripts\pip install pipreqs
-%LOCALAPPDATA%\Programs\Python\Python311\scripts\pip install -U -r requirements.txt
+.venv\scripts\activate.bat
+%PIP% install -U -r requirements.txt
 
-%LOCALAPPDATA%\Programs\Python\Python311\python gui.py
+
+%PIP% install --upgrade pip wheel setuptools
+
+%PIP% install -U -r requirements.txt
+
+
+%PIP% install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
+
+
+%PYTHON% gui.py
