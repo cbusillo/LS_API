@@ -19,8 +19,7 @@ if %errorlevel% NEQ 0 (
 	git pull https://github.com/cbusillo/LS_API
 )
 
-cl.exe
-if %errorlevel% NEQ 0 (
+if not exist "%PROGRAMFILES%\Microsoft Visual Studio\2022\Community" (
 	winget install --id=Microsoft.VisualStudio.2022.BuildTools  -e
 	winget install Microsoft.VisualStudio.2022.Community --silent --override "--wait --quiet --add ProductLang En-us --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended"
 	echo "Restarting script."
