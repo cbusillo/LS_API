@@ -6,7 +6,8 @@ REM git clone https://github.com/cbusillo/LS_API
 
 cl.exe
 if %errorlevel% NEQ 0 (
-	winget install Microsoft.VisualStudio.2022.Community --silent --override "--wait --quiet --add ProductLang En-us --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended"
+	winget install Microsoft.VisualStudio.2022.BuildTools --silent
+	#winget install Microsoft.VisualStudio.2022.Community --silent --override "--wait --quiet --add ProductLang En-us --add Microsoft.VisualStudio.Workload.NativeDesktop --includeRecommended"
 	echo "Restarting script."
 	%0
 	exit
