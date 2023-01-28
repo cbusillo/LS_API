@@ -28,7 +28,7 @@ if %errorlevel% NEQ 0 (
 	git pull https://github.com/cbusillo/LS_API
 )
 
-FOR /F "tokens=* USEBACKQ" %%F IN (`python --version`) DO (
+FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON% --version`) DO (
 SET output=%%F
 )
 
