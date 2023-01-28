@@ -2,6 +2,7 @@
 activate () { 
     . ./.venv/bin/activate
 }
+REQPYTHON="3.11"
 killall Python &> /dev/null
 cd "$(dirname "$0")"
 git remote update
@@ -23,23 +24,23 @@ else
     brew update
 fi
 
-brew install python@3.11
+brew install python@$REQPYTHON
 brew upgrade
 brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer
 pip3.11 install virtualenv
 
 if [ ! -d "./.venv" ]; then 
-    python3.11 -m virtualenv .venv
+    python$REQPYTHON -m virtualenv .venv
 fi
 
 activate
 
-pip3.11 install -U -r requirements.txt
+pip$REQPYTHON install -U -r requirements.txt
 brew install tesseract
 if [[ $(uname -m) == 'arm64' ]]; then
-    pip3.11 install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
+    pip$REQPYTHON install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
 else
-    USE_OSX_FRAMEWORKS=0 pip3.11 install https://github.com/kivy/kivy/zipball/master
+    USE_OSX_FRAMEWORKS=0 pip$REQPYTHON install https://github.com/kivy/kivy/zipball/master
 fi
 
 #make binary on desktop

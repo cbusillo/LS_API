@@ -4,8 +4,11 @@ REM winget install --id Git.Git -e --source winget
 REM close window and open new
 REM git clone https://github.com/cbusillo/LS_API
 
+set REQPYTHON="3.11"
+
 set "PYTHONROOT=%LOCALAPPDATA%\Programs\Python"
-for /d %%d in (%PYTHONROOT%\*) do (set "PYTHONVERSION=%%d" & goto break)
+for /d %%d in (%PYTHONROOT%\Python%REQPYTHON%*) 
+do (set "PYTHONVERSION=%%d" & goto break)
 :break
 
 set "PIP=%PYTHONVERSION%\scripts\pip"
@@ -28,11 +31,8 @@ if %errorlevel% NEQ 0 (
 	git pull https://github.com/cbusillo/LS_API
 )
 
-FOR /F "tokens=* USEBACKQ" %%F IN (`%PYTHON% --version`) DO (
-	SET output=%%F
-)
-
-if x%output%:Python 3.11=%==x%output% (
+%PYTHON% --version
+if %errorlevel% NEQ 0 (
 	winget install -h --silent -a X64 -e --id Python.Python.3.11
 	echo "Restarting script."
 	%0
