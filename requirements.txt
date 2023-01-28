@@ -10,3 +10,4 @@ sqlalchemy
 scikit-image
 deskew
 matplotlib
+pytesseract
