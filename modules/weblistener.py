@@ -19,10 +19,11 @@ open(location, '_self').close();
 @app.route("/hdd_label", methods=["GET"])
 def web_hd_label():
     """Print customer HDD label"""
-    if request.args.get("quantity") is not None:
-        quantity = int(request.args.get("quantity"))
-    if quantity < 1:
+    quantity = 0
+    if request.args.get("quantity") is None:
         quantity = 1
+    else:
+        quantity = int(request.args.get("quantity"))
     customer = ls_customer.Customer.get_customer(request.args.get("customerID"))
     today = datetime.date.today()
     print(f"{customer.first_name} {customer.last_name}")
@@ -30,7 +31,7 @@ def web_hd_label():
     label_print.print_text(
         f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}",
         barcode=f'2500000{request.args.get("workorderID")}',
-        quantity=request.args.get("quantity"),
+        quantity=quantity,
     )
     return HTML_RETURN
 
@@ -38,13 +39,18 @@ def web_hd_label():
 @app.route("/in_process_label", methods=["GET"])
 def web_in_process_label():
     """Print customer name and workorder number barcode to label printer"""
+    quantity = 0
+    if request.args.get("quantity") is None:
+        quantity = 1
+    else:
+        quantity = int(request.args.get("quantity"))
     customer = ls_customer.Customer.get_customer(request.args.get("customerID"))
     today = datetime.date.today()
     print(f"{customer.first_name} {customer.last_name}")
     label_print.print_text(
         f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}",
         barcode=f'2500000{request.args.get("workorderID")}',
-        quantity=request.args.get("quantity"),
+        quantity=quantity,
     )
     return HTML_RETURN
 
