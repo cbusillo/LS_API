@@ -28,7 +28,7 @@ def deskew(image):
     angle = determine_skew(image)
     if angle is None:
         angle = 0
-    rotated = rotate(image, angle, resize=True) * 255
+    rotated = rotate(image, angle, resize=False) * 255
     return rotated.astype(np.uint8)
 
 
@@ -37,7 +37,7 @@ def thresh_image(image):
     image = cv2.rotate(image, cv2.ROTATE_180)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = deskew(image)
-    _, image = cv2.threshold(image, 200, 255, cv2.THRESH_BINARY)
+    _, image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)
     return image
 
 
@@ -47,9 +47,15 @@ class PhotoWindow(GridLayout):
     def __init__(self, **kwargs):
         """Create GUI"""
         super(PhotoWindow, self).__init__(**kwargs)
+        # self.width = config.CAM_WIDTH
+        # self.height = config.CAM_HEIGHT
+        # self.size = [1920, 1080]
+
         self.cols = 1
         self.padding = 100
         self.scanned_image = Image()
+        self.scanned_image.width = cv2.CAP_PROP_FRAME_WIDTH
+        self.scanned_image.height = cv2.CAP_PROP_FRAME_HEIGHT
         self.add_widget(self.scanned_image)
         self.status = Label()
         self.add_widget(self.status)
@@ -57,9 +63,7 @@ class PhotoWindow(GridLayout):
         self.capture = cv2.VideoCapture(config.CAM_PORT)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAM_WIDTH)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAM_HEIGHT)
-        self.texture1 = None
-
-        Clock.schedule_interval(self.update, 0.1)
+        Clock.schedule_interval(self.update, 1)
 
     def update(self, _):
         """Handle clock updates"""
@@ -70,11 +74,11 @@ class PhotoWindow(GridLayout):
             serial_image_data = pytesseract.image_to_data(
                 threshed,
                 output_type=pytesseract.Output.DICT,
-                config="--psm 12",
+                config="--psm 12 -c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",
             )
         lines = ""
         for conf, word in zip(serial_image_data["conf"], serial_image_data["text"]):
-            if conf > 50 and word[0:1].lower() == "d" and len(word) >= 8:
+            if conf > 1 and word[0:1].lower() == "d" and len(word) >= 8:
                 if word.lower().strip() == "dmpykq6vjf8j":
                     output = f"Conf: {conf} {word}"
                     print(output)
@@ -82,24 +86,23 @@ class PhotoWindow(GridLayout):
                 else:
                     print(f"{word} fail at {conf}")
 
-        print()
+        print(".", end="")
         self.status.text = lines
 
-        cv2.imshow("test", threshed)
-        buf1 = cv2.flip(serial_image, 0)
+        # cv2.imshow("test", threshed)
+        buf1 = cv2.flip(threshed, 0)
         buf = buf1.tobytes()
-        if self.texture1 is None:
-            self.texture1 = Texture.create()
-        self.texture1.blit_buffer(buf, colorfmt="rgb", bufferfmt="ubyte")
-        self.scanned_image.texture = self.texture1
+        # if self.scanned_image.texture is None:
+        self.scanned_image.texture = Texture.create(size=(config.CAM_WIDTH, config.CAM_HEIGHT), colorfmt="luminance")
+        self.scanned_image.texture.blit_buffer(buf, colorfmt="luminance", bufferfmt="ubyte")
 
 
 class SerialCamera(App):
     """Get image from camera and start serial check"""
 
     def build(self):
-        Window.left = 220  # 0
-        Window.top = 100
+        Window.left = 0  # 0
+        Window.top = 0
         Window.size = (config.CAM_WIDTH / 2, config.CAM_HEIGHT)
         return PhotoWindow()
 
