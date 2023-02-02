@@ -37,7 +37,7 @@ def thresh_image(image):
     image = cv2.rotate(image, cv2.ROTATE_180)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image = deskew(image)
-    _, image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY)
+    _, image = cv2.threshold(image, 150, 255, cv2.THRESH_BINARY)
     return image
 
 
@@ -64,6 +64,7 @@ class PhotoWindow(GridLayout):
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAM_WIDTH)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAM_HEIGHT)
         Clock.schedule_interval(self.update, 1)
+        self.serial_history = []
 
     def update(self, _):
         """Handle clock updates"""
@@ -74,20 +75,25 @@ class PhotoWindow(GridLayout):
             serial_image_data = pytesseract.image_to_data(
                 threshed,
                 output_type=pytesseract.Output.DICT,
-                config="--psm 12 -c tessedit_char_whitelist=0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                config="--psm 12 -c tessedit_char_whitelist=' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
             )
-        lines = ""
+        display_lines = ""
+        miss = True
         for conf, word in zip(serial_image_data["conf"], serial_image_data["text"]):
-            if conf > 1 and word[0:1].lower() == "d" and len(word) >= 8:
-                if word.lower().strip() == "dmpykq6vjf8j":
-                    output = f"Conf: {conf} {word}"
-                    print(output)
-                    lines = f"{lines} {output}\n"
-                else:
-                    print(f"{word} fail at {conf}")
-
-        print(".", end="")
-        self.status.text = lines
+            if conf > 50 and len(word) >= 8:
+                # if word.upper().strip() == "GG7X2LZ6JF88":
+                if word not in self.serial_history:
+                    self.serial_history.append(word)
+                    print(f"New Serial!")
+                output = f"Conf: {conf} {word}"
+                print(output)
+                display_lines = f"{display_lines} {output}\n"
+                miss = False
+                # else:
+                #    print(f"{word} fail at {conf}")
+        if miss is True:
+            print(".", end="")
+        self.status.text = display_lines
 
         # cv2.imshow("test", threshed)
         buf1 = cv2.flip(threshed, 0)
