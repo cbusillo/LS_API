@@ -4,6 +4,7 @@ import datetime
 from flask import Flask, request
 from kivy.uix.button import Button
 from classes import ls_customer
+from classes import ls_workorder
 from modules import label_print
 
 print(f"Importing {os.path.basename(__file__)}...")
@@ -20,18 +21,26 @@ open(location, '_self').close();
 def web_hd_label():
     """Print customer HDD label"""
     quantity = 0
+    password = ""
     if request.args.get("quantity") is None:
         quantity = 1
     else:
         quantity = int(request.args.get("quantity"))
     customer = ls_customer.Customer.get_customer(request.args.get("customerID"))
     today = datetime.date.today()
+    workorder = ls_workorder.Workorder.get_workorder(request.args.get("workorderID"))
+    for line in workorder.note.split("\n"):
+        if line[0:2].lower() == "pw" or line[0:2].lower() == "pc":
+            password = line
+    print(password)
     print(f"{customer.first_name} {customer.last_name}")
     print(f"{today.month}.{today.day}.{today.year}")
+    print(workorder.note)
     label_print.print_text(
         f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}",
         barcode=f'2500000{request.args.get("workorderID")}',
         quantity=quantity,
+        password=password,
     )
     return HTML_RETURN
 

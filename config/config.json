@@ -15,7 +15,8 @@
         "itemPut": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Item/{itemID}.json",
         "itemMatrix": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/ItemMatrix.json",
         "customer": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Customer.json",
-        "customerPut": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Customer/{customerID}.json"
+        "customerPut": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Customer/{customerID}.json",
+        "workorderSingle": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/DisplayTemplate/Workorder/{workorderID}.json"
     },
     "google_sheets_serial_name" : "Shiny Testing"
 }

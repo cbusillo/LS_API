@@ -6,11 +6,13 @@ from modules import load_config as config
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-def print_text(text: str, barcode=None, quantity=None):
+def print_text(text: str, barcode=None, quantity=None, password=None):
     """Open socket to printer and send text"""
     label_string = b"^XA^A0N,50,50^FO0,20^FB450,4,,C,^FD" + bytes(text, "utf-8")
     if barcode:
         label_string += b"^FS^FO40,130^FB450,4,,C,^B2N,40,Y,N,N^FD" + bytes(barcode, "utf-8")
+    if password:
+        label_string += b"^FS^A0N,30,30^FO0,210^FB450,4,,C,^FD" + bytes(password, "utf-8")
     label_string += b"^FS^XZ"
     quantity = int(quantity)
     if quantity < 1:
