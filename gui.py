@@ -6,7 +6,6 @@ from threading import Thread
 import subprocess
 from kivy.app import App
 from kivy.config import Config
-from kivy.core.window import Window
 from kivy.logger import Logger, LOG_LEVELS
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
