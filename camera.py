@@ -1,5 +1,6 @@
 """Take picture from webcam"""
 import os
+import re
 import cv2
 import pytesseract
 from kivy.app import App
@@ -11,7 +12,6 @@ from kivy.uix.image import Image
 from kivy.uix.gridlayout import GridLayout
 import numpy as np
 from skimage.transform import rotate
-from skimage.color import rgb2gray
 from deskew import determine_skew
 from modules import load_config as config
 from classes.google_mysql import Database
@@ -36,8 +36,10 @@ def thresh_image(image):
     """take grayscale image and return Threshholded image"""
     image = cv2.rotate(image, cv2.ROTATE_180)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    image = deskew(image)
+
     _, image = cv2.threshold(image, 150, 255, cv2.THRESH_BINARY)
+    # image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 5, 10)
+    image = deskew(image)
     return image
 
 
@@ -63,7 +65,7 @@ class PhotoWindow(GridLayout):
         self.capture = cv2.VideoCapture(config.CAM_PORT)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAM_WIDTH)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAM_HEIGHT)
-        Clock.schedule_interval(self.update, 1)
+        Clock.schedule_interval(self.update, 1 / 30)
         self.serial_history = []
 
     def update(self, _):
@@ -75,22 +77,24 @@ class PhotoWindow(GridLayout):
             serial_image_data = pytesseract.image_to_data(
                 threshed,
                 output_type=pytesseract.Output.DICT,
-                config="--psm 12 -c tessedit_char_whitelist=' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
+                config="--psm 11",  # -c tessedit_char_whitelist=' 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'",
             )
         display_lines = ""
         miss = True
+        serial_previous = False
         for conf, word in zip(serial_image_data["conf"], serial_image_data["text"]):
-            if conf > 50 and len(word) >= 8:
+            if conf > 60 and len(word) >= 8 and re.sub(r"[^A-Z0-9]", "", word) == word:
                 # if word.upper().strip() == "GG7X2LZ6JF88":
                 if word not in self.serial_history:
                     self.serial_history.append(word)
-                    print(f"New Serial!")
-                output = f"Conf: {conf} {word}"
+                output = f"Conf: {conf} {word} Total: {len(self.serial_history)}"
                 print(output)
-                display_lines = f"{display_lines} {output}\n"
+                display_lines += f" {output}\n"
                 miss = False
                 # else:
                 #    print(f"{word} fail at {conf}")
+            elif "serial" in word.lower():
+                serial_previous = True
         if miss is True:
             print(".", end="")
         self.status.text = display_lines
