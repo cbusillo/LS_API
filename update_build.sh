@@ -2,7 +2,7 @@
 activate () { 
     . ./.venv/bin/activate
 }
-REQPYTHON="3.11"
+REQPYTHON="3.10"
 killall Python &> /dev/null
 cd "$(dirname "$0")"
 git remote update
@@ -19,18 +19,21 @@ fi
 which -s brew
 if [[ $? != 0 ]] ; then
     # Install Homebrew
-    arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    if [[ $(uname -m) == 'arm64' ]]; then
+        arch -arm64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    else
+        arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
     echo "Restart script."
     exec $0
     exit     
 else
     brew update
 fi
-
-brew install python@$REQPYTHON
 brew upgrade
-brew install pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer
-pip3.11 install virtualenv
+
+brew install python@$REQPYTHON pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer tesseract 
+python$REQPYTHON -m pip install virtualenv
 
 if [ ! -d "./.venv" ]; then 
     python$REQPYTHON -m virtualenv .venv
@@ -38,13 +41,7 @@ fi
 
 activate
 
-pip$REQPYTHON install -U -r requirements.txt
-brew install tesseract
-if [[ $(uname -m) == 'arm64' ]]; then
-    pip$REQPYTHON install kivy --pre --no-deps --index-url  https://kivy.org/downloads/simple/
-else
-    USE_OSX_FRAMEWORKS=0 pip$REQPYTHON install https://github.com/kivy/kivy/zipball/master
-fi
+python$REQPYTHON -m pip install -U -r requirements.txt
 
 #make binary on desktop
 ./gui.py
