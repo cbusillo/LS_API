@@ -3,8 +3,6 @@ import os
 import json
 import pygsheets
 import modules.load_config as config
-import pandas as pd
-from classes.api_serial import Serial
 
 
 print(f"Importing {os.path.basename(__file__)}...")
@@ -22,9 +20,3 @@ print(serial_sheet)
 serial_sheet.share("Laptoptester123@gmail.com", role="reader", type="anyone")
 
 # sheets = google_sheets_connection.spreadsheets()
-
-
-class Database:
-    """Create Database class for Google mysql"""
-
-    pass

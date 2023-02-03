@@ -1,5 +1,6 @@
 """Take picture from webcam"""
 import os
+import time
 import re
 import cv2
 import pytesseract

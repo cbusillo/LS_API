@@ -12,3 +12,5 @@ deskew
 matplotlib
 pytesseract
 kivy
+pygsheets
+pandas

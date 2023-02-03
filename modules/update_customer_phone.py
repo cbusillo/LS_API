@@ -1,7 +1,7 @@
 """Module to clean customer phone numbers."""
 import os
 import re
-from kivy.uix.button import Label, Button
+from kivy.uix.button import Button
 from classes import ls_customer
 
 print(f"Importing {os.path.basename(__file__)}...")
