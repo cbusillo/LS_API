@@ -5,6 +5,7 @@ import re
 import cv2
 import pytesseract
 from functools import partial
+from bs4 import BeautifulSoup
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -16,6 +17,7 @@ import numpy as np
 from skimage.transform import rotate
 from deskew import determine_skew
 from modules import load_config as config
+from classes import sickw_results
 from classes.google_mysql import Database
 from classes.api_serial import Serial
 import modules.connect_sickw as connect_sickw
@@ -25,7 +27,7 @@ import modules.connect_sickw as connect_sickw
 
 print(f"Importing {os.path.basename(__file__)}...")
 
-APPLE_SERIAL_INFO = 26
+
 BLACKLIST = ["BCGA"]
 
 
@@ -37,6 +39,19 @@ def deskew(image: Image):
         angle = 0
     rotated = rotate(image, angle, resize=False) * 255
     return rotated.astype(np.uint8)
+
+
+def sickw_html_to_dict(html):
+    soup = BeautifulSoup(html, "html.parser")
+    return_dict = {}
+    for line in soup.findAll("br"):
+        line_next = line.nextSibling
+        if line_next != line and line_next is not None:
+            data = line_next.split(":")
+            return_dict[data[0]] = data[1].strip()
+            # return_list.append(br_next)
+
+    return return_dict
 
 
 class PhotoWindow(GridLayout):
@@ -74,11 +89,11 @@ class PhotoWindow(GridLayout):
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAM_WIDTH)
         self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAM_HEIGHT)
         Clock.schedule_interval(self.update, 1 / 30)
-        self.serial_history = []
+        self.sickw_history = []
         self.fps_previous = 0
         self.fps_current = 0
         self.rotation = 1
-        self.theshold_value = 150
+        self.theshold_value = 180
 
     def thresh_image(self, image):
         """take grayscale image and return Threshholded image"""
@@ -113,7 +128,6 @@ class PhotoWindow(GridLayout):
             )
         display_lines = ""
         miss = True
-        serial_previous = False
         for conf, word in zip(serial_image_data["conf"], serial_image_data["text"]):
             if conf > 60 and len(word) >= 8 and re.sub(r"[^A-Z0-9]", "", word) == word:
                 blacklisted = False
@@ -121,23 +135,15 @@ class PhotoWindow(GridLayout):
                     if black in word:
                         blacklisted = True
                 # if word.upper().strip() == "GG7X2LZ6JF88":
-                if word not in self.serial_history and not blacklisted:
-                    result = connect_sickw.get_data(word, APPLE_SERIAL_INFO)
-                    self.serial_history.append(
-                        {
-                            word,
-                            result["status"],
-                        }
-                    )
+                if not any(d.serial_number == word for d in self.sickw_history) and not blacklisted:
+                    sickw = sickw_results.SickwResults(word, sickw_results.APPLE_SERIAL_INFO)
+                    if sickw and sickw.status == "success":
+                        self.sickw_history.append(sickw)
+                output = f"Conf: {conf} {word} Total: {len(self.sickw_history)} {self.sickw_history[-1].name}"
 
-                output = f"Conf: {conf} {word} Total: {len(self.serial_history)}"
-                print(output)
                 display_lines += f" {output}\n"
                 miss = False
-                # else:
-                #    print(f"{word} fail at {conf}")
-            elif "serial" in word.lower():
-                serial_previous = True
+
         if miss is True:
             print(".", end="")
         self.status.text = display_lines
