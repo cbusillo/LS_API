@@ -59,7 +59,7 @@
     "iPhone 7" : [false, 2016, 125, 299, "iphone/iphone-se"],
     "iPhone 6s Plus" : [false, 2015, 229, 0, "iphone/iphone-se"],
     "iPhone 6s" : [false, 2015, 199, 0, "iphone/iphone-se"],
-    "iPhone 6 Plus" : [false, 2014, 249, 0, "iphone/iphone-se"],
+    "iPhone 6 Plus" : [false, 2014, 199, 0, "iphone/iphone-se"],
     "iPhone 6" : [false, 2014, 199, 0, "iphone/iphone-se"],
     "iPhone 5s" : [false, 2013, 49, 0, "iphone/iphone-se"]   
 }
