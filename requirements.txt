@@ -11,3 +11,4 @@ scikit-image
 deskew
 matplotlib
 pytesseract
+kivy
