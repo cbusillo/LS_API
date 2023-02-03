@@ -34,7 +34,7 @@ class MainGrid(GridLayout):
     """Define main screen grid layout"""
 
     def __init__(self, **kwargs):
-        super(MainGrid, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.cols = 1
         self.padding = 100
         self.update_customer_phone_btn = Button(text="Format Customer Phone Numbers", halign="center")
