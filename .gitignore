@@ -13,3 +13,4 @@
 /modules/.DS_Store
 /.pylintrc
 /tmp
+temp.py
