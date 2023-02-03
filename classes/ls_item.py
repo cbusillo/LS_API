@@ -250,7 +250,7 @@ class Item:
                 ]
             }
         }
-        put_data(config.LS_URLS["itemPut"].format(itemID=item.itemID), put_item)
+        put_data(config.LS_URLS["itemPut"].format(itemID=item.item_id), put_item)
 
     @staticmethod
     def get_items() -> "List[Item]":
