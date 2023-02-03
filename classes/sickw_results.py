@@ -41,8 +41,8 @@ class SickwResults:
                 self.color = sickw_return_dict["Color"]
                 self.type = sickw_return_dict["Type"]
                 self.year = sickw_return_dict["Year"]
-        if not self.serial_number:
-            self.status = "failed"
+                return
+        self.status = "failed"
 
     def get_json(self, serial_number, service):
         """Get requested data from Sickw API"""
