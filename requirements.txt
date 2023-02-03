@@ -14,3 +14,4 @@ pytesseract
 kivy
 pygsheets
 pandas
+beautifulsoup4
