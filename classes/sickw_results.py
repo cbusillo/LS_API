@@ -8,6 +8,7 @@ from modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 
+# Constants for sickw service codes
 APPLE_SERIAL_INFO = 26
 
 
@@ -27,6 +28,8 @@ class SickwResults:
     year: int = 0
 
     def __init__(self, serial_number: str, service: int) -> None:
+        """Instantiate result with data from API from passed serial number and service.  Set status to false if sickw
+        says not success or no HTML result string"""
         self.serial_number = serial_number
         sickw_return = json.loads(self.get_json(serial_number, service))
         if sickw_return["status"].lower() == "success":
@@ -68,12 +71,14 @@ class SickwResults:
 
     @staticmethod
     def search_list_for_serial(serial: str, sickw_history: "List[SickwResults]") -> str:
+        """Return the device description from provided serial number and list of results"""
         for result in sickw_history:
             if result.serial_number == serial:
                 return result.name, result.status
 
     @staticmethod
     def success_count(sickw_history: "List[SickwResults]") -> int:
+        """Return count of total sucessful Sickw results"""
         return_count = 0
         for result in sickw_history:
             if result.name:

@@ -5,7 +5,6 @@ import re
 from functools import partial
 import cv2
 import pytesseract
-from bs4 import BeautifulSoup
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -20,12 +19,9 @@ from deskew import determine_skew
 from modules import load_config as config
 from classes import sickw_results
 
-# from classes import google_sheets
-
-
 print(f"Importing {os.path.basename(__file__)}...")
 
-
+# Ignore serial number if it contains an item from this list
 BLACKLIST = ["BCGA"]
 
 
@@ -39,31 +35,15 @@ def deskew(image: Image):
     return rotated.astype(np.uint8)
 
 
-def sickw_html_to_dict(html):
-    soup = BeautifulSoup(html, "html.parser")
-    return_dict = {}
-    for line in soup.findAll("br"):
-        line_next = line.nextSibling
-        if line_next != line and line_next is not None:
-            data = line_next.split(":")
-            return_dict[data[0]] = data[1].strip()
-            # return_list.append(br_next)
-
-    return return_dict
-
-
 class SerialCamera(GridLayout):
     """Independent app to scan serials"""
 
     def __init__(self, **kwargs):
         """Create GUI"""
         super(SerialCamera, self).__init__(**kwargs)
-        # self.width = config.CAM_WIDTH
-        # self.height = config.CAM_HEIGHT
-        # self.size = [1920, 1080]
 
         self.cols = 1
-        self.padding = 100
+        self.padding = 50
 
         self.rotate_button = Button(text="Rotate", halign="center", size_hint=(0.1, 0.1))
         self.rotate_button.bind(on_press=self.rotate_button_fn)
@@ -119,7 +99,7 @@ class SerialCamera(GridLayout):
         # self.theshold_value = 180
 
     def thresh_image(self, image):
-        """take grayscale image and return Threshholded image"""
+        """take grayscale image and return Threshholded image.  Use value from slider"""
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image = deskew(image)
         _, image = cv2.threshold(image, self.threshold_slider.value, 255, cv2.THRESH_BINARY)
@@ -128,12 +108,14 @@ class SerialCamera(GridLayout):
         return image
 
     def rotate_button_fn(self, _):
+        """Rotate 90 degress when button is pressed.  At no rotation set -1 and ignore in code"""
         if self.rotation < 2:
             self.rotation += 1
         else:
             self.rotation = -1
 
     def threshold_change(self, caller, value=None):
+        """change thresholding value in slider when buttons pressed.  Set label value if buttons or slider changes"""
         if isinstance(caller, Button):
             self.threshold_slider.value += value
         self.threshold_label.text = str(int(self.threshold_slider.value))
@@ -175,16 +157,15 @@ class SerialCamera(GridLayout):
         cv2.putText(threshed, str(round(fps, 2)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 0), 3)
         cv2.putText(serial_image, str(round(fps, 2)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 0), 3)
 
-        # cv2.imshow("test", threshed)
         buf1 = cv2.flip(serial_image, 0)
         buf = buf1.tobytes()
-        # if self.scanned_image.texture is None:
+
         self.scanned_image.texture = Texture.create(size=(config.CAM_WIDTH, config.CAM_HEIGHT), colorfmt="bgr")
         self.scanned_image.texture.blit_buffer(buf, colorfmt="bgr", bufferfmt="ubyte")
 
         buf1 = cv2.flip(threshed, 0)
         buf = buf1.tobytes()
-        # if self.scanned_image.texture is None:
+
         self.threshed_image.texture = Texture.create(size=(config.CAM_WIDTH, config.CAM_HEIGHT), colorfmt="luminance")
         self.threshed_image.texture.blit_buffer(buf, colorfmt="luminance", bufferfmt="ubyte")
 
