@@ -6,7 +6,7 @@ activate () {
 }
 REQPYTHON="3.10"
 killall Python &> /dev/null
-cd "$(dirname "$0")"
+#cd "$(dirname "$0")"
 
 which -s brew
 if [[ $? != 0 ]] ; then
@@ -27,6 +27,7 @@ brew upgrade
 
 brew install python@$REQPYTHON
 
+python$REQPYTHON -m pip install --upgrade pip
 python$REQPYTHON -m pip install virtualenv
 
 if [ ! -d "Shiny_API" ]; then 
