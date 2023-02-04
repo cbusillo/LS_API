@@ -26,10 +26,12 @@ fi
 brew upgrade
 
 brew install python@$REQPYTHON
-pwd
-exit
+
 python$REQPYTHON -m pip install --upgrade pip
 python$REQPYTHON -m pip install virtualenv
+pwd
+exit
+
 
 if [ ! -d "Shiny_API" ]; then 
     python$REQPYTHON -m virtualenv Shiny_API
