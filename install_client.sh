@@ -1,10 +1,12 @@
 #!/bin/bash
 #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/cbusillo/Shiny_API/bulid-system/install_client.sh)"
 """TODO: Update to master"""
-activate () { 
-    . ./.venv/bin/activate
-}
 REQPYTHON="3.10"
+APPNAME="Shiny_API"
+activate () { 
+    . ./$APPNAME/bin/activate
+}
+
 killall Python &> /dev/null
 cd ~
 
@@ -32,12 +34,12 @@ python$REQPYTHON -m pip install virtualenv
 
 
 
-if [ ! -d "Shiny_API" ]; then 
-    python$REQPYTHON -m virtualenv Shiny_API
+if [ ! -d $APPNAME ]; then 
+    python$REQPYTHON -m virtualenv $APPNAME
 fi
 pwd
 exit
 
 activate
 
-python$REQPYTHON -m pip install -U Shiny_API
+python$REQPYTHON -m pip install -U $APPNAME
