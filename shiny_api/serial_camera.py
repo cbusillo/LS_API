@@ -96,6 +96,9 @@ class SerialCamera(GridLayout):
         self.fps_previous = 0
         self.fps_current = 0
         self.rotation = 1
+        self.scanned_image.texture = Texture.create(size=(config.CAM_WIDTH, config.CAM_HEIGHT), colorfmt="bgr")
+        self.threshed_image.texture = Texture.create(size=(config.CAM_WIDTH, config.CAM_HEIGHT), colorfmt="luminance")
+
         # self.theshold_value = 180
 
     def thresh_image(self, image):
@@ -160,13 +163,11 @@ class SerialCamera(GridLayout):
         buf1 = cv2.flip(serial_image, 0)
         buf = buf1.tobytes()
 
-        self.scanned_image.texture = Texture.create(size=(config.CAM_WIDTH, config.CAM_HEIGHT), colorfmt="bgr")
         self.scanned_image.texture.blit_buffer(buf, colorfmt="bgr", bufferfmt="ubyte")
 
         buf1 = cv2.flip(threshed, 0)
         buf = buf1.tobytes()
 
-        self.threshed_image.texture = Texture.create(size=(config.CAM_WIDTH, config.CAM_HEIGHT), colorfmt="luminance")
         self.threshed_image.texture.blit_buffer(buf, colorfmt="luminance", bufferfmt="ubyte")
 
 
