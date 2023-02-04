@@ -37,8 +37,7 @@ python$REQPYTHON -m pip install virtualenv
 if [ ! -d ~/$APPNAME ]; then 
     python$REQPYTHON -m virtualenv $APPNAME
 fi
-pwd
-exit
+
 
 activate
 
