@@ -20,7 +20,7 @@ if platform.node() == "Chris-MBP":
     config.DEBUG_CODE = True
     config.DEBUG_LOGGING = False
 
-Config.set("kivy", "log_level", "debug")
+Config.set("kivy", "log_level", "warning")
 Logger.setLevel(LOG_LEVELS["warning"])
 logging.getLogger().setLevel(logging.WARNING)
 if config.DEBUG_LOGGING:
