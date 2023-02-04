@@ -6,7 +6,6 @@ from functools import partial
 import cv2
 import pytesseract
 from kivy.app import App
-from kivy.base import EventLoop
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.graphics.texture import Texture

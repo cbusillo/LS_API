@@ -86,7 +86,7 @@ class MainGrid(GridLayout):
     def open_serial_scanner_fn(self, _):
         """Open the serial number scanner"""
         # caller.text += "\nrunning..."
-        subprocess.Popen("python3.11 ./serial_camera.py", shell=True)
+        subprocess.Popen("python3.10 -m serial_camera", shell=True)
         # scanner = camera.SerialCamera()
         # popup_window = Popup(title="Serial Scanner", content=scanner, size_hint=(None, None), size=(1024, 768))
         # popup_window.open()
@@ -112,5 +112,6 @@ class APIApp(App):
         return MainGrid()
 
 
-interface = APIApp()
-interface.run()
+if __name__ == "__main__":
+    interface = APIApp()
+    interface.run()

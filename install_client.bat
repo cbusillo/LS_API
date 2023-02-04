@@ -22,7 +22,7 @@ if not exist %APPNAME% (
 	%PYTHON% -m virtualenv %APPNAME%
 )
 
-set "VPYTHON=%APPNAME%\scripts\python.exe"
+set "VPYTHON=.\%APPNAME%\scripts\python.exe"
 
 %VPYTHON% -m pip install --upgrade pip
 %VPYTHON% -m pip install --upgrade %APPNAME%
