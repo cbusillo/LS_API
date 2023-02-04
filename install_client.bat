@@ -22,8 +22,8 @@ if not exist %APPNAME% (
 	%PYTHON% -m virtualenv %APPNAME%
 )
 
-%APPNAME%\scripts\activate.bat
+set VPYTHON = %APPNAME%\scripts\python.exe
 
-%PYTHON% -m pip install --upgrade pip
-%PYTHON% -m pip install --upgrade %APPNAME%
+%VPYTHON% -m pip install --upgrade pip
+%VPYTHON% -m pip install --upgrade %APPNAME%
 
