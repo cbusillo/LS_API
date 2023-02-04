@@ -4,7 +4,7 @@ import json
 import datetime
 from kivy.uix.button import Button
 from selenium import webdriver
-from classes import ls_item
+from shiny_api.classes import ls_item
 
 print(f"Importing {os.path.basename(__file__)}...")
 

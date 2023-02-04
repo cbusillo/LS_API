@@ -2,7 +2,7 @@
 import os
 import re
 from kivy.uix.button import Button
-from classes import ls_customer
+from shiny_api.classes import ls_customer
 
 print(f"Importing {os.path.basename(__file__)}...")
 

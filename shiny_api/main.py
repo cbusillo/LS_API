@@ -9,11 +9,11 @@ from kivy.config import Config
 from kivy.logger import Logger, LOG_LEVELS
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
-from modules import weblistener
-from modules import update_item_price
-from modules import update_customer_phone
-from modules import get_ipsws
-from modules import load_config as config
+from shiny_api.modules import weblistener
+from shiny_api.modules import update_customer_phone
+from shiny_api.modules import get_ipsws
+from shiny_api.modules import load_config as config
+from shiny_api.modules import update_item_price
 
 
 if platform.node() == "Chris-MBP":

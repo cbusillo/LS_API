@@ -4,8 +4,8 @@ import json
 from typing import List, Any
 from dataclasses import dataclass
 from kivy.uix.button import Button
-from modules.connect_ls import generate_ls_access, get_data, put_data
-from modules import load_config as config
+from shiny_api.modules.connect_ls import generate_ls_access, get_data, put_data
+from shiny_api.modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 

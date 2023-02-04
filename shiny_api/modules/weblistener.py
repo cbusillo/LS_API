@@ -3,9 +3,9 @@ import os
 import datetime
 from flask import Flask, request
 from kivy.uix.button import Button
-from classes import ls_customer
-from classes import ls_workorder
-from modules import label_print
+from shiny_api.classes import ls_customer
+from shiny_api.classes import ls_workorder
+from shiny_api.modules import label_print
 
 print(f"Importing {os.path.basename(__file__)}...")
 

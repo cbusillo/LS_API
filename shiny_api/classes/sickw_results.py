@@ -4,7 +4,7 @@ import json
 from typing import List
 from bs4 import BeautifulSoup
 import requests
-from modules import load_config as config
+from shiny_api.modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 

@@ -16,8 +16,8 @@ from kivy.uix.slider import Slider
 import numpy as np
 from skimage.transform import rotate
 from deskew import determine_skew
-from modules import load_config as config
-from classes import sickw_results
+from shiny_api.modules import load_config as config
+from shiny_api.classes import sickw_results
 
 print(f"Importing {os.path.basename(__file__)}...")
 

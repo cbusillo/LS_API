@@ -1,7 +1,7 @@
 """Connect to sickw API"""
 import os
 from kivy.uix.button import Button
-from classes import ipsw_me_ipsw
+from shiny_api.classes import ipsw_me_ipsw
 
 
 print(f"Importing {os.path.basename(__file__)}...")
