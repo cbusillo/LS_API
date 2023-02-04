@@ -6,7 +6,7 @@ activate () {
 }
 REQPYTHON="3.10"
 killall Python &> /dev/null
-#cd "$(dirname "$0")"
+cd ~
 
 which -s brew
 if [[ $? != 0 ]] ; then
