@@ -32,12 +32,11 @@ brew install python@$REQPYTHON
 python$REQPYTHON -m pip install --upgrade pip
 python$REQPYTHON -m pip install virtualenv
 
-
-
 if [ ! -d ~/$APPNAME ]; then 
     python$REQPYTHON -m virtualenv $APPNAME
 fi
 
 activate
 
-python$REQPYTHON -m pip install -U $APPNAME
+python$REQPYTHON -m pip install --upgrade pip
+python$REQPYTHON -m pip install --upgrade $APPNAME
