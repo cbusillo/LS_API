@@ -2,7 +2,7 @@ REM @ECHO OFF
 REM run these two commands manually
 REM winget install --id Git.Git -e --source winget
 REM close window and open new
-REM git clone https://github.com/cbusillo/LS_API
+REM git clone https://github.com/cbusillo/Shiny_API
 
 
 cd /D %~dp0
@@ -11,12 +11,14 @@ git remote update
 git diff origin/main --quiet update_build.bat
 if %errorlevel% NEQ 0 (
 	echo "Updating files."
-	git pull https://github.com/cbusillo/LS_API
+	git pull https://github.com/cbusillo/Shiny_API
+
 	echo "Restarting script."
 	%0
 	exit
 ) else (
-	git pull https://github.com/cbusillo/LS_API
+	git pull https://github.com/cbusillo/Shiny_API
+
 )
 
 if not exist "%PROGRAMFILES%\Microsoft Visual Studio\2022\Community" (

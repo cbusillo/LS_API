@@ -9,12 +9,12 @@ git remote update
 if ! git diff origin/main --quiet update_build.sh
 then
     echo "Updating files."
-    git pull https://github.com/cbusillo/LS_API
+    git pull https://github.com/cbusillo/Shiny_API
     echo "Restart script."
     exec $0
     exit     
 else
-    git pull https://github.com/cbusillo/LS_API
+    git pull https://github.com/cbusillo/Shiny_API
 fi
 which -s brew
 if [[ $? != 0 ]] ; then
