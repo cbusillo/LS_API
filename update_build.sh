@@ -44,4 +44,4 @@ activate
 python$REQPYTHON -m pip install -U -r requirements.txt
 
 #make binary on desktop
-./gui.py
+./main.py

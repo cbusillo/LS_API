@@ -2,9 +2,9 @@
 import os
 import time
 import re
+from functools import partial
 import cv2
 import pytesseract
-from functools import partial
 from bs4 import BeautifulSoup
 from kivy.app import App
 from kivy.clock import Clock
@@ -19,8 +19,6 @@ from skimage.transform import rotate
 from deskew import determine_skew
 from modules import load_config as config
 from classes import sickw_results
-from classes.google_mysql import Database
-from classes.api_serial import Serial
 
 # from classes import google_sheets
 
@@ -54,12 +52,12 @@ def sickw_html_to_dict(html):
     return return_dict
 
 
-class PhotoWindow(GridLayout):
+class SerialCamera(GridLayout):
     """Independent app to scan serials"""
 
     def __init__(self, **kwargs):
         """Create GUI"""
-        super(PhotoWindow, self).__init__(**kwargs)
+        super(SerialCamera, self).__init__(**kwargs)
         # self.width = config.CAM_WIDTH
         # self.height = config.CAM_HEIGHT
         # self.size = [1920, 1080]
@@ -80,14 +78,14 @@ class PhotoWindow(GridLayout):
         self.threshold_grid.size_hint_y = 0.1
 
         self.threshold_down_button = Button(text="Threshold down", halign="center")
-        self.threshold_down_button.bind(on_press=partial(self.threshold_change, change=-5))
+        self.threshold_down_button.bind(on_press=partial(self.threshold_change, value=-5))
         self.threshold_grid.add_widget(self.threshold_down_button)
 
         self.threshold_label = Label(text=str(self.threshold_slider.value))
         self.threshold_grid.add_widget(self.threshold_label)
 
         self.threshold_up_button = Button(text="Threshold up", halign="center")
-        self.threshold_up_button.bind(on_press=partial(self.threshold_change, change=5))
+        self.threshold_up_button.bind(on_press=partial(self.threshold_change, value=5))
         self.threshold_grid.add_widget(self.threshold_up_button)
 
         self.add_widget(self.threshold_grid)
@@ -135,9 +133,9 @@ class PhotoWindow(GridLayout):
         else:
             self.rotation = -1
 
-    def threshold_change(self, _, value=None, change=None):
-        if change:
-            self.threshold_slider.value += change
+    def threshold_change(self, caller, value=None):
+        if isinstance(caller, Button):
+            self.threshold_slider.value += value
         self.threshold_label.text = str(int(self.threshold_slider.value))
 
     def update(self, _):
@@ -191,25 +189,15 @@ class PhotoWindow(GridLayout):
         self.threshed_image.texture.blit_buffer(buf, colorfmt="luminance", bufferfmt="ubyte")
 
 
-class SerialCamera(App):
+class SerialCameraApp(App):
     """Get image from camera and start serial check"""
 
     def build(self):
         Window.left = 0  # 0
         Window.top = 0
         Window.size = (config.CAM_WIDTH / 2, config.CAM_HEIGHT * 0.7)
-        return PhotoWindow()
+        return SerialCamera()
 
 
 if __name__ == "__main__":
-    SerialCamera().run()
-
-
-def testing():
-    """Launch testing debug"""
-    api_db = Database()
-    api_db.add_serial("12345")
-    serials = api_db.get_all(Serial)
-    for serial in serials:
-        print(serial.serial_number)
-    print(api_db.exists(Serial, "12345"))
+    SerialCameraApp().run()

@@ -20,7 +20,7 @@ if platform.node() == "Chris-MBP":
     config.DEBUG_CODE = True
     config.DEBUG_LOGGING = False
 
-Config.set("kivy", "log_level", "warning")
+Config.set("kivy", "log_level", "debug")
 Logger.setLevel(LOG_LEVELS["warning"])
 logging.getLogger().setLevel(logging.WARNING)
 if config.DEBUG_LOGGING:
@@ -86,7 +86,7 @@ class MainGrid(GridLayout):
     def open_serial_scanner_fn(self, _):
         """Open the serial number scanner"""
         # caller.text += "\nrunning..."
-        subprocess.Popen("python3.11 ./camera.py", shell=True)
+        subprocess.Popen("python3.11 ./serial_camera.py", shell=True)
         # scanner = camera.SerialCamera()
         # popup_window = Popup(title="Serial Scanner", content=scanner, size_hint=(None, None), size=(1024, 768))
         # popup_window.open()
