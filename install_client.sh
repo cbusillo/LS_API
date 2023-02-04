@@ -17,7 +17,8 @@ if [[ $? != 0 ]] ; then
         arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
     echo "Restart script."
-    exec $0
+    exec /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/cbusillo/Shiny_API/bulid-system/install_client.sh)"
+
     exit     
 else
     brew update
