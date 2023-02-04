@@ -31,3 +31,7 @@ python$REQPYTHON -m pip install virtualenv
 if [ ! -d "Shiny_API" ]; then 
     python$REQPYTHON -m virtualenv Shiny_API
 fi
+
+activate
+
+python$REQPYTHON -m pip install -U Shiny_API
