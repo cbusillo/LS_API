@@ -38,7 +38,6 @@ if [ ! -d ~/$APPNAME ]; then
     python$REQPYTHON -m virtualenv $APPNAME
 fi
 
-
 activate
 
 python$REQPYTHON -m pip install -U $APPNAME
