@@ -15,6 +15,8 @@ if [[ $? != 0 ]] ; then
     # Install Homebrew
     if [[ $(uname -m) == 'arm64' ]]; then
         arch -arm64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/joshalletto/.zprofile
+        eval "$(/opt/homebrew/bin/brew shellenv)"
     else
         arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
