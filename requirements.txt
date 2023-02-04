@@ -11,3 +11,7 @@ scikit-image
 deskew
 matplotlib
 pytesseract
+kivy
+pygsheets
+pandas
+beautifulsoup4

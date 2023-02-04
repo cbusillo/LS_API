@@ -6,7 +6,7 @@
 /classes/.DS_Store
 /config/.DS_Store
 /config/__pycache__
-/config/secret*
+/config/secret.json
 /config/*pem
 /dist
 /modules/__pycache__
