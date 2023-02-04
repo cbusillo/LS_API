@@ -7,7 +7,8 @@ activate () {
 REQPYTHON="3.10"
 killall Python &> /dev/null
 cd ~
-
+pwd
+exit
 which -s brew
 if [[ $? != 0 ]] ; then
     # Install Homebrew
