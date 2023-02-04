@@ -1,3 +1,4 @@
+#!/bin/bash
 python -m build . --wheel
-python -m twine upload --repository testpypi dist/*
+python -m twine upload dist/*
 

@@ -1,4 +1,6 @@
 #!/bin/bash
+#/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/cbusillo/Shiny_API/bulid-system/install_client.sh)"
+"""TODO: Update to master"""
 activate () { 
     . ./.venv/bin/activate
 }
@@ -21,3 +23,11 @@ else
     brew update
 fi
 brew upgrade
+
+brew install python@$REQPYTHON
+
+python$REQPYTHON -m pip install virtualenv
+
+if [ ! -d "Shiny_API" ]; then 
+    python$REQPYTHON -m virtualenv Shiny_API
+fi
