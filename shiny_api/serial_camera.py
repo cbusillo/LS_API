@@ -180,5 +180,10 @@ class SerialCameraApp(App):
         return SerialCamera()
 
 
-if __name__ == "__main__":
+def start_gui():
+    """start the gui, call from project or if run directly"""
     SerialCameraApp().run()
+
+
+if __name__ == "__main__":
+    start_gui()

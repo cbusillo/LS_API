@@ -10,7 +10,7 @@ with open(f"{config_dir}/../config/config.json", encoding="utf8") as file:
     config_file = json.load(file)
 
 # load secret keys from secret.json
-with open(f"{config_dir}/../config/secret.json", encoding="utf8") as file:
+with open(f"secret.json", encoding="utf8") as file:
     secret_file = json.load(file)
 
 PRINTER_HOST = config_file["host"]
