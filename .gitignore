@@ -6,5 +6,5 @@
 /dist
 /tmp
 *temp.py
-/src/config/secret.json
-/src/config/*pem
+*secret.json
+*pem
