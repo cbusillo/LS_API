@@ -7,8 +7,7 @@ activate () {
 REQPYTHON="3.10"
 killall Python &> /dev/null
 cd ~
-pwd
-exit
+
 which -s brew
 if [[ $? != 0 ]] ; then
     # Install Homebrew
@@ -27,7 +26,8 @@ fi
 brew upgrade
 
 brew install python@$REQPYTHON
-
+pwd
+exit
 python$REQPYTHON -m pip install --upgrade pip
 python$REQPYTHON -m pip install virtualenv
 
