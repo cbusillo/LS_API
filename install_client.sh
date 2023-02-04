@@ -27,7 +27,7 @@ else
 fi
 brew upgrade
 
-brew install python@$REQPYTHON
+brew install python@$REQPYTHON tesseract
 
 python$REQPYTHON -m pip install --upgrade pip
 python$REQPYTHON -m pip install virtualenv
