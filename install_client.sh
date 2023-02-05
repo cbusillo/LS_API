@@ -42,3 +42,5 @@ activate
 
 python$REQPYTHON -m pip install --upgrade pip
 python$REQPYTHON -m pip install --upgrade $APPNAME
+
+python$REQPYTHON -m shiny_api.main
