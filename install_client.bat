@@ -1,3 +1,4 @@
+@echo off
 set APPNAME="Shiny_API"
 set PYTHONVERSION=10
 set "PYTHONROOT=%LOCALAPPDATA%\Programs\Python"
