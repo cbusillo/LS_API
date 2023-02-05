@@ -49,11 +49,6 @@ if %errorlevel% NEQ 0 (
 	%0
 	exit
 )
-%PIP% install virtualenv
-
-if not exist .venv/ (
-	%PYTHON% -m virtualenv .venv
-)
 
 REM .venv\scripts\activate.bat
 %PIP% install -U -r requirements.txt
