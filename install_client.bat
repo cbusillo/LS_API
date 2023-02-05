@@ -5,7 +5,7 @@ set "PYTHONROOT=%LOCALAPPDATA%\Programs\Python"
 for /d %%d in (%PYTHONROOT%\Python3%REQVERSION%*) do (set "PYTHONVERSION=%%d" & goto break)
 :break
 set "PYTHON=%PYTHONVERSION%\python"
-set "PATH=%PYTHONVERSION%:%PROGRAMFILES%\tesseract-ocr:%PATH%"
+set "PATH=%PYTHONVERSION%;%PROGRAMFILES%\tesseract-ocr;%PATH%"
 
 tasklist | find /i "python3.exe" && taskkill /im "python3.exe" /F || echo process "python3.exe" not running
 

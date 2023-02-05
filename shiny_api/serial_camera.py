@@ -116,7 +116,6 @@ class SerialCamera(GridLayout):
 
         self.capture = cv2.VideoCapture(config.CAM_PORT)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAM_WIDTH)
-        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAM_HEIGHT)
         Clock.schedule_interval(self.update, 1 / 30)
         self.sickw_history = []
         self.fps_previous = 0
@@ -149,6 +148,9 @@ class SerialCamera(GridLayout):
     def update(self, _):
         """Handle clock updates"""
         result, serial_image = self.capture.read()
+        if not result:
+            self.capture.set(1280, 720)
+            result, serial_image = self.capture.read()
         if self.rotation > -1:
             serial_image = cv2.rotate(serial_image, self.rotation)
         if result:
@@ -185,13 +187,13 @@ class SerialCamera(GridLayout):
 
         buf = cv2.flip(serial_image, 0).tobytes()
 
-        texture = Texture.create(size=(config.CAM_WIDTH, config.CAM_HEIGHT), colorfmt="bgr")
+        texture = Texture.create(size=(serial_image.shape[1], serial_image.shape[0]), colorfmt="bgr")
         texture.blit_buffer(buf, colorfmt="bgr", bufferfmt="ubyte")
         self.scanned_image.texture = texture
 
         buf = cv2.flip(threshed, 0).tobytes()
 
-        texture = Texture.create(size=(config.CAM_WIDTH, config.CAM_HEIGHT), colorfmt="luminance")
+        texture = Texture.create(size=(threshed.shape[1], threshed.shape[0]), colorfmt="luminance")
         texture.blit_buffer(buf, colorfmt="luminance", bufferfmt="ubyte")
         self.threshed_image.texture = texture
 
@@ -200,8 +202,8 @@ class SerialCameraApp(App):
     """Get image from camera and start serial check"""
 
     def build(self):
-        Window.left = 0  # 0
-        Window.top = 0
+        Window.left = 100  # 0
+        Window.top = 100
         Window.size = (config.CAM_WIDTH / 2, config.CAM_HEIGHT * 0.7)
         return SerialCamera()
 

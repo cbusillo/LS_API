@@ -24,3 +24,7 @@ black = "^23.1.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+shiny_start_gui = "shiny_api.main:start_gui"
+shiny_serial_camera = "shiny_api.shiny_serial_camera:start_gui"
