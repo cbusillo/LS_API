@@ -86,7 +86,7 @@ class MainGrid(GridLayout):
     def open_serial_scanner_fn(self, _):
         """Open the serial number scanner"""
         # caller.text += "\nrunning..."
-        subprocess.Popen("python3 -m shiny_api.main", shell=True)
+        subprocess.Popen("python3 -m shiny_api.serial_camera", shell=True)
         # scanner = camera.SerialCamera()
         # popup_window = Popup(title="Serial Scanner", content=scanner, size_hint=(None, None), size=(1024, 768))
         # popup_window.open()
