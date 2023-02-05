@@ -18,7 +18,7 @@ if %errorlevel% NEQ 0 (
 )
 
 if not exist "%PROGRAMFILES%\Tesseract-OCR" (
-	winget install tesseract-ocr
+	winget install --silent  --accept-package-agreements --accept-source-agreements tesseract-ocr
 )
 
 %PYTHON% -m pip install --upgrade pip
