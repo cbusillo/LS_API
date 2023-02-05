@@ -16,14 +16,7 @@ if %errorlevel% NEQ 0 (
 	exit
 
 )
-%PYTHON% -m pip install virtualenv
 
-if not exist %APPNAME% (
-	%PYTHON% -m virtualenv %APPNAME%
-)
 
-set "VPYTHON=.\%APPNAME%\scripts\python.exe"
-
-%VPYTHON% -m pip install --upgrade pip
 %VPYTHON% -m pip install --upgrade %APPNAME%
 
