@@ -19,6 +19,6 @@ if %errorlevel% NEQ 0 (
 )
 
 
-%PYTHON% -m pip install --upgrade %APPNAME%
+%PYTHON% -m pip install --no-cache-dir --upgrade %APPNAME%
 
 %PYTHON% -m shiny_api.main
