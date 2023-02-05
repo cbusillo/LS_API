@@ -2,6 +2,7 @@
 """Main GUI File"""
 import platform
 import logging
+import sys
 from threading import Thread
 import subprocess
 from kivy.app import App
@@ -9,18 +10,17 @@ from kivy.config import Config
 from kivy.logger import Logger, LOG_LEVELS
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
-from modules import weblistener
-from modules import update_item_price
-from modules import update_customer_phone
-from modules import get_ipsws
-from modules import load_config as config
-
+from shiny_api.modules import weblistener
+from shiny_api.modules import update_customer_phone
+from shiny_api.modules import get_ipsws
+from shiny_api.modules import load_config as config
+from shiny_api.modules import update_item_price
 
 if platform.node() == "Chris-MBP":
     config.DEBUG_CODE = True
     config.DEBUG_LOGGING = False
 
-Config.set("kivy", "log_level", "debug")
+Config.set("kivy", "log_level", "warning")
 Logger.setLevel(LOG_LEVELS["warning"])
 logging.getLogger().setLevel(logging.WARNING)
 if config.DEBUG_LOGGING:
@@ -86,7 +86,7 @@ class MainGrid(GridLayout):
     def open_serial_scanner_fn(self, _):
         """Open the serial number scanner"""
         # caller.text += "\nrunning..."
-        subprocess.Popen("python3.11 ./serial_camera.py", shell=True)
+        subprocess.Popen(f"{sys.executable} -m shiny_api.serial_camera", shell=True)
         # scanner = camera.SerialCamera()
         # popup_window = Popup(title="Serial Scanner", content=scanner, size_hint=(None, None), size=(1024, 768))
         # popup_window.open()
@@ -112,5 +112,11 @@ class APIApp(App):
         return MainGrid()
 
 
-interface = APIApp()
-interface.run()
+def start_gui():
+    """start the gui, call from project or if run directly"""
+    interface = APIApp()
+    interface.run()
+
+
+if __name__ == "__main__":
+    start_gui()

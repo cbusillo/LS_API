@@ -4,7 +4,7 @@ import time
 import logging
 import requests
 from kivy.uix.button import Button
-from modules import load_config as config
+from shiny_api.modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 

@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "shiny_api"
+version = "0.1.8"
+description = "Interface with LS and Camera Scanner"
+authors = ["Chris Busillo <info@shinycomputers.com>"]
+readme = "README.md"
+packages = [{include = "shiny_api"}]
+
+[tool.poetry.dependencies]
+python = "3.10.*"
+Flask = "^2.2.2"
+selenium = "^4.8.0"
+opencv-python = "^4.7.0.68"
+sqlalchemy = "^2.0.1"
+pytesseract = "^0.3.10"
+kivy = "^2.1.0"
+pygsheets = "^2.0.6"
+beautifulsoup4 = "^4.11.2"
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^2.16.1"
+black = "^23.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+shiny_start_gui = "shiny_api.main:start_gui"
+shiny_serial_camera = "shiny_api.shiny_serial_camera:start_gui"

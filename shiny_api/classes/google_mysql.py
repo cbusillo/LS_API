@@ -2,8 +2,8 @@
 import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
-from modules.load_config import DB_ACCESS as config
-from classes.api_serial import Serial
+from shiny_api.modules.load_config import DB_ACCESS as config
+from shiny_api.classes.api_serial import Serial
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -19,7 +19,6 @@ class Database:
         ssl_certs = {"ssl_ca": "config/server-ca.pem", "ssl_cert": "config/client-cert.pem", "ssl_key": "config/client-key.pem"}
         connect_string = f'mysql+pymysql://{config["user"]}:{config["password"]}@{config["host"]}/{config["database"]}'
         if Database.engine is None:
-
             Database.engine = create_engine(connect_string, echo=False, connect_args=ssl_certs)
             Database.session = Session(Database.engine)
 

@@ -7,7 +7,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 import requests
 from kivy.uix.button import Button
-from modules.connect_ls import get_data
+from shiny_api.modules.connect_ls import get_data
 
 
 print(f"Importing {os.path.basename(__file__)}...")

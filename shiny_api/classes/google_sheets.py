@@ -2,7 +2,7 @@
 import os
 import json
 import pygsheets
-import modules.load_config as config
+import shiny_api.modules.load_config as config
 
 
 print(f"Importing {os.path.basename(__file__)}...")

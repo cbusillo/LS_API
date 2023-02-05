@@ -4,18 +4,20 @@ import json
 import datetime
 from kivy.uix.button import Button
 from selenium import webdriver
-from classes import ls_item
+from shiny_api.classes import ls_item
 
 print(f"Importing {os.path.basename(__file__)}...")
 
 
 def run_update_item_price(caller: Button):
     """ "//device key": ["current model?", "year", "basePrice", "cellPrice", "store URL"]"""
-    with open("config/devices.json", encoding="utf8") as file:
+    config_dir = os.path.dirname(os.path.abspath(__file__))
+
+    with open(f"{config_dir}/../config/devices.json", encoding="utf8") as file:
         devices = json.load(file)
 
     # "//max age": "price multiplier"
-    with open("config/age.json", encoding="utf8") as file:
+    with open(f"{config_dir}/../config/age.json", encoding="utf8") as file:
         age_price = json.load(file)
 
     # Apple URL to load pricing from

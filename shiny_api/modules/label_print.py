@@ -1,7 +1,7 @@
 """Zebra printing module"""
 import socket
 import os
-from modules import load_config as config
+from shiny_api.modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 

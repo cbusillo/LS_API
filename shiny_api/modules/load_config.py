@@ -4,11 +4,13 @@ import json
 
 print(f"Importing {os.path.basename(__file__)}...")
 
-with open("config/config.json", encoding="utf8") as file:
+config_dir = os.path.dirname(os.path.abspath(__file__))
+
+with open(f"{config_dir}/../config/config.json", encoding="utf8") as file:
     config_file = json.load(file)
 
 # load secret keys from secret.json
-with open("config/secret.json", encoding="utf8") as file:
+with open(f"{os.path.expanduser('~')}/.secret.json", encoding="utf8") as file:
     secret_file = json.load(file)
 
 PRINTER_HOST = config_file["host"]

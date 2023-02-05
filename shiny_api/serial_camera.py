@@ -1,6 +1,7 @@
 """Take picture from webcam"""
 import os
 import time
+import math
 import re
 from functools import partial
 import cv2
@@ -14,10 +15,8 @@ from kivy.uix.image import Image
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.slider import Slider
 import numpy as np
-from skimage.transform import rotate
-from deskew import determine_skew
-from modules import load_config as config
-from classes import sickw_results
+from shiny_api.modules import load_config as config
+from shiny_api.classes import sickw_results
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -25,14 +24,41 @@ print(f"Importing {os.path.basename(__file__)}...")
 BLACKLIST = ["BCGA"]
 
 
-def deskew(image: Image):
-    """take image and return straight image"""
+def rotate_image(image, angle):
+    image_center = tuple(np.array(image.shape[1::-1]) / 2)
+    rot_mat = cv2.getRotationMatrix2D(image_center, angle, 1.0)
+    result = cv2.warpAffine(image, rot_mat, image.shape[1::-1], flags=cv2.INTER_LINEAR)
+    return result
 
-    angle = determine_skew(image)
-    if angle is None:
-        angle = 0
-    rotated = rotate(image, angle, resize=False) * 255
-    return rotated.astype(np.uint8)
+
+def compute_skew(src_img):
+    if len(src_img.shape) == 3:
+        height, width, _ = src_img.shape
+    elif len(src_img.shape) == 2:
+        height, width = src_img.shape
+    else:
+        print("upsupported image type")
+
+    img = cv2.medianBlur(src_img, 3)
+    edges = cv2.Canny(img, threshold1=30, threshold2=100, apertureSize=3, L2gradient=True)
+    lines = cv2.HoughLinesP(edges, 1, math.pi / 180, 30, minLineLength=width / 4.0, maxLineGap=height / 4.0)
+    angle = 0.0
+
+    cnt = 0
+    if lines is not None:
+        for x_1, y_1, x_2, y_2 in lines[0]:
+            ang = np.arctan2(y_2 - y_1, x_2 - x_1)
+            if math.fabs(ang) <= 30:  # excluding extreme rotations
+                angle += ang
+                cnt += 1
+
+        if cnt == 0:
+            return 0.0
+        return (angle / cnt) * 180 / math.pi
+
+
+def deskew(src_img):
+    return rotate_image(src_img, compute_skew(src_img))
 
 
 class SerialCamera(GridLayout):
@@ -90,7 +116,6 @@ class SerialCamera(GridLayout):
 
         self.capture = cv2.VideoCapture(config.CAM_PORT)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAM_WIDTH)
-        self.capture.set(cv2.CAP_PROP_FRAME_HEIGHT, config.CAM_HEIGHT)
         Clock.schedule_interval(self.update, 1 / 30)
         self.sickw_history = []
         self.fps_previous = 0
@@ -102,8 +127,8 @@ class SerialCamera(GridLayout):
         """take grayscale image and return Threshholded image.  Use value from slider"""
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image = deskew(image)
-        _, image = cv2.threshold(image, self.threshold_slider.value, 255, cv2.THRESH_BINARY)
-        # image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 15)
+        # _, image = cv2.threshold(image, self.threshold_slider.value, 255, cv2.THRESH_BINARY)
+        image = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 15)
 
         return image
 
@@ -123,6 +148,9 @@ class SerialCamera(GridLayout):
     def update(self, _):
         """Handle clock updates"""
         result, serial_image = self.capture.read()
+        if not result:
+            self.capture.set(1280, 720)
+            result, serial_image = self.capture.read()
         if self.rotation > -1:
             serial_image = cv2.rotate(serial_image, self.rotation)
         if result:
@@ -157,28 +185,33 @@ class SerialCamera(GridLayout):
         cv2.putText(threshed, str(round(fps, 2)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 0), 3)
         cv2.putText(serial_image, str(round(fps, 2)), (10, 70), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 0), 3)
 
-        buf1 = cv2.flip(serial_image, 0)
-        buf = buf1.tobytes()
+        buf = cv2.flip(serial_image, 0).tobytes()
 
-        self.scanned_image.texture = Texture.create(size=(config.CAM_WIDTH, config.CAM_HEIGHT), colorfmt="bgr")
-        self.scanned_image.texture.blit_buffer(buf, colorfmt="bgr", bufferfmt="ubyte")
+        texture = Texture.create(size=(serial_image.shape[1], serial_image.shape[0]), colorfmt="bgr")
+        texture.blit_buffer(buf, colorfmt="bgr", bufferfmt="ubyte")
+        self.scanned_image.texture = texture
 
-        buf1 = cv2.flip(threshed, 0)
-        buf = buf1.tobytes()
+        buf = cv2.flip(threshed, 0).tobytes()
 
-        self.threshed_image.texture = Texture.create(size=(config.CAM_WIDTH, config.CAM_HEIGHT), colorfmt="luminance")
-        self.threshed_image.texture.blit_buffer(buf, colorfmt="luminance", bufferfmt="ubyte")
+        texture = Texture.create(size=(threshed.shape[1], threshed.shape[0]), colorfmt="luminance")
+        texture.blit_buffer(buf, colorfmt="luminance", bufferfmt="ubyte")
+        self.threshed_image.texture = texture
 
 
 class SerialCameraApp(App):
     """Get image from camera and start serial check"""
 
     def build(self):
-        Window.left = 0  # 0
-        Window.top = 0
+        Window.left = 100  # 0
+        Window.top = 100
         Window.size = (config.CAM_WIDTH / 2, config.CAM_HEIGHT * 0.7)
         return SerialCamera()
 
 
-if __name__ == "__main__":
+def start_gui():
+    """start the gui, call from project or if run directly"""
     SerialCameraApp().run()
+
+
+if __name__ == "__main__":
+    start_gui()
