@@ -18,6 +18,7 @@ from kivy.uix.slider import Slider
 import numpy as np
 from shiny_api.modules import load_config as config
 from shiny_api.classes import sickw_results
+from shiny_api.classes.google_sheets import GoogleSheet
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -127,9 +128,10 @@ class SerialCamera(GridLayout):
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAM_WIDTH)
         Clock.schedule_interval(self.capture_image, 1 / 30)
         Clock.schedule_interval(self.update_threshed_image, 1 / 5)
-        Clock.schedule_interval(self.run_ocr, 1 / 5)
+        Clock.schedule_interval(self.run_ocr, 1)
         self.sickw_history = []
         self.rotation = -1
+        self.serial_sheet = GoogleSheet("Shiny API")
 
     def thresh_image(self, image):
         """Take grayscale image and return Threshholded image.  Use value from slider or auto if checked"""
@@ -156,13 +158,6 @@ class SerialCamera(GridLayout):
         self.original_image_display.texture = self.update_image_texture(self.original_image, "bgr", 1 / delta_time)
 
     def update_threshed_image(self, delta_time: float):
-        """Start thread to update threshed image and texture from original on clock"""
-        if self.original_image is None:
-            return
-        thresh_thread = threading.Thread(target=self.update_threshed_image_thread, args=[delta_time])
-        thresh_thread.run()
-
-    def update_threshed_image_thread(self, delta_time: float):
         """Update threshed image and texture from original on clock"""
         self.threshed_image = self.thresh_image(self.original_image)
         self.threshed_image_display.texture = self.update_image_texture(self.threshed_image, "luminance", 1 / delta_time)
@@ -184,8 +179,11 @@ class SerialCamera(GridLayout):
 
     def run_ocr(self, _):
         """Start a thread to OCR on each clock"""
-        ocr_thread = threading.Thread(target=self.ocr_thread)
-        ocr_thread.start()
+        # TODO: Change back to threads after debugging
+        # self.ocr_thread()
+        if threading.active_count() < 2:
+            ocr_thread = threading.Thread(target=self.ocr_thread)
+            ocr_thread.start()
 
     def ocr_thread(self):
         """Use Tesseract to read data from threshed image"""
@@ -215,6 +213,7 @@ class SerialCamera(GridLayout):
             if not any(d.serial_number == word for d in self.sickw_history):
                 sickw = sickw_results.SickwResults(word, sickw_results.APPLE_SERIAL_INFO)
                 self.sickw_history.append(sickw)
+                self.serial_sheet.add_line(sickw_results.SickwResults(word, sickw_results.APPLE_SERIAL_INFO))
             output = f"Conf: {conf} {word} Total: {len(self.sickw_history)} "
             output += f"Matches: {sickw_results.SickwResults.search_list_for_serial(word, self.sickw_history)} "
             output += f"Sucessful: {sickw_results.SickwResults.success_count(self.sickw_history)}"
