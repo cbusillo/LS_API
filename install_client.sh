@@ -1,6 +1,5 @@
 #!/bin/bash
 #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/cbusillo/Shiny_API/main/install_client.sh)"
-#"""TODO: Update to master"""
 REQPYTHON="3.10"
 APPNAME="Shiny_API"
 activate () { 

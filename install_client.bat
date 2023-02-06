@@ -1,4 +1,8 @@
 @echo off
+REM If Winget is not installed use the Microsoft Store to install App Installer
+REM powershell -ep bypass -command "(new-object net.webclient).DownloadFile('https://raw.githubusercontent.com/cbusillo/Shiny_API/main/install_client.bat','local.bat') | ./local.bat"
+
+cd %userprofile%
 set APPNAME="Shiny_API"
 set PYTHONVERSION=10
 set "PYTHONROOT=%LOCALAPPDATA%\Programs\Python"
