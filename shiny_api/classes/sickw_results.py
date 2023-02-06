@@ -32,19 +32,19 @@ class SickwResults:
         says not success or no HTML result string"""
         self.serial_number = serial_number
         sickw_return = json.loads(self.get_json(serial_number, service))
-        if sickw_return["status"].lower() == "success":
-            sickw_return_dict = self.html_to_dict(sickw_return["result"])
-            if len(sickw_return_dict) > 0:
-                self.result_id = sickw_return["id"]
-                self.status = sickw_return["status"]
-                self.description = sickw_return_dict["Model Desc"]
-                self.name = sickw_return_dict["Model Name"]
-                self.a_number = sickw_return_dict["Model Number"]
-                self.model_id = sickw_return_dict["Model iD"]
-                self.capacity = sickw_return_dict["Capacity"]
-                self.color = sickw_return_dict["Color"]
-                self.type = sickw_return_dict["Type"]
-                self.year = sickw_return_dict["Year"]
+        if sickw_return.get("status").lower() == "success":
+            sickw_return_dict = self.html_to_dict(sickw_return.get("result"))
+            if sickw_return_dict:
+                self.result_id = sickw_return.get("id")
+                self.status = sickw_return.get("status")
+                self.description = sickw_return_dict.get("Model Desc")
+                self.name = sickw_return_dict.get("Model Name")
+                self.a_number = sickw_return_dict.get("Model Number")
+                self.model_id = sickw_return_dict.get("Model iD")
+                self.capacity = sickw_return_dict.get("Capacity")
+                self.color = sickw_return_dict.get("Color")
+                self.type = sickw_return_dict.get("Type")
+                self.year = sickw_return_dict.get("Year")
                 return
         self.status = "failed"
 
