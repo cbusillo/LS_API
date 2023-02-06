@@ -15,6 +15,7 @@ pytesseract = "^0.3.10"
 kivy = "^2.1.0"
 pygsheets = "^2.0.6"
 beautifulsoup4 = "^4.11.2"
+dotenv = {version = "^0.0.5", platform = "windows"}
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^2.16.1"
