@@ -4,7 +4,7 @@
 /.pylintrc
 /build
 /dist
-/tmp
+/temp
 *temp.py
 *secret.json
 *pem
