@@ -40,7 +40,7 @@ def web_hd_label():
         f"{customer.first_name} {customer.last_name}\\&{today.month}.{today.day}.{today.year}",
         barcode=f'2500000{request.args.get("workorderID")}',
         quantity=quantity,
-        password=password,
+        text_bottom=password,
     )
     return HTML_RETURN
 
