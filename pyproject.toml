@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shiny_api"
-version = "0.1.8"
+version = "0.1.9"
 description = "Interface with LS and Camera Scanner"
 authors = ["Chris Busillo <info@shinycomputers.com>"]
 packages = [{include = "shiny_api"}]
