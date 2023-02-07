@@ -19,6 +19,7 @@ import numpy as np
 from shiny_api.modules import load_config as config
 from shiny_api.classes import sickw_results
 from shiny_api.classes.google_sheets import GoogleSheet
+from shiny_api.modules.label_print import print_text
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -91,14 +92,14 @@ class SerialCamera(GridLayout):
 
         self.threshold_auto_checkbox = CheckBox(size_hint=(0.1, None), active=True)
         self.threshold_grid.add_widget(self.threshold_auto_checkbox)
-        self.threshold_down_button = Button(text="Threshold down", halign="center")
+        self.threshold_down_button = Button(text="Threshold down")
         self.threshold_down_button.bind(on_press=partial(self.threshold_change, value=-5))
         self.threshold_grid.add_widget(self.threshold_down_button)
 
         self.threshold_label = Label(text=str(self.threshold_slider.value))
         self.threshold_grid.add_widget(self.threshold_label)
 
-        self.threshold_up_button = Button(text="Threshold up", halign="center")
+        self.threshold_up_button = Button(text="Threshold up")
         self.threshold_up_button.bind(on_press=partial(self.threshold_change, value=5))
         self.threshold_grid.add_widget(self.threshold_up_button)
 
@@ -124,11 +125,20 @@ class SerialCamera(GridLayout):
         self.status = Label(size_hint=(0.8, 0.2))
         self.add_widget(self.status)
 
+        self.capture_grid = GridLayout(size_hint=(1, 0.1), cols=2)
+        self.capture_grid.capture_auto = CheckBox(size_hint=(0.1, None))
+        self.capture_grid.add_widget(self.capture_grid.capture_auto)
+        self.capture_grid.capture_button = Button(text="Capture Serial")
+        self.capture_grid.capture_button.bind(on_press=self.run_ocr)
+        self.capture_grid.add_widget(self.capture_grid.capture_button)
+        self.add_widget(self.capture_grid)
+
         self.capture = cv2.VideoCapture(config.CAM_PORT)
         self.capture.set(cv2.CAP_PROP_FRAME_WIDTH, config.CAM_WIDTH)
+
         Clock.schedule_interval(self.capture_image, 1 / 30)
         Clock.schedule_interval(self.update_threshed_image, 1 / 5)
-        Clock.schedule_interval(self.run_ocr, 1)
+        Clock.schedule_interval(self.run_ocr, 0.1)
         self.sickw_history = []
         self.rotation = -1
         self.serial_sheet = GoogleSheet("Shiny API")
@@ -177,13 +187,12 @@ class SerialCamera(GridLayout):
             self.threshold_slider.value += value
         self.threshold_label.text = str(int(self.threshold_slider.value))
 
-    def run_ocr(self, _):
+    def run_ocr(self, caller):
         """Start a thread to OCR on each clock"""
-        # TODO: Change back to threads after debugging
-        # self.ocr_thread()
-        if threading.active_count() < 2:
-            ocr_thread = threading.Thread(target=self.ocr_thread)
-            ocr_thread.start()
+        if isinstance(caller, Button) or self.capture_grid.capture_auto.active is True:
+            if threading.active_count() < 2:
+                ocr_thread = threading.Thread(target=self.ocr_thread)
+                ocr_thread.start()
 
     def ocr_thread(self):
         """Use Tesseract to read data from threshed image"""
@@ -213,7 +222,10 @@ class SerialCamera(GridLayout):
             if not any(d.serial_number == word for d in self.sickw_history):
                 sickw = sickw_results.SickwResults(word, sickw_results.APPLE_SERIAL_INFO)
                 self.sickw_history.append(sickw)
-                self.serial_sheet.add_line(sickw_results.SickwResults(word, sickw_results.APPLE_SERIAL_INFO))
+                if sickw.status.lower() == "success":
+                    self.serial_sheet.add_line(sickw_results.SickwResults(word, sickw_results.APPLE_SERIAL_INFO))
+                    if config.GOOGLE_SHEETS_SERIAL_PRINT:
+                        print_text(text=sickw.name, barcode=sickw.serial_number)
             output = f"Conf: {conf} {word} Total: {len(self.sickw_history)} "
             output += f"Matches: {sickw_results.SickwResults.search_list_for_serial(word, self.sickw_history)} "
             output += f"Sucessful: {sickw_results.SickwResults.success_count(self.sickw_history)}"
