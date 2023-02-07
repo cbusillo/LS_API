@@ -47,3 +47,5 @@ if config_file["debug_logging"].lower() == "false":
     DEBUG_LOGGING = False
 
 GOOGLE_SHEETS_SERIAL_NAME = config_file["google_sheets_serial_name"]
+
+GOOGLE_SHEETS_SERIAL_PRINT = config_file["google_sheets_serial_print"].lower() == "true"
