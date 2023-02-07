@@ -18,5 +18,6 @@
         "customerPut": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Customer/{customerID}.json",
         "workorderSingle": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/DisplayTemplate/Workorder/{workorderID}.json"
     },
-    "google_sheets_serial_name" : "Shiny API"
+    "google_sheets_serial_name" : "Shiny API",
+    "google_sheets_serial_print" : "true"
 }
