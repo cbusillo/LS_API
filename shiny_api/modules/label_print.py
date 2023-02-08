@@ -6,7 +6,7 @@ from shiny_api.modules import load_config as config
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-def print_text(text: str, barcode=None, quantity=None, text_bottom=None):
+def print_text(text: str, barcode: str = None, quantity: int = 1, text_bottom: str = None):
     """Open socket to printer and send text"""
     label_string = b"^XA^A0N,50,50^FO0,20^FB450,4,,C,^FD" + bytes(text, "utf-8")
     if barcode:
@@ -14,11 +14,8 @@ def print_text(text: str, barcode=None, quantity=None, text_bottom=None):
     if text_bottom:
         label_string += b"^FS^A0N,30,30^FO0,210^FB450,4,,C,^FD" + bytes(text_bottom, "utf-8")
     label_string += b"^FS^XZ"
-    if quantity is None:
-        quantity = 1
-    quantity = int(quantity)
-    if quantity < 1:
-        quantity = 1
+
+    quantity = max(int(quantity), 1)
 
     mysocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
