@@ -9,17 +9,20 @@ from threading import Thread
 from typing import List
 import subprocess
 from kivy.app import App
+from kivy.clock import Clock
 from kivy.config import Config
 from kivy.logger import Logger, LOG_LEVELS
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.screenmanager import Screen, ScreenManager
+
 from shiny_api.modules import weblistener
 from shiny_api.modules import update_customer_phone
 from shiny_api.modules import get_ipsws
 from shiny_api.modules import load_config as config
 from shiny_api.modules import update_item_price
 from shiny_api.modules import label_print
+from kivy.uix.textinput import TextInput
 
 if platform.node() == "Chris-MBP":
     config.DEBUG_CODE = True
@@ -140,9 +143,24 @@ class LabelPrinterScreen(Screen):
         main_grid.cols = 1
         main_grid.padding = 100
 
+        header_grid = GridLayout(size_hint=(1, 0.1))
+        header_grid.cols = 3
+        header_grid.padding = 10
+
+        self.quantity_textbox = TextInput(text="1", size_hint=(0.1, 1))
+        self.quantity_textbox.bind(focus=self.on_focus)
+        header_grid.add_widget(self.quantity_textbox)
+        self.text_textbox = TextInput(text="Custom label text")
+        self.text_textbox.bind(focus=self.on_focus)
+        header_grid.add_widget(self.text_textbox)
+        custom_print_button = Button(text="Custom Label", size_hint=(0.2, 1))
+        custom_print_button.bind(on_press=self.custom_print)
+        header_grid.add_widget(custom_print_button)
+        main_grid.add_widget(header_grid)
+
         label_grid = GridLayout()
         label_grid.cols = 3
-        label_grid.padding = 100
+        label_grid.padding = 10
 
         label_buttons: List[Button] = []
 
@@ -159,18 +177,25 @@ class LabelPrinterScreen(Screen):
 
         self.add_widget(main_grid)
 
+    def custom_print(self, _):
+        self.print_labels(text=self.text_textbox.text, quantity=self.quantity_textbox.text)
+
+    def on_focus(self, caller: TextInput, _):
+        if caller.focus:
+            Clock.schedule_once(lambda dt: caller.select_all(), 0.2)
+
     def changer(self, *_):
         """Slide to main_screen"""
         self.manager.current = "main_screen"
 
-    def print_labels(self, _, text):
+    def print_labels(self, _=None, text: str = "", quantity: int = 1):
         """Print label from input text with date"""
+        if len(text) < 1:
+            return
+        quantity = max(int(quantity), 1)
         today = datetime.date.today()
         Thread(
-            target=partial(
-                label_print.print_text,
-                f"{text}\\&{today.month}.{today.day}.{today.year}",
-            )
+            target=partial(label_print.print_text, f"{text}\\&{today.month}.{today.day}.{today.year}", quantity=quantity)
         ).start()
 
 
