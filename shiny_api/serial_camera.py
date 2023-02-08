@@ -78,9 +78,9 @@ class SerialCamera(GridLayout):
         self.cols = 1
         self.padding = 50
 
-        self.rotate_button = Button(text="Rotate", halign="center", size_hint=(0.1, 0.1))
-        self.rotate_button.bind(on_press=self.rotate_button_fn)
-        self.add_widget(self.rotate_button)
+        self.rotate_image_button = Button(text="Rotate", size_hint=(0.1, 0.1))
+        self.rotate_image_button.bind(on_press=self.rotate_image)
+        self.add_widget(self.rotate_image_button)
 
         self.threshold_slider = Slider(min=0, max=255, value=180, size_hint=(1, 0.15))
         self.threshold_slider.bind(value=self.threshold_change)
@@ -172,7 +172,7 @@ class SerialCamera(GridLayout):
         self.threshed_image = self.thresh_image(self.original_image)
         self.threshed_image_display.texture = self.update_image_texture(self.threshed_image, "luminance", 1 / delta_time)
 
-    def rotate_button_fn(self, _):
+    def rotate_image(self, _):
         """Rotate 90 degress when button is pressed.  At no rotation set -1 and ignore in code"""
         if self.rotation < 2:
             self.rotation += 1
