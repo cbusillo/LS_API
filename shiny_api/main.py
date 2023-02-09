@@ -1,6 +1,5 @@
 #!/usr/bin/env python3.11
 """Main GUI File"""
-import datetime
 import platform
 import logging
 import sys
@@ -8,23 +7,28 @@ from functools import partial
 from threading import Thread
 from typing import List
 import subprocess
+
+# pylint: disable=ungrouped-imports
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.config import Config
 from kivy.logger import Logger, LOG_LEVELS
 from kivy.uix.button import Button
+from kivy.uix.checkbox import CheckBox
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.screenmanager import Screen, ScreenManager
-
 from shiny_api.modules import weblistener
 from shiny_api.modules import update_customer_phone
 from shiny_api.modules import get_ipsws
 from shiny_api.modules import load_config as config
 from shiny_api.modules import update_item_price
 from shiny_api.modules import label_print
-from kivy.uix.textinput import TextInput
+from kivy.uix.textinput import TextInput  # pylint: disable=wrong-import-order
 
-if platform.node() == "Chris-MBP":
+MY_COMPUTER = "Chris-MBP"
+SERVER = "SecureErase"
+
+if platform.node() == MY_COMPUTER:
     config.DEBUG_CODE = True
     config.DEBUG_LOGGING = False
 
@@ -92,6 +96,8 @@ class MainScreen(Screen):
         self.grid_layout.add_widget(start_api_server_button)
         self.add_widget(self.grid_layout)
 
+        self.start_api_server(start_api_server_button)
+
     def changer(self, *_):
         """Slide to malabel_printer_screen"""
         self.manager.current = "label_printer_screen"
@@ -141,21 +147,30 @@ class LabelPrinterScreen(Screen):
 
         main_grid = GridLayout()
         main_grid.cols = 1
-        main_grid.padding = 100
+        main_grid.padding = 10
 
-        header_grid = GridLayout(size_hint=(1, 0.1))
+        header_grid = GridLayout(size_hint=(1, 0.2))
         header_grid.cols = 3
         header_grid.padding = 10
 
-        self.quantity_textbox = TextInput(text="1", size_hint=(0.1, 1))
-        self.quantity_textbox.bind(focus=self.on_focus)
-        header_grid.add_widget(self.quantity_textbox)
-        self.text_textbox = TextInput(text="Custom label text")
+        self.text_textbox = TextInput(text="Custom label text", multiline=True)
         self.text_textbox.bind(focus=self.on_focus)
         header_grid.add_widget(self.text_textbox)
-        custom_print_button = Button(text="Custom Label", size_hint=(0.2, 1))
+        self.barcode_textbox = TextInput(text="Barcode", size_hint=(0.3, 0.3))
+        self.barcode_textbox.bind(focus=self.on_focus)
+        header_grid.add_widget(self.barcode_textbox)
+
+        header_button_grid = GridLayout(size_hint=(0.15, 1))
+        header_button_grid.cols = 1
+        self.date_checkbox = CheckBox(active=True)
+        header_button_grid.add_widget(self.date_checkbox)
+        self.quantity_textbox = TextInput(text="1", halign="center")
+        self.quantity_textbox.bind(focus=self.on_focus)
+        header_button_grid.add_widget(self.quantity_textbox)
+        custom_print_button = Button(text="Print")
         custom_print_button.bind(on_press=self.custom_print)
-        header_grid.add_widget(custom_print_button)
+        header_button_grid.add_widget(custom_print_button)
+        header_grid.add_widget(header_button_grid)
         main_grid.add_widget(header_grid)
 
         label_grid = GridLayout()
@@ -178,9 +193,16 @@ class LabelPrinterScreen(Screen):
         self.add_widget(main_grid)
 
     def custom_print(self, _):
-        self.print_labels(text=self.text_textbox.text, quantity=self.quantity_textbox.text)
+        """Print label generated from text and quantity"""
+        lines = self.text_textbox.text.split("\n")
+        while "" in lines:
+            lines.remove("")
+        barcode = self.barcode_textbox.text if self.barcode_textbox.text != "Barcode" else None
+
+        self.print_labels(text=lines, barcode=barcode)
 
     def on_focus(self, caller: TextInput, _):
+        """Schedule text selection after update"""
         if caller.focus:
             Clock.schedule_once(lambda dt: caller.select_all(), 0.2)
 
@@ -188,14 +210,12 @@ class LabelPrinterScreen(Screen):
         """Slide to main_screen"""
         self.manager.current = "main_screen"
 
-    def print_labels(self, _=None, text: str = "", quantity: int = 1):
+    def print_labels(self, _=None, text: str = "", barcode: str = ""):
         """Print label from input text with date"""
-        if len(text) < 1:
-            return
-        quantity = max(int(quantity), 1)
-        today = datetime.date.today()
+        quantity = int(self.quantity_textbox.text)
+
         Thread(
-            target=partial(label_print.print_text, f"{text}\\&{today.month}.{today.day}.{today.year}", quantity=quantity)
+            target=partial(label_print.print_text, text, quantity=quantity, print_date=self.date_checkbox.active, barcode=barcode)
         ).start()
 
 
