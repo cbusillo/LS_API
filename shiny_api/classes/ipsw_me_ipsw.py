@@ -108,13 +108,8 @@ class Devices:
                     devices.append(Devices.from_dict(device))
 
         for device in devices:
-            newest_firmware_date = ""
             for firmware in device.firmwares:
-                if firmware.upload_date > newest_firmware_date:
-                    device.newest_firmware_url = firmware.url
-                    newest_firmware_date = firmware.upload_date
-            for firmware in device.firmwares:
-                if firmware.upload_date == newest_firmware_date:
+                if firmware.signed:
                     local_file = device.local_path + os.path.basename(urlparse(firmware.url).path)
                     # label.set(local_file)
                     caller.text = f"{caller.text.split(chr(10))[0]}\n{local_file}"
