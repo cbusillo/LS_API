@@ -218,6 +218,7 @@ class LabelPrinterScreen(Screen):
             target=partial(label_print.print_text, text, quantity=quantity, print_date=self.date_checkbox.active, barcode=barcode)
         ).start()
         self.barcode_textbox.text = "Barcode"
+        self.quantity_textbox.text = "1"
 
 
 class APIApp(App):
