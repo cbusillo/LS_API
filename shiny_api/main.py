@@ -12,6 +12,7 @@ import subprocess
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.config import Config
+
 from kivy.logger import Logger, LOG_LEVELS
 from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
@@ -24,6 +25,7 @@ from shiny_api.modules import load_config as config
 from shiny_api.modules import update_item_price
 from shiny_api.modules import label_print
 from kivy.uix.textinput import TextInput  # pylint: disable=wrong-import-order
+from kivy.core.window import Window  # pylint: disable=wrong-import-order
 
 MY_COMPUTER = "Chris-MBP"
 SERVER = "SecureErase"
@@ -149,11 +151,11 @@ class LabelPrinterScreen(Screen):
         main_grid.cols = 1
         main_grid.padding = 10
 
-        header_grid = GridLayout(size_hint=(1, 0.2))
+        header_grid = GridLayout(size_hint=(1, 0.3))
         header_grid.cols = 3
         header_grid.padding = 10
 
-        self.text_textbox = TextInput(text="Custom label text", multiline=True)
+        self.text_textbox = TextInput(text="Custom label text", multiline=True, font_size=25)
         self.text_textbox.bind(focus=self.on_focus)
         header_grid.add_widget(self.text_textbox)
         self.barcode_textbox = TextInput(text="Barcode", size_hint=(0.3, 0.3))
@@ -164,9 +166,21 @@ class LabelPrinterScreen(Screen):
         header_button_grid.cols = 1
         self.date_checkbox = CheckBox(active=True)
         header_button_grid.add_widget(self.date_checkbox)
+
+        header_quantity_button_grid = GridLayout()
+        header_quantity_button_grid.cols = 3
+        quantity_down_button = Button(text="-")
+        quantity_down_button.bind(on_press=self.quantity_button_press)
+        header_quantity_button_grid.add_widget(quantity_down_button)
+
         self.quantity_textbox = TextInput(text="1", halign="center")
         self.quantity_textbox.bind(focus=self.on_focus)
-        header_button_grid.add_widget(self.quantity_textbox)
+        header_quantity_button_grid.add_widget(self.quantity_textbox)
+        quantity_up_button = Button(text="+")
+        quantity_up_button.bind(on_press=self.quantity_button_press)
+        header_quantity_button_grid.add_widget(quantity_up_button)
+        header_button_grid.add_widget(header_quantity_button_grid)
+
         custom_print_button = Button(text="Print")
         custom_print_button.bind(on_press=self.custom_print)
         header_button_grid.add_widget(custom_print_button)
@@ -191,6 +205,18 @@ class LabelPrinterScreen(Screen):
         main_grid.add_widget(main_grid.slide_label_printer_button)
 
         self.add_widget(main_grid)
+
+        Window.bind(on_keyboard=self.on_keyboard)  # bind our handler
+
+    def on_keyboard(self, window, key, scancode, codepoint, modifier):
+        if modifier == ["meta"] and codepoint == "p":
+            self.custom_print(None)
+
+    def quantity_button_press(self, caller):
+        if caller.text == "+":
+            self.quantity_textbox.text = str(int(self.quantity_textbox.text) + 1)
+        elif int(self.quantity_textbox.text) > 1:
+            self.quantity_textbox.text = str(int(self.quantity_textbox.text) - 1)
 
     def custom_print(self, _):
         """Print label generated from text and quantity"""
