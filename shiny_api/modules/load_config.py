@@ -32,13 +32,6 @@ CAM_HEIGHT = config_file["cam_height"]
 
 SICKW_URL = config_file["sickw_url"]
 
-"""Secret section"""
-DB_ACCESS = secret_file["sql_access"]
-ACCESS_TOKEN = secret_file["ls_api_access"]
-SICKW_API_KEY = secret_file["sickw_api_key"]
-SHEETS_ACCESS = secret_file["sheets_access"]
-
-
 DEBUG_CODE = True
 if config_file["debug_code"].lower() == "false":
     DEBUG_CODE = False
@@ -49,3 +42,12 @@ if config_file["debug_logging"].lower() == "false":
 GOOGLE_SHEETS_SERIAL_NAME = config_file["google_sheets_serial_name"]
 
 GOOGLE_SHEETS_SERIAL_PRINT = config_file["google_sheets_serial_print"].lower() == "true"
+
+
+"""Secret section"""
+DB_ACCESS = secret_file["sql_access"]
+ACCESS_TOKEN = secret_file["ls_api_access"]
+SICKW_API_KEY = secret_file["sickw_api_key"]
+DISCORD_TOKEN = secret_file["discord_token"]
+TRELLO_APIKEY = secret_file["trello_apiKey"]
+TRELLO_OAUTH_TOKEN = secret_file["trello_oauth_token"]
