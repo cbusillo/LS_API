@@ -13,6 +13,7 @@ from shiny_api.modules.connect_ls import get_data
 print(f"Importing {os.path.basename(__file__)}...")
 
 IPSW_PATH = ["iPad Software Updates", "iPhone Software Updates", "iPod Software Updates"]
+IPSW_ME_API_URL = {"device": "https://api.ipsw.me/v4/device/", "devices": "https://api.ipsw.me/v4/devices"}
 
 
 @dataclass
@@ -83,7 +84,7 @@ class Devices:
         _platform = str(obj.get("platform"))
         _cpid = str(obj.get("cpid"))
         _bdid = str(obj.get("bdid"))
-        response = get_data(f"https://api.ipsw.me/v4/device/{_identifier}")
+        response = get_data(f"{IPSW_ME_API_URL['device']}{_identifier}")
         _firmwares = [Firmware.from_dict(y) for y in response.json()["firmwares"]]
         _local_path = str(obj.get("local_path"))
         return Devices(_name, _identifier, _boardconfig, _platform, _cpid, _bdid, _firmwares, "", _local_path)
@@ -96,7 +97,7 @@ class Devices:
             Path(directory).mkdir(parents=True, exist_ok=True)
             for file in Path(directory).glob("**/*.tmp"):
                 file.unlink()
-        response = get_data("https://api.ipsw.me/v4/devices", current_params={"keysOnly": True})
+        response = get_data(f"{IPSW_ME_API_URL['devices']}", current_params={"keysOnly": True})
         devices: List[Devices] = []
         for device in response.json():
             output = f'{device["name"]}'
