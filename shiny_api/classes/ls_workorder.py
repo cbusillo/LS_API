@@ -96,6 +96,6 @@ class Workorder:
     def get_workorder(workorder_id):
         """Get single workorder from LS API into workorder object"""
         generate_ls_access()
-        response = get_data(config.LS_URLS["workorderSingle"].format(workorderID=workorder_id))
+        response = get_data(config.LS_URLS["workorder"].format(workorderID=workorder_id))
 
         return Workorder.from_dict(response.json().get("Workorder"))
