@@ -231,7 +231,7 @@ class Customer:
                     }
                 }
             }
-            put_data(config.LS_URLS["customerPut"].format(customerID=self.customer_id), put_customer, caller)
+            put_data(config.LS_URLS["customer"].format(customerID=self.customer_id), put_customer, caller)
 
     @staticmethod
     def from_dict(obj: Any) -> "Customer":
@@ -276,7 +276,7 @@ class Customer:
         # Run API auth
         generate_ls_access()
         customer_list: List[Customer] = []
-        current_url = config.LS_URLS["customer"]
+        current_url = config.LS_URLS["customers"]
         pages = 0
         while current_url:
             response = get_data(current_url, {"load_relations": '["Contact"]', "limit": 100}, caller=caller)
@@ -295,6 +295,6 @@ class Customer:
     def get_customer(customer_id):
         """Get single customer from LS API into Customer object"""
         generate_ls_access()
-        response = get_data(config.LS_URLS["customerPut"].format(customerID=customer_id), {"load_relations": '["Contact"]'})
+        response = get_data(config.LS_URLS["customer"].format(customerID=customer_id), {"load_relations": '["Contact"]'})
 
         return Customer.from_dict(response.json().get("Customer"))
