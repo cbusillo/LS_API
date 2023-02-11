@@ -250,7 +250,7 @@ class Item:
                 ]
             }
         }
-        put_data(config.LS_URLS["itemPut"].format(itemID=item.item_id), put_item)
+        put_data(config.LS_URLS["item"].format(itemID=item.item_id), put_item)
 
     @staticmethod
     def get_items() -> "List[Item]":
@@ -260,7 +260,7 @@ class Item:
         # Convert from json dict to Item object and add to itemList list.
         item_list: List[Item] = []
         for category in config.DEVICE_CATEGORIES_FOR_PRICE:
-            current_url = config.LS_URLS["item"]
+            current_url = config.LS_URLS["items"]
             while current_url:
                 response = get_data(
                     current_url,
@@ -272,6 +272,24 @@ class Item:
                 )
                 for item in response.json().get("Item"):
                     item_list.append(Item.from_dict(item))
+                current_url = response.json()["@attributes"]["next"]
+
+        return item_list
+
+    @staticmethod
+    def get_item_by_id(item_id: int) -> "Item":
+        current_url = config.LS_URLS["item"]
+        response = get_data(current_url.format(itemID=item_id), {"load_relations": '["ItemAttributes"]'})
+        return Item.from_dict(response.json().get("Item"))
+
+    @staticmethod
+    def get_item_by_desciption(description: str) -> "List[Item]":
+        item_list: List[Item] = []
+        current_url = config.LS_URLS["items"]
+        while current_url:
+            response = get_data(current_url, {"description": description, "load_relations": '["ItemAttributes"]'})
+            for item in response.json().get("Item"):
+                item_list.append(Item.from_dict(item))
                 current_url = response.json()["@attributes"]["next"]
 
         return item_list
