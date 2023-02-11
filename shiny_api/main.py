@@ -1,36 +1,36 @@
 #!/usr/bin/env python3.11
 """Main GUI File"""
-import platform
 import logging
+import platform
+import subprocess
 import sys
 from functools import partial
 from threading import Thread
 from typing import List
-import subprocess
 
 # pylint: disable=ungrouped-imports
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.config import Config
 
-from kivy.logger import Logger, LOG_LEVELS
+from kivy.logger import LOG_LEVELS, Logger
 from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.screenmanager import Screen, ScreenManager
-from shiny_api.modules import weblistener
-from shiny_api.modules import update_customer_phone
-from shiny_api.modules import get_ipsws
+
+from shiny_api.modules import discord_bot
+from shiny_api.modules import get_ipsws, label_print
 from shiny_api.modules import load_config as config
-from shiny_api.modules import update_item_price
-from shiny_api.modules import label_print
-from kivy.uix.textinput import TextInput  # pylint: disable=wrong-import-order
+from shiny_api.modules import update_customer_phone, update_item_price, weblistener
+
 from kivy.core.window import Window  # pylint: disable=wrong-import-order
+from kivy.uix.textinput import TextInput  # pylint: disable=wrong-import-order
 
-MY_COMPUTER = "Chris-MBP"
-SERVER = "SecureErase"
+MY_COMPUTER = "chris-mbp"
+SERVER = ["secureErase", MY_COMPUTER]
 
-if platform.node() == MY_COMPUTER:
+if platform.node().lower() == MY_COMPUTER:
     config.DEBUG_CODE = True
     config.DEBUG_LOGGING = False
 
@@ -96,9 +96,15 @@ class MainScreen(Screen):
         start_api_server_button = Button(text="Start API Server")
         start_api_server_button.bind(on_press=self.start_api_server)
         self.grid_layout.add_widget(start_api_server_button)
+
+        start_discord_bot_button = Button(text="Start Discord Bot")
+        start_discord_bot_button.bind(on_press=self.start_discord_bot)
+        self.grid_layout.add_widget(start_discord_bot_button)
         self.add_widget(self.grid_layout)
 
-        self.start_api_server(start_api_server_button)
+        if platform.node().lower() in SERVER:
+            self.start_api_server(start_api_server_button)
+            self.start_discord_bot(start_discord_bot_button)
 
     def changer(self, *_):
         """Slide to malabel_printer_screen"""
@@ -135,6 +141,14 @@ class MainScreen(Screen):
     def start_api_server(self, caller: Button):
         """Start API Server for LS"""
         thread = Thread(target=weblistener.start_weblistener, args=[caller])
+        thread.daemon = True
+        caller.text += "\nrunning..."
+        caller.disabled = True
+        thread.start()
+
+    def start_discord_bot(self, caller: Button):
+        """Start API Server for LS"""
+        thread = Thread(target=discord_bot.start_bot, args=[caller])
         thread.daemon = True
         caller.text += "\nrunning..."
         caller.disabled = True
@@ -208,11 +222,13 @@ class LabelPrinterScreen(Screen):
 
         Window.bind(on_keyboard=self.on_keyboard)  # bind our handler
 
-    def on_keyboard(self, window, key, scancode, codepoint, modifier):
+    def on_keyboard(self, _, _1, _2, codepoint, modifier):
+        """Create keyboard shortcuts"""
         if modifier == ["meta"] and codepoint == "p":
             self.custom_print(None)
 
     def quantity_button_press(self, caller):
+        """Update quantity textbox when up or down is pressed."""
         if caller.text == "+":
             self.quantity_textbox.text = str(int(self.quantity_textbox.text) + 1)
         elif int(self.quantity_textbox.text) > 1:
