@@ -91,6 +91,8 @@ class ItemAttributes:
     @staticmethod
     def from_dict(obj: Any) -> "ItemAttributes":
         """Load ItemAttributes object from json dict."""
+        if obj is None:
+            return None
         _attribute1 = str(obj.get("attribute1"))
         _attribute2 = str(obj.get("attribute2"))
         _attribute3 = str(obj.get("attribute3"))
@@ -283,16 +285,23 @@ class Item:
         return Item.from_dict(response.json().get("Item"))
 
     @staticmethod
-    def get_item_by_desciption(description: str) -> "List[Item]":
+    def get_item_by_desciption(descriptions: List[str]) -> "List[Item]":
         item_list: List[Item] = []
         current_url = config.LS_URLS["items"]
+        description = ""
+        for word in descriptions:
+            description += f"description=~,%{word}%|"
         while current_url:
-            response = get_data(current_url, {"description": description, "load_relations": '["ItemAttributes"]'})
+            response = get_data(current_url, {"or": description, "load_relations": '["ItemAttributes"]'})
+            current_url = response.json()["@attributes"]["next"]
+            if response.json().get("Item") is None:
+                return
             for item in response.json().get("Item"):
                 item_list.append(Item.from_dict(item))
-                current_url = response.json()["@attributes"]["next"]
 
-        return item_list
+        filtered_item_list = [item for item in item_list if all(word.lower() in item.description.lower() for word in descriptions)]
+
+        return filtered_item_list
 
 
 # load attributes before main program runs
