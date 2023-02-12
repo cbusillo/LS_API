@@ -99,6 +99,7 @@ class Devices:
                 file.unlink()
         response = get_data(f"{IPSW_ME_API_URL['devices']}", current_params={"keysOnly": True})
         devices: List[Devices] = []
+
         for device in response.json():
             output = f'{device["name"]}'
             caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
@@ -109,20 +110,26 @@ class Devices:
                     devices.append(Devices.from_dict(device))
 
         for device in devices:
+            if "iPhone 4" not in device.name:
+                continue
             for firmware in device.firmwares:
-                if firmware.signed:
-                    local_file = device.local_path + os.path.basename(urlparse(firmware.url).path)
-                    # label.set(local_file)
-                    caller.text = f"{caller.text.split(chr(10))[0]}\n{local_file}"
-                    print(local_file, end="\r")
-                    if not Path(local_file).exists():
-                        with requests.get(firmware.url, stream=True, timeout=60) as response:
-                            response.raise_for_status()
-                            with open(local_file + ".tmp", "wb") as ipsw_file:
-                                for chunk in response.iter_content(chunk_size=8192):
-                                    ipsw_file.write(chunk)
-                            Path(local_file + ".tmp").rename(local_file)
-                else:
-                    Path(device.local_path + os.path.basename(urlparse(firmware.url).path)).unlink(missing_ok=True)
+                local_file = device.local_path + os.path.basename(urlparse(firmware.url).path)
+                if not firmware.signed:
+                    Path(local_file).unlink(missing_ok=True)
+
+                    continue
+
+                caller.text = f"{caller.text.split(chr(10))[0]}\n{local_file}"
+
+                if Path(local_file).exists():
+                    continue
+
+                print(local_file, end="\r")
+                with requests.get(firmware.url, stream=True, timeout=60) as response:
+                    response.raise_for_status()
+                    with open(local_file + ".tmp", "wb") as ipsw_file:
+                        for chunk in response.iter_content(chunk_size=8192):
+                            ipsw_file.write(chunk)
+                    Path(local_file + ".tmp").rename(local_file)
 
         return devices
