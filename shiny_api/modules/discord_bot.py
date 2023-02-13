@@ -1,5 +1,6 @@
 import os
 import discord
+import platform
 import textwrap
 from discord.ext import commands
 from kivy.uix.button import Button
@@ -27,14 +28,14 @@ intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 intents.presences = True
-bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
+client = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
 
 
-@bot.event
+@client.event
 async def on_ready():
-    print(f"{bot.user.display_name} has connected to Discord!")
+    print(f"{client.user.display_name} has connected to Discord!")
 
-    channels = bot.get_all_channels()
+    channels = client.get_all_channels()
 
     channel = discord.utils.get(channels, name="bot-config")
 
@@ -45,13 +46,17 @@ async def on_ready():
             await message.delete()
 
 
-@bot.event
+@client.event
 async def on_message(message: discord.Message):
-    if message.author == bot.user:
+    bots = client.guilds[0].members
+    if len(bots) > 1:
+        if platform.node().lower() == "secureerase":
+            return
+    if message.author == client.user:
         return
 
-    if bot.user.mentioned_in(message) or not message.guild:
-        prompt = message.content.replace(bot.user.mention, "").strip()
+    if client.user.mentioned_in(message) or not message.guild:
+        prompt = message.content.replace(client.user.mention, "").strip()
         engine = "text-davinci-003"
         if prompt.split()[0].lower() == "code":
             engine = "code-davinci-002"
@@ -65,7 +70,7 @@ async def on_message(message: discord.Message):
         async with message.channel.typing():
             await get_chatgpt_message(message=message, engine=engine, prompt=prompt)
 
-    await bot.process_commands(message)
+    await client.process_commands(message)
     if message.content is None or len(message.content) == 0:
         return
     if message.content[0] == COMMAND_PREFIX:
@@ -117,8 +122,16 @@ async def wrap_lines(lines: list[str], message: discord.Message):
         await message.channel.send(line)
 
 
-@bot.command()
+@client.command()
+async def testing(context: commands.Context, *args):
+    print(client.user)
+
+
+@client.command()
 async def ls(context: commands.Context, *args):
+    if context.channel.category_id != 896413039543336990:
+        await context.channel.send("Not allowed in this channel")
+        return
     if len(args) == 0 or args is None:
         return
     if args[0].lower() == "price" and len(args) > 1:
@@ -134,8 +147,11 @@ async def ls(context: commands.Context, *args):
         await context.channel.send(message_output)
 
 
-@bot.command()
+@client.command()
 async def trello(context: commands.Context, *args):
+    if context.channel.category_id != 896413039543336990:
+        await context.channel.send("Not allowed in this channel")
+        return
     if args is None or len(args) == 0:
         await trello_list_cards(TRELLO_INVENYORY_LISTS["pt"], context=context)
         return
@@ -178,27 +194,27 @@ async def trello_list_cards(list_id: int, context: commands.Context):
     return
 
 
-@bot.command()
+@client.command()
 async def clear(context: commands.Context, *args):
     if args[0].lower() == "bot":
         async for message in context.channel.history():
-            if message.author == bot.user and message.id != context.message.id:
+            if message.author == client.user and message.id != context.message.id:
                 await message.delete()
 
 
-@bot.command()
+@client.command()
 async def best(context: commands.Context, *args):
     if args is None:
         await context.channel.send(f"{context.author.mention} is the best!")
         return
-    users = bot.get_all_members()
+    users = client.get_all_members()
     for user in users:
         if " ".join(args).lower() in user.name.lower():
             await context.channel.send(f"{user.mention} is the best!")
 
 
 def start_bot(caller: Button):
-    bot.run(config.DISCORD_TOKEN)
+    client.run(config.DISCORD_TOKEN)
     caller.text = f"{caller.text.split(chr(10))[0]}\nDiscord Bot Running"
     caller.disabled = False
     caller.text = caller.text.split("\n")[0]
