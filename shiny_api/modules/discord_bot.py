@@ -1,12 +1,15 @@
 import os
 import discord
+import textwrap
 from discord.ext import commands
 from kivy.uix.button import Button
 from trello import TrelloClient
+import openai
 
 import shiny_api.modules.load_config as config
 from shiny_api.classes.ls_item import Item
 from shiny_api.modules.connect_ls import generate_ls_access
+
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -18,6 +21,7 @@ TRELLO_INVENYORY_LISTS = {
     "ebay": "616af4a1b42d5e6af2222605",
     "china": "63cd686b0de2bc0082b20499",
 }
+
 
 intents = discord.Intents.default()
 intents.members = True
@@ -43,14 +47,74 @@ async def on_ready():
 
 @bot.event
 async def on_message(message: discord.Message):
-    if bot.user.mentioned_in(message):
-        await message.channel.send("RUFF!")
+    if message.author == bot.user:
+        return
+
+    if bot.user.mentioned_in(message) or not message.guild:
+        prompt = message.content.replace(bot.user.mention, "").strip()
+        engine = "text-davinci-003"
+        if prompt.split()[0].lower() == "code":
+            engine = "code-davinci-002"
+            prompt = " ".join(prompt.split()[1:]).strip()
+
+        if prompt.split()[0].lower() == "image":
+            image_engine = "image-alpha-001"
+            prompt = " ".join(prompt.split()[1:]).strip()
+            async with message.channel.typing():
+                await get_walle_image(message=message, engine=image_engine, prompt=prompt)
+        async with message.channel.typing():
+            await get_chatgpt_message(message=message, engine=engine, prompt=prompt)
 
     await bot.process_commands(message)
     if message.content is None or len(message.content) == 0:
         return
     if message.content[0] == COMMAND_PREFIX:
-        await message.delete()
+        # await message.delete()
+        pass
+
+
+async def get_walle_image(message: discord.Message, prompt: str, engine: str):
+    print(f"Sending message: {prompt} to {engine}")
+    try:
+        response = await openai.Image.acreate(
+            prompt=prompt, n=1, size="1024x1024", response_format="url", api_key=config.OPENAI_API_KEY
+        )
+    except openai.error.InvalidRequestError as exception:
+        await message.channel.send(str(exception))
+        return
+
+    image_url = response["data"][0]["url"]
+
+    embed = discord.Embed()
+    embed.set_image(url=image_url)
+
+    # Send the message
+    await message.channel.send(embed=embed)
+
+
+async def get_chatgpt_message(message: discord.Message, engine: str, prompt: str):
+    print(f"Sending message: {prompt} to {engine}")
+    try:
+        response = await openai.Completion.acreate(
+            engine=engine,
+            prompt=prompt,
+            max_tokens=1000,
+            n=1,
+            stop=None,
+            temperature=0.8,
+            api_key=config.OPENAI_API_KEY,
+        )
+    except openai.error.InvalidRequestError as exception:
+        await message.channel.send(str(exception))
+        return
+    await wrap_lines(response["choices"][0]["text"], message=message)
+    print(f"Received response: {response['choices'][0]['text']}")
+
+
+async def wrap_lines(lines: list[str], message: discord.Message):
+    lines = textwrap.wrap(lines, 2000, break_long_words=False, replace_whitespace=False)
+    for line in lines:
+        await message.channel.send(line)
 
 
 @bot.command()
@@ -77,16 +141,16 @@ async def trello(context: commands.Context, *args):
         return
 
     if len(args) > 1:
-        if args[0] == "list":
-            if args[1] not in TRELLO_INVENYORY_LISTS:
+        if args[0].lower() == "list":
+            if args[1].lower() not in TRELLO_INVENYORY_LISTS:
                 return
-            await trello_list_cards(list_id=TRELLO_INVENYORY_LISTS[args[1]], context=context)
+            await trello_list_cards(list_id=TRELLO_INVENYORY_LISTS[args[1].lower()], context=context)
             return
-        if args[0] == "add":
+        if args[0].lower() == "add":
             list_name = "pt"
             card_name = " ".join(args[1:])
-            if args[1] in TRELLO_INVENYORY_LISTS:
-                list_name = args[1]
+            if args[1].lower() in TRELLO_INVENYORY_LISTS:
+                list_name = args[1].lower()
             if len(args) > 2:
                 card_name = " ".join(args[2:])
             await trello_add_card(list_id=TRELLO_INVENYORY_LISTS[list_name], card_name=card_name)
@@ -118,7 +182,7 @@ async def trello_list_cards(list_id: int, context: commands.Context):
 async def clear(context: commands.Context, *args):
     if args[0].lower() == "bot":
         async for message in context.channel.history():
-            if message.author == bot.user:
+            if message.author == bot.user and message.id != context.message.id:
                 await message.delete()
 
 
