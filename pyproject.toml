@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shiny_api"
-version = "0.1.27"
+version = "0.1.28"
 description = "Interface with LS and Camera Scanner"
 authors = ["Chris Busillo <info@shinycomputers.com>"]
 packages = [{include = "shiny_api"}]
@@ -22,7 +22,7 @@ discord = "^2.1.0"
 py-trello = "^0.19.0"
 numpi = "^0.3.1"
 pandas = "^1.5.3"
-openai = {version = "^0.26.5", extras = ["wandbd datalib embeddings"]}
+openai = "^0.26.5"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^2.16.1"

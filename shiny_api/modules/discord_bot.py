@@ -1,7 +1,7 @@
 import os
-import discord
 import platform
 import textwrap
+import discord
 from discord.ext import commands
 from kivy.uix.button import Button
 from trello import TrelloClient
@@ -28,14 +28,15 @@ intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 intents.presences = True
-client = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
+
+bot_client = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
 
 
-@client.event
+@bot_client.event
 async def on_ready():
-    print(f"{client.user.display_name} has connected to Discord!")
+    print(f"{bot_client.user.display_name} has connected to Discord!")
 
-    channels = client.get_all_channels()
+    channels = bot_client.get_all_channels()
 
     channel = discord.utils.get(channels, name="bot-config")
 
@@ -46,17 +47,23 @@ async def on_ready():
             await message.delete()
 
 
-@client.event
+# [item for item in item_list if all(word.lower() in item.description.lower() for word in descriptions)]
+
+
+@bot_client.event
 async def on_message(message: discord.Message):
-    bots = client.guilds[0].members
-    if len(bots) > 1:
+    roles = bot_client.guilds[0].me.roles
+    if any("Dev" in role.name for role in roles):
         if platform.node().lower() == "secureerase":
             return
-    if message.author == client.user:
+    elif platform.node().lower() != "secureerase":
         return
 
-    if client.user.mentioned_in(message) or not message.guild:
-        prompt = message.content.replace(client.user.mention, "").strip()
+    if message.author == bot_client.user:
+        return
+
+    if bot_client.user.mentioned_in(message) or not message.guild:
+        prompt = message.content.replace(bot_client.user.mention, "").strip()
         engine = "text-davinci-003"
         if prompt.split()[0].lower() == "code":
             engine = "code-davinci-002"
@@ -70,12 +77,11 @@ async def on_message(message: discord.Message):
         async with message.channel.typing():
             await get_chatgpt_message(message=message, engine=engine, prompt=prompt)
 
-    await client.process_commands(message)
+    await bot_client.process_commands(message)
     if message.content is None or len(message.content) == 0:
         return
     if message.content[0] == COMMAND_PREFIX:
-        # await message.delete()
-        pass
+        await message.delete()
 
 
 async def get_walle_image(message: discord.Message, prompt: str, engine: str):
@@ -106,7 +112,7 @@ async def get_chatgpt_message(message: discord.Message, engine: str, prompt: str
             max_tokens=1000,
             n=1,
             stop=None,
-            temperature=0.8,
+            temperature=1,
             api_key=config.OPENAI_API_KEY,
         )
     except openai.error.InvalidRequestError as exception:
@@ -122,12 +128,12 @@ async def wrap_lines(lines: list[str], message: discord.Message):
         await message.channel.send(line)
 
 
-@client.command()
-async def testing(context: commands.Context, *args):
-    print(client.user)
+@bot_client.command()
+async def testing(_: commands.Context, *_1):
+    pass
 
 
-@client.command()
+@bot_client.command()
 async def ls(context: commands.Context, *args):
     if context.channel.category_id != 896413039543336990:
         await context.channel.send("Not allowed in this channel")
@@ -147,7 +153,7 @@ async def ls(context: commands.Context, *args):
         await context.channel.send(message_output)
 
 
-@client.command()
+@bot_client.command()
 async def trello(context: commands.Context, *args):
     if context.channel.category_id != 896413039543336990:
         await context.channel.send("Not allowed in this channel")
@@ -173,15 +179,15 @@ async def trello(context: commands.Context, *args):
 
 
 async def trello_add_card(list_id: int, card_name: str):
-    client = TrelloClient(api_key=config.TRELLO_APIKEY, token=config.TRELLO_OAUTH_TOKEN)
-    inventory_board = client.get_board(TRELLO_INVENTORY_BOARD)
+    trello_client = TrelloClient(api_key=config.TRELLO_APIKEY, token=config.TRELLO_OAUTH_TOKEN)
+    inventory_board = trello_client.get_board(TRELLO_INVENTORY_BOARD)
     inventory_list = inventory_board.get_list(list_id=list_id)
     inventory_list.add_card(card_name)
 
 
 async def trello_list_cards(list_id: int, context: commands.Context):
-    client = TrelloClient(api_key=config.TRELLO_APIKEY, token=config.TRELLO_OAUTH_TOKEN)
-    inventory_board = client.get_board(TRELLO_INVENTORY_BOARD)
+    trello_client = TrelloClient(api_key=config.TRELLO_APIKEY, token=config.TRELLO_OAUTH_TOKEN)
+    inventory_board = trello_client.get_board(TRELLO_INVENTORY_BOARD)
     message_output = ""
     inventory_list = inventory_board.get_list(list_id=list_id)
     for card in inventory_list.list_cards(card_filter="open"):
@@ -194,27 +200,32 @@ async def trello_list_cards(list_id: int, context: commands.Context):
     return
 
 
-@client.command()
+@bot_client.command()
 async def clear(context: commands.Context, *args):
+    if context.channel.id != 1073943829192912936:
+        return
     if args[0].lower() == "bot":
         async for message in context.channel.history():
-            if message.author == client.user and message.id != context.message.id:
+            if message.author == bot_client.user and message.id != context.message.id:
                 await message.delete()
+    elif args[0].lower() == "all":
+        async for message in context.channel.history():
+            await message.delete()
 
 
-@client.command()
+@bot_client.command()
 async def best(context: commands.Context, *args):
     if args is None:
         await context.channel.send(f"{context.author.mention} is the best!")
         return
-    users = client.get_all_members()
+    users = bot_client.get_all_members()
     for user in users:
         if " ".join(args).lower() in user.name.lower():
             await context.channel.send(f"{user.mention} is the best!")
 
 
 def start_bot(caller: Button):
-    client.run(config.DISCORD_TOKEN)
+    bot_client.run(config.DISCORD_TOKEN)
     caller.text = f"{caller.text.split(chr(10))[0]}\nDiscord Bot Running"
     caller.disabled = False
     caller.text = caller.text.split("\n")[0]
