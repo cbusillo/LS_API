@@ -30,6 +30,7 @@ intents.message_content = True
 intents.presences = True
 
 bot_client = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
+bot_client.user_threads = {}
 
 
 @bot_client.event
@@ -46,30 +47,42 @@ async def on_ready():
         if message.content[0] == COMMAND_PREFIX:
             await message.delete()
 
+    if platform.node().lower() == "chris-mbp":
+        role = discord.utils.get(bot_client.guilds[0].roles, name="Dev")
+        bot_member = discord.utils.get(bot_client.get_all_members(), name="Doug Bot")
+        await bot_member.add_roles(role)
+
 
 # [item for item in item_list if all(word.lower() in item.description.lower() for word in descriptions)]
 
 
 @bot_client.event
 async def on_message(message: discord.Message):
+    if message.author == bot_client.user:
+        return
+
     roles = bot_client.guilds[0].me.roles
     if any("Dev" in role.name for role in roles):
         if platform.node().lower() == "secureerase":
             return
     elif platform.node().lower() != "secureerase":
         return
-
-    if message.author == bot_client.user:
-        return
-
+    prompt = message.content
     if bot_client.user.mentioned_in(message) or not message.guild:
-        prompt = message.content.replace(bot_client.user.mention, "").strip()
+        while bot_client.user.mention in prompt:
+            prompt = prompt.replace(bot_client.user.mention, "").strip()
+
         engine = "text-davinci-003"
-        if prompt.split()[0].lower() == "code":
+        if prompt.split()[0].lower() == "reset":
+            bot_client.user_threads[message.author.id] = ""
+            prompt = " ".join(prompt.split()[1:]).strip()
+        if len(prompt.strip()) == 0:
+            return
+        if prompt.split()[0].lower() == "code" and len(prompt.split()) > 2:
             engine = "code-davinci-002"
             prompt = " ".join(prompt.split()[1:]).strip()
 
-        if prompt.split()[0].lower() == "image":
+        if prompt.split()[0].lower() == "image" and len(prompt.split()) > 2:
             image_engine = "image-alpha-001"
             prompt = " ".join(prompt.split()[1:]).strip()
             async with message.channel.typing():
@@ -104,15 +117,18 @@ async def get_walle_image(message: discord.Message, prompt: str, engine: str):
 
 
 async def get_chatgpt_message(message: discord.Message, engine: str, prompt: str):
-    print(f"Sending message: {prompt} to {engine}")
+    if message.author.id not in bot_client.user_threads:
+        bot_client.user_threads[message.author.id] = ""
+    bot_client.user_threads[message.author.id] += f"\n{prompt}"
+    print(f"Sending message: {str(bot_client.user_threads[message.author.id]).strip()} to {engine}")
     try:
         response = await openai.Completion.acreate(
             engine=engine,
-            prompt=prompt,
+            prompt=bot_client.user_threads[message.author.id],
             max_tokens=1000,
             n=1,
             stop=None,
-            temperature=1,
+            temperature=0.75,
             api_key=config.OPENAI_API_KEY,
         )
     except openai.error.InvalidRequestError as exception:
