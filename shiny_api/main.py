@@ -27,8 +27,8 @@ from shiny_api.modules import update_customer_phone, update_item_price, webliste
 from kivy.core.window import Window  # pylint: disable=wrong-import-order
 from kivy.uix.textinput import TextInput  # pylint: disable=wrong-import-order
 
-MY_COMPUTER = "chris-mbp"
-SERVER = ["secureerase", MY_COMPUTER]
+MY_COMPUTER = "chris-macbook-pro.local"
+SERVER = ["secureerase.local", MY_COMPUTER]
 
 if platform.node().lower() == MY_COMPUTER:
     config.DEBUG_CODE = True
