@@ -10,6 +10,7 @@ import openai
 import shiny_api.modules.load_config as config
 from shiny_api.classes.ls_item import Item
 from shiny_api.modules.connect_ls import generate_ls_access
+from shiny_api.modules.label_print import print_text
 
 
 print(f"Importing {os.path.basename(__file__)}...")
@@ -31,6 +32,11 @@ intents.presences = True
 
 bot_client = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
 bot_client.user_threads = {}
+
+
+@bot_client.event
+async def on_disconnect():
+    print("test")
 
 
 @bot_client.event
@@ -67,34 +73,41 @@ async def on_message(message: discord.Message):
             return
     elif platform.node().lower() != "secureerase":
         return
-    prompt = message.content
+
     if bot_client.user.mentioned_in(message) or not message.guild:
-        while bot_client.user.mention in prompt:
-            prompt = prompt.replace(bot_client.user.mention, "").strip()
-
-        engine = "text-davinci-003"
-        if prompt.split()[0].lower() == "reset":
-            bot_client.user_threads[message.author.id] = ""
-            prompt = " ".join(prompt.split()[1:]).strip()
-        if len(prompt.strip()) == 0:
-            return
-        if prompt.split()[0].lower() == "code" and len(prompt.split()) > 2:
-            engine = "code-davinci-002"
-            prompt = " ".join(prompt.split()[1:]).strip()
-
-        if prompt.split()[0].lower() == "image" and len(prompt.split()) > 2:
-            image_engine = "image-alpha-001"
-            prompt = " ".join(prompt.split()[1:]).strip()
-            async with message.channel.typing():
-                await get_walle_image(message=message, engine=image_engine, prompt=prompt)
-        async with message.channel.typing():
-            await get_chatgpt_message(message=message, engine=engine, prompt=prompt)
+        await bot_mentioned(message)
 
     await bot_client.process_commands(message)
     if message.content is None or len(message.content) == 0:
         return
     if message.content[0] == COMMAND_PREFIX:
         await message.delete()
+
+
+async def bot_mentioned(message: discord.Message):
+    prompt = message.content
+    while bot_client.user.mention in prompt:
+        prompt = prompt.replace(bot_client.user.mention, "").strip()
+
+    engine = "text-davinci-003"
+
+    if prompt.split()[0].lower() == "code" and len(prompt.split()) > 2:
+        engine = "code-davinci-002"
+        prompt = " ".join(prompt.split()[1:]).strip()
+    if message.author.id not in bot_client.user_threads:
+        bot_client.user_threads[message.author.id] = ""
+    if message.reference:
+        bot_client.user_threads[message.author.id] += f"\n{prompt}"
+    else:
+        bot_client.user_threads[message.author.id] = prompt
+
+    if prompt.split()[0].lower() == "image" and len(prompt.split()) > 2:
+        image_engine = "image-alpha-001"
+        prompt = " ".join(prompt.split()[1:]).strip()
+        async with message.channel.typing():
+            await get_walle_image(message=message, engine=image_engine, prompt=prompt)
+    async with message.channel.typing():
+        await get_chatgpt_message(message=message, engine=engine)
 
 
 async def get_walle_image(message: discord.Message, prompt: str, engine: str):
@@ -116,10 +129,7 @@ async def get_walle_image(message: discord.Message, prompt: str, engine: str):
     await message.channel.send(embed=embed)
 
 
-async def get_chatgpt_message(message: discord.Message, engine: str, prompt: str):
-    if message.author.id not in bot_client.user_threads:
-        bot_client.user_threads[message.author.id] = ""
-    bot_client.user_threads[message.author.id] += f"\n{prompt}"
+async def get_chatgpt_message(message: discord.Message, engine: str):
     print(f"Sending message: {str(bot_client.user_threads[message.author.id]).strip()} to {engine}")
     try:
         response = await openai.Completion.acreate(
@@ -145,12 +155,21 @@ async def wrap_lines(lines: list[str], message: discord.Message):
 
 
 @bot_client.command()
-async def testing(_: commands.Context, *_1):
-    pass
+async def label(_: commands.Context, *args):
+    quantity = 1
+    date_bool = True
+    barcode = None
+    text = " ".join(args)
+    if int(args[0]):
+        quantity = args[0]
+        text = text.replace(args[0], "")
+    text = text.strip()
+
+    print_text(text, quantity=quantity, print_date=date_bool, barcode=barcode)
 
 
-@bot_client.command()
-async def ls(context: commands.Context, *args):
+@bot_client.command(aliases=["ls"])
+async def ls_api(context: commands.Context, *args):
     if context.channel.category_id != 896413039543336990:
         await context.channel.send("Not allowed in this channel")
         return
