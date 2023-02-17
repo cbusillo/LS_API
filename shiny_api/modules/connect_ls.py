@@ -16,7 +16,10 @@ if config.DEBUG_LOGGING is False:
 def generate_ls_access():
     """Generate access requirements."""
     response = requests.post(config.LS_URLS["access"], data=config.ACCESS_TOKEN, timeout=60)
-    config.accessHeader["Authorization"] = f'Bearer {response.json()["access_token"]}'
+    try:
+        config.accessHeader["Authorization"] = f'Bearer {response.json()["access_token"]}'
+    except:
+        return
 
 
 def get_data(currenturl, current_params="", caller: Button = None):

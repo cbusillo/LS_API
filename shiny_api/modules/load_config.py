@@ -4,6 +4,7 @@ import json
 
 print(f"Importing {os.path.basename(__file__)}...")
 
+
 CONFIG_DIR = os.path.dirname(os.path.abspath(__file__)) + "/../"
 CONFIG_SECRET_DIR = os.path.expanduser("~")
 

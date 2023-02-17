@@ -305,4 +305,7 @@ class Item:
 
 
 # load attributes before main program runs
-sizeAttributes = SizeAttributes.get_size_attributes()
+try:
+    sizeAttributes = SizeAttributes.get_size_attributes()
+except:
+    pass
