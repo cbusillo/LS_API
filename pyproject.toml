@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shiny_api"
-version = "0.1.39"
+version = "0.1.41"
 description = "Interface with LS and Camera Scanner"
 authors = ["Chris Busillo <info@shinycomputers.com>"]
 packages = [{include = "shiny_api"}]
@@ -17,12 +17,12 @@ pygsheets = "^2.0.6"
 beautifulsoup4 = "^4.11.2"
 dotenv = {version = "^0.0.5", platform = "windows"}
 python-dotenv = {version = "^0.21.1", platform = "darwin"}
-zpl = "^0.1.10"
 discord = "^2.1.0"
 py-trello = "^0.19.0"
 numpi = "^0.3.1"
 pandas = "^1.5.3"
 openai = "^0.26.5"
+simple-zpl2 = "^0.3.0"
 
 [tool.poetry.group.dev.dependencies]
 pylint = "^2.16.1"
