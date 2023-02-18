@@ -1,6 +1,5 @@
 """Connect to sickw and return a SickwResults object with data from serial_number and service """
 import os
-import json
 from typing import List
 from bs4 import BeautifulSoup
 import requests
@@ -15,46 +14,46 @@ APPLE_SERIAL_INFO = 26
 class SickwResults:
     """Object built from sickw API results"""
 
-    result_id: int = 0
-    status: str
-    serial_number: str
-    description: str = ""
-    name: str = ""
-    a_number: str = ""
-    model_id: str = ""
-    capacity: str = ""
-    color: str = ""
-    type: str = ""
-    year: int = 0
+    status: str = "failed"
 
-    def __init__(self, serial_number: str, service: int) -> None:
+    def __init__(self, serial_number: str, service: int = APPLE_SERIAL_INFO) -> None:
         """Instantiate result with data from API from passed serial number and service.  Set status to false if sickw
         says not success or no HTML result string"""
-        self.serial_number = serial_number
-        sickw_return = json.loads(self.get_json(serial_number, service))
-        if sickw_return.get("status").lower() == "success":
-            sickw_return_dict = self.html_to_dict(sickw_return.get("result"))
-            if sickw_return_dict:
-                self.result_id = sickw_return.get("id")
-                self.status = sickw_return.get("status")
-                self.description = sickw_return_dict.get("Model Desc")
-                self.name = sickw_return_dict.get("Model Name")
-                self.a_number = sickw_return_dict.get("Model Number")
-                self.model_id = sickw_return_dict.get("Model iD")
-                self.capacity = sickw_return_dict.get("Capacity")
-                self.color = sickw_return_dict.get("Color")
-                self.type = sickw_return_dict.get("Type")
-                self.year = sickw_return_dict.get("Year")
-                return
-        self.status = "failed"
 
-    def get_json(self, serial_number: str, service: int):
-        """Get requested data from Sickw API"""
         current_params = {"imei": serial_number, "service": service, "key": config.SICKW_API_KEY, "format": "JSON"}
         headers = {"User-Agent": "My User Agent 1.0"}
         response = requests.get("https://sickw.com/api.php", params=current_params, headers=headers, timeout=60)
-        # response_text = BeautifulSoup(response.text).get_text()
-        return response.text
+        response_json = response.json()
+
+        self.serial_number = serial_number
+        if response_json.get("status").lower() != "success":
+            return
+
+        sickw_return_dict = self.html_to_dict(response_json.get("result"))
+        if not sickw_return_dict:
+            return
+        self.result_id: int = response_json.get("id")
+        self.status: str = response_json.get("status")
+        self.description: str = sickw_return_dict.get("Model Desc")
+        self.name: str = sickw_return_dict.get("Model Name")
+        self.a_number: str = sickw_return_dict.get("Model Number")
+        self.model_id: str = sickw_return_dict.get("Model iD")
+        self.capacity: str = sickw_return_dict.get("Capacity")
+        self.color: str = sickw_return_dict.get("Color")
+        self.type: str = sickw_return_dict.get("Type")
+        self.year: int = sickw_return_dict.get("Year")
+        return
+
+    def __str__(self) -> str:
+        if self.status == "failed":
+            return "No results"
+
+        print_string = (
+            f"{self.name} {self.description} {self.color} {self.capacity}\n"
+            + f"{self.model_id} {self.a_number} {self.type} {self.year}\n"
+            + f"{self.status}\n"
+        )
+        return print_string
 
     def html_to_dict(self, html: str):
         """generate dict from html returned in result"""
