@@ -101,7 +101,8 @@ class MainScreen(Screen):
 
         start_discord_bot_button = Button(text="Start Discord Bot")
         start_discord_bot_button.bind(on_press=self.start_discord_bot)
-        start_discord_bot_button.disabled = True
+        if platform.node().lower() not in MY_COMPUTER:
+            start_discord_bot_button.disabled = True
         self.grid_layout.add_widget(start_discord_bot_button)
         self.add_widget(self.grid_layout)
 
@@ -151,7 +152,8 @@ class MainScreen(Screen):
 
     def start_discord_bot(self, caller: Button):
         """Start API Server for LS"""
-        thread = Thread(target=discord_bot.start_bot, args=[caller])
+        shiny_bot = discord_bot.ShinyBot()
+        thread = Thread(target=shiny_bot.run, args=[config.DISCORD_TOKEN])
         thread.daemon = True
         caller.text += "\nrunning..."
         caller.disabled = True
