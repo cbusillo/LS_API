@@ -56,3 +56,9 @@ TRELLO_OAUTH_TOKEN = secret_file["trello_oauth_token"]
 TRELLO_INVENTORY_BOARD = "61697cfbd3529050685f9e3a"
 TRELLO_LIST_DEFAULT = "61697d01d1c4463bc0fa066c"
 OPENAI_API_KEY = secret_file["openai_api_key"]
+PHONECHECK_API_KEY = secret_file["phonecheck_api_key"]
+
+PC_API_URL = {
+    "device": " https://clientapiv2.phonecheck.com/cloud/cloudDB/GetDeviceInfo",
+    "devices": "https://clientapiv2.phonecheck.com/cloud/CloudDB/v2/GetAllDevices",
+}
