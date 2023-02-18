@@ -17,11 +17,6 @@ def print_text(text: List[str] = None, barcode: str = None, text_bottom: str = N
     if not isinstance(text, list):
         text = [text]
 
-    if text_bottom is None:
-        text_bottom = ""
-    if barcode is None:
-        barcode = ""
-
     label_width = int(203 * LABEL_SIZE["width"])
     label_height = int(203 * LABEL_SIZE["height"])
 
