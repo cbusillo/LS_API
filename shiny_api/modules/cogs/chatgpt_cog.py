@@ -3,7 +3,6 @@ import os
 import platform
 import textwrap
 import discord
-from discord import app_commands
 from discord.ext import commands
 import openai
 import shiny_api.modules.load_config as config
