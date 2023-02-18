@@ -13,11 +13,11 @@ print(f"Importing {os.path.basename(__file__)}...")
 def run_update_item_price(caller: Button):
     """ "//device key": ["current model?", "year", "basePrice", "cellPrice", "store URL"]"""
 
-    with open(f"{config.CONFIG_DIR}/../config/devices.json", encoding="utf8") as file:
+    with open(f"{config.SCRIPT_DIR}/../config/devices.json", encoding="utf8") as file:
         devices = json.load(file)
 
     # "//max age": "price multiplier"
-    with open(f"{config.CONFIG_DIR}/config/age.json", encoding="utf8") as file:
+    with open(f"{config.SCRIPT_DIR}/config/age.json", encoding="utf8") as file:
         age_price = json.load(file)
 
     # Apple URL to load pricing from

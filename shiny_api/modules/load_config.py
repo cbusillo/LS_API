@@ -5,10 +5,11 @@ import json
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-CONFIG_DIR = os.path.dirname(os.path.abspath(__file__)) + "/../"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__)) + "/../"
 CONFIG_SECRET_DIR = os.path.expanduser("~")
+COG_DIR = SCRIPT_DIR + "/modules/cogs"
 
-with open(f"{CONFIG_DIR}/config/config.json", encoding="utf8") as file:
+with open(f"{SCRIPT_DIR}/config/config.json", encoding="utf8") as file:
     config_file = json.load(file)
 
 # load secret keys from secret.json
@@ -52,4 +53,6 @@ SICKW_API_KEY = secret_file["sickw_api_key"]
 DISCORD_TOKEN = secret_file["discord_token"]
 TRELLO_APIKEY = secret_file["trello_apiKey"]
 TRELLO_OAUTH_TOKEN = secret_file["trello_oauth_token"]
+TRELLO_INVENTORY_BOARD = "61697cfbd3529050685f9e3a"
+TRELLO_LIST_DEFAULT = "61697d01d1c4463bc0fa066c"
 OPENAI_API_KEY = secret_file["openai_api_key"]
