@@ -1,0 +1,18 @@
+@bot_client.command(aliases=["ls"])
+async def ls_api(context: commands.Context, *args):
+    if context.channel.category_id != 896413039543336990:
+        await context.channel.send("Not allowed in this channel")
+        return
+    if len(args) == 0 or args is None:
+        return
+    if args[0].lower() == "price" and len(args) > 1:
+        generate_ls_access()
+        items = Item.get_item_by_desciption(args[1:])
+        if items is None:
+            await context.channel.send("No results")
+            return
+        message_output = ""
+        for item in items:
+            message_output += f"{item.description} is ${item.prices.item_price[0].amount}\n"
+
+        await context.channel.send(message_output)
