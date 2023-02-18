@@ -1,6 +1,5 @@
 """Sync cogs to discord to enable /commands"""
 import os
-import platform
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -16,6 +15,7 @@ class SetupCog(commands.Cog):
         super().__init__()
 
     @commands.command(name="sync")
+    @commands.has_role("Shiny")
     async def sync_command(self, context: commands.Context) -> None:
         """Add slash commands to Discord guid"""
         context.bot.tree.copy_global_to(guild=context.guild)
@@ -51,13 +51,13 @@ class SetupCog(commands.Cog):
         """Print console message that bot is connected"""
         print(f"{self.client.user.display_name} has connected to Discord!")
 
-    @commands.Cog.listener("on_ready")
-    async def set_dev_rol(self):
-        """Add dev role to activate bot if run from dev machine"""
-        if platform.node().lower() == "chris-mbp":
-            role = discord.utils.get(self.client.guilds[0].roles, name="Dev")
-            bot_member = discord.utils.get(self.client.get_all_members(), name="Doug Bot")
-            await bot_member.add_roles(role)
+    # @commands.Cog.listener("on_ready")
+    # async def set_dev_rol(self):
+    #     """Add dev role to activate bot if run from dev machine"""
+    #     if platform.node().lower() == "chris-mbp":
+    #         role = discord.utils.get(self.client.guilds[0].roles, name="Dev")
+    #         bot_member = discord.utils.get(self.client.get_all_members(), name="Doug Bot")
+    #         await bot_member.add_roles(role)
 
 
 async def setup(client: commands.Bot):
