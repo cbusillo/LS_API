@@ -64,4 +64,6 @@ def print_text(text: List[str] = None, barcode: str = None, text_bottom: str = N
         current_origin = current_origin + (BARCODE_HEIGHT / 9) + 2
 
     printer = NetworkPrinter(config.PRINTER_HOST)
-    printer.print_zpl(label)
+
+    for _ in range(quantity):
+        printer.print_zpl(label)
