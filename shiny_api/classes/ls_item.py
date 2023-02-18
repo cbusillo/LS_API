@@ -233,7 +233,6 @@ class Item:
     @staticmethod
     def save_item_price(item: "Item"):
         """Call API put to update pricing."""
-        # TODO use generated payload instead of manual
         put_item = {
             "Prices": {
                 "ItemPrice": [
@@ -280,12 +279,14 @@ class Item:
 
     @staticmethod
     def get_item_by_id(item_id: int) -> "Item":
+        """Return LS Item object by item ID"""
         current_url = config.LS_URLS["item"]
         response = get_data(current_url.format(itemID=item_id), {"load_relations": '["ItemAttributes"]'})
         return Item.from_dict(response.json().get("Item"))
 
     @staticmethod
     def get_item_by_desciption(descriptions: List[str]) -> "List[Item]":
+        """Return LS Item by searching description using OR and then filtering for all words"""
         item_list: List[Item] = []
         current_url = config.LS_URLS["items"]
         description = ""
@@ -307,5 +308,5 @@ class Item:
 # load attributes before main program runs
 try:
     sizeAttributes = SizeAttributes.get_size_attributes()
-except:
-    pass
+except TypeError as error:
+    print(f"failed to get attribute: {error}")
