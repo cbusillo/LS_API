@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shiny_api"
-version = "0.2.20"
+version = "0.2.21"
 description = "Interface with LS and Camera Scanner"
 authors = ["Chris Busillo <info@shinycomputers.com>"]
 packages = [{include = "shiny_api"}]
@@ -26,8 +26,8 @@ simple-zpl2 = "^0.3.0"
 luddite = "^1.0.2"
 
 [tool.poetry.group.dev.dependencies]
-pylint = "^2.16.2"
 black = "^23.1.0"
+pylint = "^2.16.2"
 
 [build-system]
 requires = ["poetry-core"]

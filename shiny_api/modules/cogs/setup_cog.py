@@ -43,7 +43,7 @@ class SetupCog(commands.Cog):
             app_commands.Choice(name="All", value="all"),
         ]
     )
-    async def clear_command(self, context: discord.Interaction, scope: str):
+    async def clear_command(self, context: discord.Interaction, scope: str) -> None:
         """Clear all or bot messages in bot-config"""
         if context.channel.id != BOT_CHANNEL:
             await context.channel.send("Cannot use in this channel")
@@ -74,9 +74,7 @@ class SetupCog(commands.Cog):
         """Set bot role and sync commands"""
         self.client.tree.copy_global_to(guild=self.client.guilds[0])
         synced = await self.client.tree.sync(guild=self.client.guilds[0])
-        await self.client.get_channel(BOT_CHANNEL).send(
-            f"Synced {len(synced)} commands from {platform.node()}."
-        )
+        await self.client.get_channel(BOT_CHANNEL).send(f"Synced {len(synced)} commands from {platform.node()}.")
         role = discord.utils.get(self.client.guilds[0].roles, name="Dev")
         bot_member = discord.utils.get(self.client.get_all_members(), name="Doug Bot")
         if platform.node().lower() == "secureerase":

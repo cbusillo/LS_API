@@ -10,12 +10,12 @@ from shiny_api.modules import load_config as config
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-def atoi(text):
+def atoi(text: str):
     """check if text is number for natrual number sort"""
     return int(text) if text.isdigit() else text
 
 
-def natural_keys(text):
+def natural_keys(text: str):
     """sort numbers like a human"""
     match text.lower():
         case "1tb":
@@ -25,7 +25,7 @@ def natural_keys(text):
     return [atoi(c) for c in re.split(r"(\d+)", text)]
 
 
-def to_json(tojson):
+def to_json(tojson: str):
     """Convert string to JSON"""
     return json.dumps(
         tojson,
