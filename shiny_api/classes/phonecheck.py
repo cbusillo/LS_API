@@ -23,7 +23,7 @@ class Device:
         response = requests.post(url=config.PC_API_URL["device"], data=params, timeout=60)
         response_json: dict = response.json()
 
-        if response_json["msg"] == "No Data Found":
+        if response_json.get("msg") == "No Data Found":
             return
         self.master_id: int = response_json.get("master_id")
         self.model: str = response_json.get("Model")
@@ -59,8 +59,3 @@ class Device:
             + f"Parts: {self.parts_status}"
         )
         return print_string
-
-
-# device = Device("FV7P2LJJR6")
-# print(device)
-# pass
