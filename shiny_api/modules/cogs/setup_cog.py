@@ -1,5 +1,7 @@
 """Sync cogs to discord to enable /commands"""
+import asyncio
 import os
+import platform
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -18,9 +20,25 @@ class SetupCog(commands.Cog):
     @commands.has_role("Shiny")
     async def sync_command(self, context: commands.Context) -> None:
         """Add slash commands to Discord guid"""
-        context.bot.tree.copy_global_to(guild=context.guild)
-        synced = await context.bot.tree.sync(guild=context.guild)
-        await context.send(f"Synced {len(synced)} commands.")
+        if platform.node().lower() == "secureerase":
+            await asyncio.sleep(2)
+
+        try:
+            await context.message.delete()
+            context.bot.tree.copy_global_to(guild=context.guild)
+            synced = await context.bot.tree.sync(guild=context.guild)
+            await context.send(f"Synced {len(synced)} commands from {platform.node()}.")
+            role = discord.utils.get(self.client.guilds[0].roles, name="Dev")
+            bot_member = discord.utils.get(self.client.get_all_members(), name="Doug Bot")
+            if platform.node().lower() == "secureerase":
+                print("Switching to Prod")
+                await bot_member.remove_roles(role)
+            else:
+                print("Switching to Dev")
+                await bot_member.add_roles(role)
+        except:
+            print("Not able to delete message")
+            return
 
     @app_commands.command(name="clear")
     @app_commands.choices(
@@ -51,13 +69,13 @@ class SetupCog(commands.Cog):
         """Print console message that bot is connected"""
         print(f"{self.client.user.display_name} has connected to Discord!")
 
-    # @commands.Cog.listener("on_ready")
-    # async def set_dev_rol(self):
-    #     """Add dev role to activate bot if run from dev machine"""
-    #     if platform.node().lower() == "chris-mbp":
-    #         role = discord.utils.get(self.client.guilds[0].roles, name="Dev")
-    #         bot_member = discord.utils.get(self.client.get_all_members(), name="Doug Bot")
-    #         await bot_member.add_roles(role)
+    @commands.Cog.listener("on_ready")
+    async def set_dev_rol(self):
+        """Add dev role to activate bot if run from dev machine"""
+        if platform.node().lower() == "chris-mbp":
+            role = discord.utils.get(self.client.guilds[0].roles, name="Dev")
+            bot_member = discord.utils.get(self.client.get_all_members(), name="Doug Bot")
+            await bot_member.add_roles(role)
 
 
 async def setup(client: commands.Bot):
