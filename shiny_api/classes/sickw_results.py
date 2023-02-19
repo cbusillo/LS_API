@@ -1,4 +1,5 @@
 """Connect to sickw and return a SickwResults object with data from serial_number and service """
+from dataclasses import dataclass
 import os
 from typing import List
 from bs4 import BeautifulSoup
@@ -11,6 +12,7 @@ print(f"Importing {os.path.basename(__file__)}...")
 APPLE_SERIAL_INFO = 26
 
 
+@dataclass
 class SickwResults:
     """Object built from sickw API results"""
 
