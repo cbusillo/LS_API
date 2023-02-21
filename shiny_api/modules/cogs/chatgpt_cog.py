@@ -26,9 +26,9 @@ class ChatGPTCog(commands.Cog):
 
         roles = self.client.guilds[0].me.roles
         if any("Dev" in role.name for role in roles):
-            if platform.node().lower() == "secureerase":
+            if "secureerase" in platform.node().lower():
                 return
-        elif platform.node().lower() != "secureerase":
+        elif "secureerase" not in platform.node().lower():
             return
 
         if self.client.user.mentioned_in(message) or not message.guild:
@@ -64,6 +64,9 @@ class ChatGPTCog(commands.Cog):
         except openai.error.InvalidRequestError as exception:
             await message.channel.send(str(exception))
             return
+        except openai.error.RateLimitError as exception:
+            await message.channel.send(str(exception))
+            return
 
         image_url = response["data"][0]["url"]
 
@@ -83,10 +86,14 @@ class ChatGPTCog(commands.Cog):
                 max_tokens=1000,
                 n=1,
                 stop=None,
-                temperature=0.75,
+                temperature=0,
+                top_p=1,
                 api_key=config.OPENAI_API_KEY,
             )
         except openai.error.InvalidRequestError as exception:
+            await message.channel.send(str(exception))
+            return
+        except openai.error.RateLimitError as exception:
             await message.channel.send(str(exception))
             return
         await self.wrap_lines(response["choices"][0]["text"], message=message)
