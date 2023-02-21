@@ -3,10 +3,11 @@ import asyncio
 import importlib.metadata
 import os
 import platform
-import luddite
+import time
 import discord
-from discord.ext import commands
+import luddite
 from discord import app_commands
+from discord.ext import commands
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -18,22 +19,32 @@ class SetupCog(commands.Cog):
 
     def __init__(self, client: commands.Bot) -> None:
         self.client = client
+        self.enable_commands = True
         super().__init__()
+
+    @commands.Cog.listener("on_message")
+    async def enable_function(self, _: discord.Message):
+        """If not enabled, delay one second so dev can answer"""
+        if self.enable_commands is False:
+            time.sleep(2)
 
     @commands.command(name="sync")
     async def sync_command(self, context: commands.Context) -> None:
         """Add slash commands to Discord guid"""
-        if platform.node().lower() == "secureerase":
+        if "secureerase" in platform.node().lower():
             await context.defer()
-            if importlib.metadata.version("shiny_api") != luddite.get_version_pypi("shiny_api"):
+            if importlib.metadata.version("shiny_api") < luddite.get_version_pypi("shiny_api"):
+                await context.send("New version available, exiting and updating")
                 os._exit(1)  # pylint: disable=protected-access
             await asyncio.sleep(2)
 
         try:
             await context.message.delete()
             await self.check_server()
+            self.enable_commands: bool = True
         except discord.errors.NotFound:
             print("Not able to delete message")
+            self.enable_commands: bool = False
             return
 
     @app_commands.command(name="clear")
@@ -77,7 +88,7 @@ class SetupCog(commands.Cog):
         await self.client.get_channel(BOT_CHANNEL).send(f"Synced {len(synced)} commands from {platform.node()}.")
         role = discord.utils.get(self.client.guilds[0].roles, name="Dev")
         bot_member = discord.utils.get(self.client.get_all_members(), name="Doug Bot")
-        if platform.node().lower() == "secureerase":
+        if "secureerase" in platform.node().lower():
             print("Switching to Prod")
             await bot_member.remove_roles(role)
         else:
