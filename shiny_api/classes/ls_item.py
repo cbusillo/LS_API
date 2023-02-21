@@ -287,6 +287,8 @@ class Item:
     @staticmethod
     def get_item_by_desciption(descriptions: List[str]) -> "List[Item]":
         """Return LS Item by searching description using OR and then filtering for all words"""
+        if not isinstance(descriptions, list):
+            descriptions = [descriptions]
         item_list: List[Item] = []
         current_url = config.LS_URLS["items"]
         description = ""
