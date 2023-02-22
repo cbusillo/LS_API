@@ -63,6 +63,12 @@ LABELS = [
     "Fully Functional",
     "eBay",
 ]
+PRINTER_HOST_ROB = "192.168.1.241"
+LABELS_ROB = [
+    "Scrap NOT Wiped",
+    "Scrap Wiped",
+    "List on eBay",
+]
 
 
 class MainScreen(Screen):
@@ -90,9 +96,13 @@ class MainScreen(Screen):
         open_ipsw_downloader_button.bind(on_press=self.open_ipsw_downloader)
         self.grid_layout.add_widget(open_ipsw_downloader_button)
 
-        slide_label_printer_button = Button(text="Open Label Printer")
+        slide_label_printer_button = Button(text="Label Printer")
         slide_label_printer_button.bind(on_press=self.changer)
         self.grid_layout.add_widget(slide_label_printer_button)
+
+        slide_label_printer_rob_button = Button(text="Rob's Label Printer")
+        slide_label_printer_rob_button.bind(on_press=self.changer)
+        self.grid_layout.add_widget(slide_label_printer_rob_button)
 
         start_api_server_button = Button(text="Start API Server")
         start_api_server_button.bind(on_press=self.start_api_server)
@@ -110,9 +120,9 @@ class MainScreen(Screen):
             self.start_api_server(start_api_server_button)
             self.start_discord_bot(start_discord_bot_button)
 
-    def changer(self, *_):
+    def changer(self, caller: Button):
         """Slide to malabel_printer_screen"""
-        self.manager.current = "label_printer_screen"
+        self.manager.current = caller.text
 
     def update_item_price(self, caller: Button):
         """Run the Item Pricing Function"""
@@ -163,9 +173,12 @@ class MainScreen(Screen):
 class LabelPrinterScreen(Screen):
     """Define main screen grid layout"""
 
-    def __init__(self, **kwargs):
+    def __init__(self, printer_ip: str = config.PRINTER_HOST, labels: list[str] = None, **kwargs):
         super().__init__(**kwargs)
+        if not labels:
+            labels = LABELS
 
+        self.printer_ip = printer_ip
         main_grid = GridLayout()
         main_grid.cols = 1
         main_grid.padding = 10
@@ -212,7 +225,7 @@ class LabelPrinterScreen(Screen):
 
         label_buttons: List[Button] = []
 
-        for index, label in enumerate(LABELS):
+        for index, label in enumerate(labels):
             label_buttons.append(Button(text=label))
             label_buttons[index].bind(on_press=partial(self.print_labels, text=label))
             label_grid.add_widget(label_buttons[index])
@@ -262,7 +275,14 @@ class LabelPrinterScreen(Screen):
         quantity = int(self.quantity_textbox.text)
 
         Thread(
-            target=partial(label_print.print_text, text, quantity=quantity, print_date=self.date_checkbox.active, barcode=barcode)
+            target=partial(
+                label_print.print_text,
+                text,
+                quantity=quantity,
+                print_date=self.date_checkbox.active,
+                barcode=barcode,
+                printer_ip=self.printer_ip,
+            )
         ).start()
         self.barcode_textbox.text = "Barcode"
         self.quantity_textbox.text = "1"
@@ -274,9 +294,11 @@ class APIApp(App):
     def build(self):
         screen_manager = ScreenManager()
         main_screen = MainScreen(name="main_screen")
-        label_printer_screen = LabelPrinterScreen(name="label_printer_screen")
+        label_printer_screen = LabelPrinterScreen(name="Label Printer")
+        label_printer_screen_rob = LabelPrinterScreen(name="Rob's Label Printer", printer_ip=PRINTER_HOST_ROB)
         screen_manager.add_widget(main_screen)
         screen_manager.add_widget(label_printer_screen)
+        screen_manager.add_widget(label_printer_screen_rob)
         return screen_manager
 
 

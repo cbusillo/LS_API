@@ -12,7 +12,14 @@ LABEL_PADDING = 10
 BARCODE_HEIGHT = 35
 
 
-def print_text(text: List[str] = None, barcode: str = None, text_bottom: str = None, quantity: int = 1, print_date: bool = True):
+def print_text(
+    text: List[str] = None,
+    barcode: str = None,
+    text_bottom: str = None,
+    quantity: int = 1,
+    print_date: bool = True,
+    printer_ip: str = config.PRINTER_HOST,
+):
     """Open socket to printer and send text"""
     if not isinstance(text, list):
         text = [text]
@@ -58,7 +65,6 @@ def print_text(text: List[str] = None, barcode: str = None, text_bottom: str = N
         label.add_barcode(barcode_zpl)
         current_origin = current_origin + (BARCODE_HEIGHT / 9) + 2
 
-    printer = NetworkPrinter(config.PRINTER_HOST)
-
+    printer = NetworkPrinter(printer_ip)
     for _ in range(quantity):
         printer.print_zpl(label)
