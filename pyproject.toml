@@ -6,13 +6,12 @@ authors = ["Chris Busillo <info@shinycomputers.com>"]
 packages = [{include = "shiny_api"}]
 
 [tool.poetry.dependencies]
-python = "3.10.*"
+python = "3.11.*"
 Flask = "^2.2.3"
 selenium = "^4.8.2"
 opencv-python = "^4.7.0.68"
 sqlalchemy = "^2.0.4"
 pytesseract = "^0.3.10"
-kivy = "^2.1.0"
 pygsheets = "^2.0.6"
 beautifulsoup4 = "^4.11.2"
 dotenv = {version = "^0.0.5", platform = "windows"}
@@ -24,6 +23,7 @@ pandas = "^1.5.3"
 openai = "^0.26.5"
 simple-zpl2 = "^0.3.0"
 luddite = "^1.0.2"
+kivy = {url = "https://kivy.org/downloads/ci/osx/kivy/Kivy-2.2.0.dev0-cp311-cp311-macosx_10_9_universal2.whl"}
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
