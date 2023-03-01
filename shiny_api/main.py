@@ -28,7 +28,8 @@ from kivy.core.window import Window  # pylint: disable=wrong-import-order
 from kivy.uix.textinput import TextInput  # pylint: disable=wrong-import-order
 
 MY_COMPUTER = ["chris-mbp"]
-SERVER = ["secureerase", "secureerase.local", MY_COMPUTER]
+SERVER = ["secureerase", "secureerase.local"]
+SERVER.extend(MY_COMPUTER)
 print(platform.node().lower())
 if platform.node().lower() in MY_COMPUTER:
     config.DEBUG_CODE = True
@@ -111,7 +112,7 @@ class MainScreen(Screen):
 
         start_discord_bot_button = Button(text="Start Discord Bot")
         start_discord_bot_button.bind(on_press=self.start_discord_bot)
-        if platform.node().lower() not in MY_COMPUTER:
+        if platform.node().lower() not in SERVER:
             start_discord_bot_button.disabled = True
         self.grid_layout.add_widget(start_discord_bot_button)
         self.add_widget(self.grid_layout)
