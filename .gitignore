@@ -4,9 +4,9 @@
 /.pylintrc
 /build
 /dist
-/temp
-*temp.py
+*temp*
 *secret.json
 *pem
 *egg-info
 poetry.lock
+shiny_api/temp.html
