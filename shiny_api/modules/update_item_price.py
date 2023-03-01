@@ -13,7 +13,7 @@ print(f"Importing {os.path.basename(__file__)}...")
 def run_update_item_price(caller: Button):
     """ "//device key": ["current model?", "year", "basePrice", "cellPrice", "store URL"]"""
 
-    with open(f"{config.SCRIPT_DIR}/../config/devices.json", encoding="utf8") as file:
+    with open(f"{config.SCRIPT_DIR}/config/devices.json", encoding="utf8") as file:
         devices = json.load(file)
 
     # "//max age": "price multiplier"
@@ -22,7 +22,7 @@ def run_update_item_price(caller: Button):
 
     # Apple URL to load pricing from
     scrape_url = "https://www.apple.com/shop/buy-{deviceURL}"
-    browser = webdriver.Safari()
+    browser = webdriver.Safari(port=0, executable_path="/usr/bin/safaridriver", quiet=False)
 
     # call LS API to load all items and return a list of Item objects
     output = "Loading items"
@@ -49,7 +49,7 @@ def run_update_item_price(caller: Button):
         ] in devices.items():
             # iterate through devices.json look for matching name look for base price or cell price
             if device_name in item.description:
-                if "cell" in item.description.lower():
+                if "cell" in item.description.lower() and device_cell_price > 0:
                     device_base_price = device_cell_price
                 # use device.json age to calculate from current
                 # and look for that age multiplier in age.json
@@ -70,27 +70,30 @@ def run_update_item_price(caller: Button):
                     json_price = json_price.replace(',"sectionEngagement":', "")
                     json_price = json_price.replace('"}]}}}}', '"}]}}')
                     json_price = json_price.replace('"shop"}}}}', '"shop"}}')
+                    json_price = json_price.replace('{"step":"select"}}}}}', '{"step":"select"}}}')
                     json_price = json.loads(json_price)
 
                     # Iterage through web prices and try to find match on current item.
                     # Use deviceBasePrice to subtract from new price.  Detect if cellular
                     for product in json_price["data"]["products"]:
-                        if size.lower() in product["name"].lower():
-                            if "cell" in item.description.lower():
-                                if "cell" in product["name"].lower():
-                                    apple_price = product["price"]["fullPrice"]
-                                    break
-                            else:
+                        if size.lower() not in product["name"].lower():
+                            continue
+                        if "12.9" in device_name and "12.9" not in product["name"]:
+                            continue
+
+                        if "cell" in item.description.lower():
+                            if "cell" in product["name"].lower():
                                 apple_price = product["price"]["fullPrice"]
                                 break
+                        else:
+                            apple_price = product["price"]["fullPrice"]
+                            break
                     device_price = apple_price - device_base_price
                 # device isn't new, dont use web lookup and
                 # generate price from base price, side and age multipliers
                 else:
                     device_price = device_base_price + (size_mult * age_mult)
-                output = (
-                    f"{item.description} Size:{size_mult} Age:{device_age} Base:{device_base_price} Item Price: {device_price}"
-                )
+                output = f"{item.description} Size:{size_mult} Age:{device_age} Base:{device_base_price} Item Price: {device_price}"
                 caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
                 print(output)
                 # load new price into all three LS item prices in Item object
