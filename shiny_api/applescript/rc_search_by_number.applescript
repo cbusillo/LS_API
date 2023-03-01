@@ -18,7 +18,7 @@ tell application "System Events"
                 end tell
             end tell
 			set value of text field 1 to phone_number
-            delay 1
+            delay 0.5
             tell static text 4
                 set search_message to value
                 if search_message does not contain text 1 thru 3 of phone_number 
