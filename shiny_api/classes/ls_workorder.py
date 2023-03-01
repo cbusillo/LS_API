@@ -27,8 +27,8 @@ class Workorder:
         """Workorder object from dict"""
         ls_workorder = self.get_workorder(workorder_id)
 
-        self.workorder_id = str(ls_workorder.get("workorderID"))
-        self.system_sku = str(ls_workorder.get("systemSku"))
+        self.workorder_id = int(ls_workorder.get("workorderID"))
+        self.system_sku = int(ls_workorder.get("systemSku"))
         self.time_in = str(ls_workorder.get("timeIn"))
         self.eta_out = str(ls_workorder.get("etaOut"))
         self.note = str(ls_workorder.get("note"))
@@ -40,14 +40,15 @@ class Workorder:
         self.save_parts = str(ls_workorder.get("saveParts"))
         self.assign_employee_to_all = str(ls_workorder.get("assignEmployeeToAll"))
         self.time_stamp = str(ls_workorder.get("timeStamp"))
-        self.customer_id = str(ls_workorder.get("customerID"))
-        self.discount_id = str(ls_workorder.get("discountID"))
-        self.employee_id = str(ls_workorder.get("employeeID"))
-        self.serialized_id = str(ls_workorder.get("serializedID"))
-        self.shop_id = str(ls_workorder.get("shopID"))
-        self.sale_id = str(ls_workorder.get("saleID"))
-        self.sale_line_id = str(ls_workorder.get("saleLineID"))
+        self.customer_id = int(ls_workorder.get("customerID"))
+        self.discount_id = int(ls_workorder.get("discountID"))
+        self.employee_id = int(ls_workorder.get("employeeID"))
+        self.serialized_id = int(ls_workorder.get("serializedID"))
+        self.shop_id = int(ls_workorder.get("shopID"))
+        self.sale_id = int(ls_workorder.get("saleID"))
+        self.sale_line_id = int(ls_workorder.get("saleLineID"))
         self.item_description = str(ls_workorder.get("Serialized").get("description")).strip()
+        self.total = float(ls_workorder.get("m").get("total"))
 
     @staticmethod
     def get_workorder(workorder_id):
