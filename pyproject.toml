@@ -24,6 +24,7 @@ openai = "^0.26.5"
 simple-zpl2 = "^0.3.0"
 luddite = "^1.0.2"
 kivy = {url = "https://kivy.org/downloads/ci/osx/kivy/Kivy-2.2.0.dev0-cp311-cp311-macosx_10_9_universal2.whl"}
+py-applescript = "^1.0.3"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
