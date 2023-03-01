@@ -1,12 +1,14 @@
 """Run webserver to listen for LS requests."""
 import os
 import datetime
+import locale
 from flask import Flask, request
 from kivy.uix.button import Button
 from shiny_api.classes import ls_customer
 from shiny_api.classes import ls_workorder
 from shiny_api.modules import label_print
 import shiny_api.modules.ring_central as ring_central
+import shiny_api.modules.load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -16,6 +18,9 @@ HTML_RETURN = """<html><script type="text/javascript">
 open(location, '_self').close(); 
 </script>
 <a id='close_button' href="javascript:window.open('','_self').close();">Close Tab</a></html>"""
+HTML_ERROR = "<html>No mobile phone number (Maybe run format customer phone numbers)<br><br>{error}</html>"
+
+locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 
 
 @app.route("/wo_label", methods=["GET"])
@@ -54,10 +59,17 @@ def rc_send_message():
     for phone in customer.contact.phones.contact_phone:
         if phone.use_type == "Mobile":
             phone_number = phone.number
-    if phone_number is None:
-        return HTML_RETURN
-    message = ring_central.MESSAGES[int(request.args.get("message"))]
-    message = message.format(name=customer.first_name, product=workorder.item_description)
+    try:
+        if phone_number is None:
+            return HTML_RETURN
+    except UnboundLocalError as error:
+        return HTML_ERROR.format(error=error)
+    message_number = int(request.args.get("message"))
+    if workorder.total == 0 and request.args.get("message") == "2":  # if we send a message with price with $0 price
+        message_number += 1
+
+    message = config.RESPONSE_MESSAGES[message_number]
+    message = message.format(name=customer.first_name, product=workorder.item_description, total=locale.currency(workorder.total))
     # message = message.replace("{{product}}", workorder)
     ring_central.send_message(phone_number, message)
 
@@ -67,6 +79,8 @@ def rc_send_message():
 def start_weblistener(caller: Button):
     """Start the listener"""
     caller.text = f"{caller.text.split(chr(10))[0]}\nListner Started"
-    app.run(host="0.0.0.0", port=8000)
+    from waitress import serve
+
+    serve(app, host="0.0.0.0", port=8000)
     caller.disabled = False
     caller.text = caller.text.split("\n")[0]
