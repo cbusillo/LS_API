@@ -27,10 +27,10 @@ from shiny_api.modules import update_customer_phone, update_item_price, webliste
 from kivy.core.window import Window  # pylint: disable=wrong-import-order
 from kivy.uix.textinput import TextInput  # pylint: disable=wrong-import-order
 
-MY_COMPUTER = "chris-mbp"
+MY_COMPUTER = ["chris-mbp"]
 SERVER = ["secureerase", "secureerase.local", MY_COMPUTER]
 print(platform.node().lower())
-if platform.node().lower() == MY_COMPUTER:
+if platform.node().lower() in MY_COMPUTER:
     config.DEBUG_CODE = True
     config.DEBUG_LOGGING = False
 
@@ -118,7 +118,8 @@ class MainScreen(Screen):
 
         if platform.node().lower() in SERVER:
             self.start_api_server(start_api_server_button)
-            self.start_discord_bot(start_discord_bot_button)
+            if platform.node().lower() not in MY_COMPUTER:
+                self.start_discord_bot(start_discord_bot_button)
 
     def changer(self, caller: Button):
         """Slide to malabel_printer_screen"""
