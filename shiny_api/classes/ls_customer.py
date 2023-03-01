@@ -237,7 +237,7 @@ class Customer:
     def from_dict(obj: Any) -> "Customer":
         """Customer object from dict"""
         _customer_id = str(obj.get("customerID"))
-        _first_name = str(obj.get("firstName"))
+        _first_name = str(obj.get("firstName")).strip()
         _last_name = str(obj.get("lastName"))
         _title = str(obj.get("title"))
         _company = str(obj.get("company"))
