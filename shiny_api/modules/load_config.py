@@ -68,3 +68,16 @@ RESPONSE_MESSAGES = [
     "Hi {name}, your {product} is finished and ready for pickup any time 11-7 Tu-Sa.  The total is {total}.  See you soon.",
     "Hi {name}, your {product} is finished and ready for pickup any time 11-7 Tu-Sa.  There is no charge.  See you soon.",
 ]
+
+STYLIZED_NAMES = [
+    "Mac",
+    "iMac",
+    "MacBook",
+    "iPhone",
+    "iPad",
+    "Watch",
+    "Pro",
+    "Air",
+    "Retina",
+    "HDD",
+]

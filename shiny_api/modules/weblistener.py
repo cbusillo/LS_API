@@ -67,9 +67,14 @@ def rc_send_message():
     message_number = int(request.args.get("message"))
     if workorder.total == 0 and request.args.get("message") == "2":  # if we send a message with price with $0 price
         message_number += 1
+    item_description = workorder.item_description
+    for word in config.STYLIZED_NAMES:
+        if word.lower() in item_description.lower() and word not in item_description:
+            index = item_description.lower().find(word.lower())
+            item_description = item_description[:index] + word + item_description[index + len(word) :]
 
     message = config.RESPONSE_MESSAGES[message_number]
-    message = message.format(name=customer.first_name, product=workorder.item_description, total=locale.currency(workorder.total))
+    message = message.format(name=customer.first_name, product=item_description, total=locale.currency(workorder.total))
     # message = message.replace("{{product}}", workorder)
     ring_central.send_message(phone_number, message)
 
