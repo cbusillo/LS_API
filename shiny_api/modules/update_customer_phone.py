@@ -12,16 +12,21 @@ def run_update_customer_phone(caller: Button):
     customers = ls_customer.Customer.get_customers(caller)
     customers_updated = 0
     for index, customer in enumerate(customers):
-        if customer.contact.phones:
-            for each_number in customer.contact.phones.contact_phone:
-                cleaned_number = re.sub(r"[^0-9x]", "", each_number.number)
-                if each_number.number != cleaned_number:
-                    each_number.number = cleaned_number
-                    customer.is_modified = True
-                if len(each_number.number) == 7:
-                    each_number.number = f"757{each_number.number}"
-                    customer.is_modified = True
-        if customer.is_modified:
+        if customer.contact.phones is None or customer.contact.phones.contact_phone == "":
+            continue
+        has_mobile = False
+        for each_number in customer.contact.phones.contact_phone:
+            cleaned_number = re.sub(r"[^0-9x]", "", each_number.number)
+
+            if each_number.number != cleaned_number:
+                each_number.number = cleaned_number
+                customer.is_modified = True
+            if len(each_number.number) == 7:
+                each_number.number = f"757{each_number.number}"
+                customer.is_modified = True
+            if each_number.use_type == "Mobile":
+                has_mobile = True
+        if customer.is_modified or has_mobile is False:
             customers_updated += 1
             output = f"{customers_updated}: Updating Customer #{index} out of {len(customers): <60}"
             caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"

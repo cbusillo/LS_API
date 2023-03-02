@@ -200,38 +200,33 @@ class Customer:
     def update_phones(self, caller):
         """call API put to update pricing"""
         # TODO use generated payload instead of manual
-        if self.contact.phones:
-            home_number = ""
-            work_number = ""
-            mobile_number = ""
-            fax_number = ""
-            pager_number = ""
+        if self.contact.phones is None:
+            return
 
-            for number in self.contact.phones.contact_phone:
-                if number.use_type == "Home":
-                    home_number = number.number
-                elif number.use_type == "Work":
-                    work_number = number.number
-                elif number.use_type == "Mobile":
-                    mobile_number = number.number
-                elif number.use_type == "Fax":
-                    fax_number = number.number
-                elif number.use_type == "Pager":
-                    pager_number = number.number
-            put_customer = {
-                "Contact": {
-                    "Phones": {
-                        "ContactPhone": [
-                            {"number": f"{mobile_number}", "useType": "Mobile"},
-                            {"number": f"{fax_number}", "useType": "Fax"},
-                            {"number": f"{pager_number}", "useType": "Pager"},
-                            {"number": f"{work_number}", "useType": "Work"},
-                            {"number": f"{home_number}", "useType": "Home"},
-                        ]
-                    }
+        numbers = {}
+        for number in self.contact.phones.contact_phone:
+            numbers[number.use_type] = number.number
+
+        numbers["Mobile"] = (
+            numbers.get("Mobile") or numbers.get("Home") or numbers.get("Work") or numbers.get("Fax") or numbers.get("Pager")
+        )
+        values = {value: key for key, value in numbers.items()}
+        numbers = {value: key for key, value in values.items()}
+
+        put_customer = {
+            "Contact": {
+                "Phones": {
+                    "ContactPhone": [
+                        {"number": f"{numbers.get('Mobile') or ''}", "useType": "Mobile"},
+                        {"number": f"{numbers.get('Fax') or ''}", "useType": "Fax"},
+                        {"number": f"{numbers.get('Pager') or ''}", "useType": "Pager"},
+                        {"number": f"{numbers.get('Work') or ''}", "useType": "Work"},
+                        {"number": f"{numbers.get('Home') or ''}", "useType": "Home"},
+                    ]
                 }
             }
-            put_data(config.LS_URLS["customer"].format(customerID=self.customer_id), put_customer, caller)
+        }
+        put_data(config.LS_URLS["customer"].format(customerID=self.customer_id), put_customer, caller)
 
     @staticmethod
     def from_dict(obj: Any) -> "Customer":
@@ -283,7 +278,7 @@ class Customer:
             for customer in response.json().get("Customer"):
                 customer_list.append(Customer.from_dict(customer))
             current_url = response.json()["@attributes"]["next"]
-            # debug to limit time
+
             pages += 1
             output = f"Loading page: {pages}"
             caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
