@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "shiny_api"
-version = "0.2.46"
+version = "0.2.48"
 description = "Interface with LS and Camera Scanner"
 authors = ["Chris Busillo <info@shinycomputers.com>"]
 packages = [{include = "shiny_api"}]
 
 [tool.poetry.dependencies]
-python = "3.11.*"
+python = "3.10.*"
 Flask = "^2.2.3"
 selenium = "^4.8.2"
 opencv-python = "^4.7.0.68"
@@ -14,8 +14,6 @@ sqlalchemy = "^2.0.4"
 pytesseract = "^0.3.10"
 pygsheets = "^2.0.6"
 beautifulsoup4 = "^4.11.2"
-dotenv = {version = "^0.0.5", platform = "windows"}
-python-dotenv = {version = "^0.21.1", platform = "darwin"}
 discord = "^2.1.0"
 py-trello = "^0.19.0"
 numpi = "^0.3.1"
@@ -25,19 +23,13 @@ simple-zpl2 = "^0.3.0"
 luddite = "^1.0.2"
 py-applescript = "^1.0.3"
 waitress = "^2.1.2"
-kivy = {version = "^2.2.0.dev0", allow-prereleases = true, source = "kivy"}
+kivy = "^2.1.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
 pylint = "^2.16.2"
-
-
-
-[[tool.poetry.source]]
-name = "kivy"
-url = "https://kivy.org/downloads/simple/"
-default = false
-secondary = true
+dotenv = {version = "^0.0.5", platform = "windows"}
+python-dotenv = {version = "^0.21.1", platform = "darwin"}
 
 [build-system]
 requires = ["poetry-core"]
