@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "shiny_api"
-version = "0.2.40"
+version = "0.2.42"
 description = "Interface with LS and Camera Scanner"
 authors = ["Chris Busillo <info@shinycomputers.com>"]
 packages = [{include = "shiny_api"}]
 
 [tool.poetry.dependencies]
-python = "3.11.*"
+python = "3.10.*"
 Flask = "^2.2.3"
 selenium = "^4.8.2"
 opencv-python = "^4.7.0.68"
@@ -23,7 +23,7 @@ pandas = "^1.5.3"
 openai = "^0.26.5"
 simple-zpl2 = "^0.3.0"
 luddite = "^1.0.2"
-kivy = {url = "https://kivy.org/downloads/ci/osx/kivy/Kivy-2.2.0.dev0-cp311-cp311-macosx_10_9_universal2.whl"}
+kivy = "^2.1.0"
 py-applescript = "^1.0.3"
 waitress = "^2.1.2"
 
