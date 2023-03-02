@@ -1,6 +1,6 @@
 #!/bin/bash
 #/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/cbusillo/Shiny_API/main/install_client.sh)"
-REQPYTHON="3.10"
+REQPYTHON="3.11"
 APPNAME="Shiny_API"
 activate () { 
     . ./$APPNAME/bin/activate
