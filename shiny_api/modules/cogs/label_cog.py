@@ -22,7 +22,7 @@ class LabelCog(commands.Cog):
     ):
         """Print label"""
         await context.response.send_message(f"Printing {quantity} label with {text=} and {date=}")
-        text = text.strip()
+        text = text.strip().splitlines()
 
         print_text(text, quantity=quantity, print_date=date, barcode=barcode)
 
