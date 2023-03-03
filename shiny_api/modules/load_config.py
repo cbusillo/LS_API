@@ -64,9 +64,11 @@ PHONECHECK_API_KEY = secret_file.get("phonecheck_api_key")
 
 RESPONSE_MESSAGES = [
     "Hi {name}, we are open 11-7 Tu-Sa.",
-    "Hi {name}, your {product} is finished and ready for pickup any time 11-7 Tu-Sa.  See you soon",
-    "Hi {name}, your {product} is finished and ready for pickup any time 11-7 Tu-Sa.  The total is {total}.  See you soon.",
-    "Hi {name}, your {product} is finished and ready for pickup any time 11-7 Tu-Sa.  There is no charge.  See you soon.",
+    "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  See you soon.",
+    "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  The total is {total}.  See you soon.",
+    "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  There is no charge.  See you soon.",
+    "Hi {name}, do you mind sending your password so we can complete the repair?",
+    "Hi {name}, ",
 ]
 
 STYLIZED_NAMES = [
