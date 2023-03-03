@@ -117,8 +117,8 @@ class MainScreen(Screen):
         self.grid_layout.add_widget(start_discord_bot_button)
         self.add_widget(self.grid_layout)
 
+        self.start_api_server(start_api_server_button)
         if platform.node().lower() in SERVER:
-            self.start_api_server(start_api_server_button)
             if platform.node().lower() not in MY_COMPUTER:
                 self.start_discord_bot(start_discord_bot_button)
 
