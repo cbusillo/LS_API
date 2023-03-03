@@ -1,6 +1,7 @@
 """Zebra printing module"""
 import datetime
 import os
+import textwrap
 from typing import List
 from simple_zpl2 import ZPLDocument, Code128_Barcode, NetworkPrinter
 from shiny_api.modules import load_config as config
@@ -23,6 +24,8 @@ def print_text(
     """Open socket to printer and send text"""
     if not isinstance(text, list):
         text = [text]
+
+    text = wrap_list_text(text, 20)
 
     label_width = int(203 * LABEL_SIZE["width"])
     label_height = int(203 * LABEL_SIZE["height"])
@@ -68,3 +71,16 @@ def print_text(
     printer = NetworkPrinter(printer_ip)
     for _ in range(quantity):
         printer.print_zpl(label)
+
+
+def wrap_list_text(text: list[str], length: int) -> list[str]:
+    """take a list of text and return wrapped lines of length"""
+    wrapped_text = []
+    for line in text:
+        if len(line) <= length:
+            wrapped_text.append(line)
+            continue
+        wrapped_lines = textwrap.wrap(line, 20, break_long_words=True, break_on_hyphens=True, replace_whitespace=False)
+        for wrapped_line in wrapped_lines:
+            wrapped_text.append(wrapped_line)
+    return wrapped_text
