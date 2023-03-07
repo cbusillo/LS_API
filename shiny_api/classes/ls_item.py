@@ -1,13 +1,15 @@
 """Item Class generated from LS API"""
 import os
 import re
-import json
-from typing import List, Any
+import shlex
+from typing import Any
 from dataclasses import dataclass
 from shiny_api.modules.connect_ls import generate_ls_access, get_data, put_data
 from shiny_api.modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
+
+SIZEATTRIBUTES = []
 
 
 def atoi(text: str):
@@ -25,45 +27,29 @@ def natural_keys(text: str):
     return [atoi(c) for c in re.split(r"(\d+)", text)]
 
 
-def to_json(tojson: str):
-    """Convert string to JSON"""
-    return json.dumps(
-        tojson,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=None,
-        separators=(", ", ": "),
-    )
-
-
 @dataclass
 class SizeAttributes:
     """Get full list of size attributes from LS table.  Use these to import into individual items without a separate API call."""
 
-    item_matrix_id: str
-    description: str
+    def __init__(self, obj: Any):
+        """Return items from json dict into SizeAttribute object."""
+        self.item_matrix_id = str(obj.get("itemMatrixID"))
+        self.attribute2_value = str(obj.get("attribute2Value"))
 
     def return_sizes(self):
         """Get sizes for individual item an return in list."""
         size_list = []
-        for size in sizeAttributes:
+        for size in SIZEATTRIBUTES:
             if size.item_matrix_id == self:
-                size_list.append(size.description)
+                size_list.append(size.attribute2_value)
         size_list.sort(key=natural_keys)
         return size_list
-
-    @staticmethod
-    def from_dict(obj: Any) -> "SizeAttributes":
-        """Return items from json dict into SizeAttribute object."""
-        _item_matrix_id = str(obj.get("itemMatrixID"))
-        _attribute2_value = str(obj.get("attribute2Value"))
-        return SizeAttributes(_item_matrix_id, _attribute2_value)
 
     @staticmethod
     def get_size_attributes():
         """Get data from API and return a dict."""
         current_url = config.LS_URLS["itemMatrix"]
-        item_matrix: List[SizeAttributes] = []
+        item_matrix: list[SizeAttributes] = []
         while current_url:
             response = get_data(current_url, current_params={"load_relations": '["ItemAttributeSet"]', "limit": 100})
             for matrix in response.json().get("ItemMatrix"):
@@ -73,194 +59,160 @@ class SizeAttributes:
                             "itemMatrixID": matrix["itemMatrixID"],
                             "attribute2Value": attribute,
                         }
-                        item_matrix.append(SizeAttributes.from_dict(attr_obj))
+                        item_matrix.append(SizeAttributes(attr_obj))
                         # itemList.append(Item.from_dict(item))
             current_url = response.json()["@attributes"]["next"]
         return item_matrix
+
+    @staticmethod
+    def check_size_attributes():
+        """Check if size attributes have been loaded."""
+        global SIZEATTRIBUTES  # pylint: disable=global-statement
+        if not SIZEATTRIBUTES:
+            SIZEATTRIBUTES = SizeAttributes.get_size_attributes()
 
 
 @dataclass
 class ItemAttributes:
     """Attribute object for item.  This holds the specific attribute on item."""
 
-    attribute1: str
-    attribute2: str
-    attribute3: str
-    item_attribute_set_id: str
-
-    @staticmethod
-    def from_dict(obj: Any) -> "ItemAttributes":
+    def __init__(self, obj: Any):
         """Load ItemAttributes object from json dict."""
         if obj is None:
             return None
-        _attribute1 = str(obj.get("attribute1"))
-        _attribute2 = str(obj.get("attribute2"))
-        _attribute3 = str(obj.get("attribute3"))
-        _item_attribute_set_id = str(obj.get("itemAttributeSetID"))
-        return ItemAttributes(_attribute1, _attribute2, _attribute3, _item_attribute_set_id)
+        self.attribute1 = str(obj.get("attribute1"))
+        self.attribute2 = str(obj.get("attribute2"))
+        self.attribute3 = str(obj.get("attribute3"))
+        self.item_attribute_set_id = str(obj.get("itemAttributeSetID"))
 
 
 @dataclass
 class ItemPrice:
     """ItemPrice class from LS"""
 
-    amount: str
-    use_type_id: str
-    use_type: str
-
-    @staticmethod
-    def from_dict(obj: Any) -> "ItemPrice":
+    def __init__(self, obj: Any):
         """ItemPrice from dict"""
-        _amount = str(obj.get("amount"))
-        _use_type_id = str(obj.get("useTypeID"))
-        _use_type = str(obj.get("useType"))
-        return ItemPrice(_amount, _use_type_id, _use_type)
+        self.amount = str(obj.get("amount"))
+        self.use_type_id = str(obj.get("useTypeID"))
+        self.use_type = str(obj.get("useType"))
 
 
 @dataclass
 class Prices:
     """Prices class from LS"""
 
-    item_price: List[ItemPrice]
-
-    @staticmethod
-    def from_dict(obj: Any) -> "Prices":
+    def __init__(self, obj: Any):
         """Prices from dict"""
-        _item_price = [ItemPrice.from_dict(y) for y in obj.get("ItemPrice")]
-        return Prices(_item_price)
+        self.item_price = [ItemPrice(y) for y in obj.get("ItemPrice")]
 
 
 @dataclass
 class Item:
     """Item class from LS"""
 
-    # item object generated from json dict
-    item_id: str
-    system_sku: str
-    default_cost: str
-    avg_cost: str
-    discountable: str
-    tax: str
-    archived: str
-    item_type: str
-    serialized: str
-    description: str
-    model_year: str
-    upc: str
-    ean: str
-    custom_sku: str
-    manufacturer_sku: str
-    create_time: str
-    time_stamp: str
-    publish_to_ecom: str
-    category_id: str
-    taxclass_id: str
-    department_id: str
-    item_matrix_id: str
-    manufacturer_id: str
-    season_id: str
-    default_vendor_id: str
-    item_attributes: ItemAttributes
-    prices: Prices
-    sizes: List
-    is_modified: bool
-
-    @staticmethod
-    def from_dict(obj: Any) -> "Item":
+    def __init__(self, item_id: int = None, ls_item: Any = None):
         """Item from dict"""
-        # return individual items from json dict to an Item object
-        _item_id = str(obj.get("itemID"))
-        _system_sku = str(obj.get("systemSku"))
-        _default_cost = str(obj.get("defaultCost"))
-        _avg_cost = str(obj.get("avgCost"))
-        _discountable = str(obj.get("discountable"))
-        _tax = str(obj.get("tax"))
-        _archived = str(obj.get("archived"))
-        _item_type = str(obj.get("itemType"))
-        _serialized = str(obj.get("serialized"))
-        _description = str(obj.get("description"))
-        _model_year = str(obj.get("modelYear"))
-        _upc = str(obj.get("upc"))
-        _ean = str(obj.get("ean"))
-        _custom_sku = str(obj.get("customSku"))
-        _manufacturer_sku = str(obj.get("manufacturerSku"))
-        _create_time = str(obj.get("createTime"))
-        _time_stamp = str(obj.get("timeStamp"))
-        _publish_to_ecom = str(obj.get("publishToEcom"))
-        _category_id = str(obj.get("categoryID"))
-        _tax_class_id = str(obj.get("taxClassID"))
-        _department_id = str(obj.get("departmentID"))
-        _item_matrix_id = str(obj.get("itemMatrixID"))
-        _manufacturer_id = str(obj.get("manufacturerID"))
-        _season_id = str(obj.get("seasonID"))
-        _default_vendor_id = str(obj.get("defaultVendorID"))
-        _item_attributes = ItemAttributes.from_dict(obj.get("ItemAttributes"))
-        _prices = Prices.from_dict(obj.get("Prices"))
-        _sizes = SizeAttributes.return_sizes(obj.get("itemMatrixID"))
-        _is_modified = False
-        return Item(
-            _item_id,
-            _system_sku,
-            _default_cost,
-            _avg_cost,
-            _discountable,
-            _tax,
-            _archived,
-            _item_type,
-            _serialized,
-            _description,
-            _model_year,
-            _upc,
-            _ean,
-            _custom_sku,
-            _manufacturer_sku,
-            _create_time,
-            _time_stamp,
-            _publish_to_ecom,
-            _category_id,
-            _tax_class_id,
-            _department_id,
-            _item_matrix_id,
-            _manufacturer_id,
-            _season_id,
-            _default_vendor_id,
-            _item_attributes,
-            _prices,
-            _sizes,
-            _is_modified,
-        )
+        SizeAttributes.check_size_attributes()
+        if ls_item is None:
+            if item_id is None:
+                raise ValueError("Must provide item_id or ls_item")
+            self.item_id = item_id
+            ls_item = self._get_item()
+        self.item_id: int = ls_item.get("itemID")
 
-    @staticmethod
-    def save_item_price(item: "Item"):
+        self.system_sku = str(ls_item.get("systemSku"))
+        self.default_cost = str(ls_item.get("defaultCost"))
+        self.avg_cost = str(ls_item.get("avgCost"))
+        self.discountable = str(ls_item.get("discountable"))
+        self.tax = str(ls_item.get("tax"))
+        self.archived = str(ls_item.get("archived"))
+        self.item_type = str(ls_item.get("itemType"))
+        self.serialized = str(ls_item.get("serialized"))
+        self.description = str(ls_item.get("description"))
+        self.model_year = str(ls_item.get("modelYear"))
+        self.upc = str(ls_item.get("upc"))
+        self.ean = str(ls_item.get("ean"))
+        self.custom_sku = str(ls_item.get("customSku"))
+        self.manufacturer_sku = str(ls_item.get("manufacturerSku"))
+        self.create_time = str(ls_item.get("createTime"))
+        self.time_stamp = str(ls_item.get("timeStamp"))
+        self.publish_to_ecom = str(ls_item.get("publishToEcom"))
+        self.category_id = str(ls_item.get("categoryID"))
+        self.tax_class_id = str(ls_item.get("taxClassID"))
+        self.department_id = str(ls_item.get("departmentID"))
+        self.item_matrix_id = str(ls_item.get("itemMatrixID"))
+        self.manufacturer_id = str(ls_item.get("manufacturerID"))
+        self.season_id = str(ls_item.get("seasonID"))
+        self.default_vendor_id = str(ls_item.get("defaultVendorID"))
+        self.item_attributes = ItemAttributes(ls_item.get("ItemAttributes"))
+        self.prices = Prices(ls_item.get("Prices"))
+        self.sizes = SizeAttributes.return_sizes(ls_item.get("itemMatrixID"))
+        self.is_modified = False
+
+    def __repr__(self):
+        return f"{self.item_id} - {self.description}"
+
+    def save_item_price(self):
         """Call API put to update pricing."""
         put_item = {
             "Prices": {
                 "ItemPrice": [
                     {
-                        "amount": f"{item.prices.item_price[0].amount}",
+                        "amount": f"{self.prices.item_price[0].amount}",
                         "useType": "Default",
                     },
                     {
-                        "amount": f"{item.prices.item_price[0].amount}",
+                        "amount": f"{self.prices.item_price[0].amount}",
                         "useType": "MSRP",
                     },
                     {
-                        "amount": f"{item.prices.item_price[0].amount}",
+                        "amount": f"{self.prices.item_price[0].amount}",
                         "useType": "Online",
                     },
                 ]
             }
         }
-        put_data(config.LS_URLS["item"].format(itemID=item.item_id), put_item)
+        put_data(config.LS_URLS["item"].format(itemID=self.item_id), put_item)
 
-    @staticmethod
-    def get_items() -> "List[Item]":
+    def _get_item(self):
+        """Return LS Item object by item ID"""
+        current_url = config.LS_URLS["item"]
+        response = get_data(current_url.format(itemID=self.item_id), {"load_relations": '["ItemAttributes"]'})
+        return response.json().get("Item")
+
+
+class Items:
+    """Return list of Item objects from LS"""
+
+    def __init__(self, descriptions: list[str] = None, categories: list[str] = None):
+        self.item_list: list[Item] = []
+        if descriptions is not None:
+            if not isinstance(descriptions, list):
+                descriptions = shlex.split(descriptions)
+            self._get_items_by_desciption(descriptions)
+            return
+        if categories is not None:
+            self._get_items_by_category(categories)
+            return
+        self._get_all_items()
+
+    def __repr__(self):
+        return f"Items({len(self)})"
+
+    def _get_all_items(self):
         """Run API auth."""
         generate_ls_access()
-        # API call to get all items.  Walk through categories and pages.
-        # Convert from json dict to Item object and add to itemList list.
-        item_list: List[Item] = []
-        for category in config.DEVICE_CATEGORIES_FOR_PRICE:
+        current_url = config.LS_URLS["items"]
+        while current_url:
+            response = get_data(current_url, {"load_relations": '["ItemAttributes"]', "limit": 100})
+            for item in response.json().get("Item"):
+                self.item_list.append(Item(ls_item=item))
+            current_url = response.json()["@attributes"]["next"]
+
+    def _get_items_by_category(self, categories: list[str] = None):
+        """Run API auth."""
+        generate_ls_access()
+        for category in categories:
             current_url = config.LS_URLS["items"]
             while current_url:
                 response = get_data(
@@ -272,24 +224,13 @@ class Item:
                     },
                 )
                 for item in response.json().get("Item"):
-                    item_list.append(Item.from_dict(item))
+                    self.item_list.append(Item(ls_item=item))
                 current_url = response.json()["@attributes"]["next"]
 
-        return item_list
-
-    @staticmethod
-    def get_item_by_id(item_id: int) -> "Item":
-        """Return LS Item object by item ID"""
-        current_url = config.LS_URLS["item"]
-        response = get_data(current_url.format(itemID=item_id), {"load_relations": '["ItemAttributes"]'})
-        return Item.from_dict(response.json().get("Item"))
-
-    @staticmethod
-    def get_item_by_desciption(descriptions: List[str]) -> "List[Item]":
+    def _get_items_by_desciption(self, descriptions: list[str]):
         """Return LS Item by searching description using OR and then filtering for all words"""
-        if not isinstance(descriptions, list):
-            descriptions = [descriptions]
-        item_list: List[Item] = []
+
+        item_list: list[Item] = []
         current_url = config.LS_URLS["items"]
         description = ""
         for word in descriptions:
@@ -300,15 +241,11 @@ class Item:
             if response.json().get("Item") is None:
                 return
             for item in response.json().get("Item"):
-                item_list.append(Item.from_dict(item))
+                item_list.append(Item(ls_item=item))
 
-        filtered_item_list = [item for item in item_list if all(word.lower() in item.description.lower() for word in descriptions)]
+        filtered_list = [item for item in item_list if all(word.lower() in item.description.lower() for word in descriptions)]
+        self.item_list.extend(filtered_list)
 
-        return filtered_item_list
 
-
-# load attributes before main program runs
-try:
-    sizeAttributes = SizeAttributes.get_size_attributes()
-except TypeError as error:
-    print(f"failed to get attribute: {error}")
+if __name__ == "__main__":
+    print(Items())

@@ -17,7 +17,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.slider import Slider
 import numpy as np
 from shiny_api.modules import load_config as config
-from shiny_api.classes import sickw_results
+from shiny_api.classes.sickw_results import SickwResults, SickwResult, SickConstants
 from shiny_api.classes.google_sheets import GoogleSheet
 from shiny_api.modules.label_print import print_text
 
@@ -139,7 +139,7 @@ class SerialCamera(GridLayout):
         Clock.schedule_interval(self.capture_image, 1 / 30)
         Clock.schedule_interval(self.update_threshed_image, 1 / 5)
         Clock.schedule_interval(self.run_ocr, 0.1)
-        self.sickw_history = []
+        self.sickw_history = SickwResults()
         self.rotation = -1
         self.serial_sheet = GoogleSheet("Shiny API")
 
@@ -219,16 +219,16 @@ class SerialCamera(GridLayout):
                 if black in word:
                     continue
 
-            if not any(d.serial_number == word for d in self.sickw_history):
-                sickw = sickw_results.SickwResults(word, sickw_results.APPLE_SERIAL_INFO)
-                self.sickw_history.append(sickw)
+            if not any(d.serial_number == word for d in self.sickw_history.sickw_results_list):
+                sickw = SickwResult(word, SickConstants.APPLE_SERIAL_INFO)
+                self.sickw_history.sickw_results_list.append(sickw)
                 if sickw.status.lower() == "success":
-                    self.serial_sheet.add_line(sickw_results.SickwResults(word, sickw_results.APPLE_SERIAL_INFO))
+                    self.serial_sheet.add_line(sickw)
                     if config.GOOGLE_SHEETS_SERIAL_PRINT:
                         print_text(text=sickw.name, barcode=sickw.serial_number)
             output = f"Conf: {conf} {word} Total: {len(self.sickw_history)} "
-            output += f"Matches: {sickw_results.SickwResults.search_list_for_serial(word, self.sickw_history)} "
-            output += f"Sucessful: {sickw_results.SickwResults.success_count(self.sickw_history)}"
+            output += f"Matches: {self.sickw_history.search_list_for_serial(word)} "
+            output += f"Sucessful: {self.sickw_history.success_count()}"
             display_lines += f" {output}\n"
             print(display_lines)
         if not output:

@@ -8,17 +8,21 @@ from shiny_api.modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 
+
 # Constants for sickw service codes
-APPLE_SERIAL_INFO = 26
+class SickConstants:
+    """Constants for sickw service codes"""
+
+    APPLE_SERIAL_INFO = 26
 
 
 @dataclass
-class SickwResults:
+class SickwResult:
     """Object built from sickw API results"""
 
     status: str = "failed"
 
-    def __init__(self, serial_number: str, service: int = APPLE_SERIAL_INFO) -> None:
+    def __init__(self, serial_number: str, service: int = SickConstants.APPLE_SERIAL_INFO):
         """Instantiate result with data from API from passed serial number and service.  Set status to false if sickw
         says not success or no HTML result string"""
 
@@ -57,7 +61,8 @@ class SickwResults:
         )
         return print_string
 
-    def html_to_dict(self, html: str):
+    @staticmethod
+    def html_to_dict(html: str):
         """generate dict from html returned in result"""
         soup = BeautifulSoup(html, "html.parser")
         return_dict = {}
@@ -70,18 +75,23 @@ class SickwResults:
 
         return return_dict
 
-    @staticmethod
-    def search_list_for_serial(serial: str, sickw_history: "List[SickwResults]") -> str:
+
+class SickwResults:
+    """Class to hold a list of SickwResult objects"""
+
+    def __init__(self):
+        self.sickw_results_list: "List[SickwResult]" = []
+
+    def search_list_for_serial(self, serial: str) -> str:
         """Return the device description from provided serial number and list of results"""
-        for result in sickw_history:
+        for result in self.sickw_results_list:
             if result.serial_number == serial:
                 return result.name, result.status
 
-    @staticmethod
-    def success_count(sickw_history: "List[SickwResults]") -> int:
+    def success_count(self) -> int:
         """Return count of total sucessful Sickw results"""
         return_count = 0
-        for result in sickw_history:
+        for result in self.sickw_results_list:
             if result.name:
                 return_count += 1
 

@@ -36,7 +36,9 @@ class TrelloCog(commands.Cog):
         trello_client = TrelloClient(api_key=config.TRELLO_APIKEY, token=config.TRELLO_OAUTH_TOKEN)
         inventory_board = trello_client.get_board(config.TRELLO_INVENTORY_BOARD)
         inventory_list = inventory_board.get_list(list_id=trello_list)
-        inventory_list.add_card(card_name)
+        inventory_list.add_card(
+            card_name,
+        )
         await context.folloup.send(f"Added '{card_name}' to list {inventory_list.name}")
 
     @app_commands.command(name="trello_list")

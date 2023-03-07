@@ -1,6 +1,5 @@
 """Class to import workorder objects from LS API"""
 import os
-import json
 from dataclasses import dataclass
 from shiny_api.modules.connect_ls import generate_ls_access, get_data
 from shiny_api.modules import load_config as config
@@ -8,26 +7,15 @@ from shiny_api.modules import load_config as config
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-def to_json(tojson):
-    """convert string to JSON"""
-    return json.dumps(
-        tojson,
-        default=lambda o: o.__dict__,
-        sort_keys=True,
-        indent=None,
-        separators=(", ", ": "),
-    )
-
-
 @dataclass
 class Workorder:
     """Workorder object from LS"""
 
-    def __init__(self, workorder_id: int) -> None:
+    def __init__(self, workorder_id: int):
         """Workorder object from dict"""
-        ls_workorder = self.get_workorder(workorder_id)
+        self.workorder_id = workorder_id
+        ls_workorder = self._get_workorder()
 
-        self.workorder_id = int(ls_workorder.get("workorderID"))
         self.system_sku = int(ls_workorder.get("systemSku"))
         self.time_in = str(ls_workorder.get("timeIn"))
         self.eta_out = str(ls_workorder.get("etaOut"))
@@ -50,9 +38,8 @@ class Workorder:
         self.item_description = str(ls_workorder.get("Serialized").get("description")).strip()
         self.total = float(ls_workorder.get("m").get("total"))
 
-    @staticmethod
-    def get_workorder(workorder_id):
+    def _get_workorder(self):
         """Get single workorder from LS API into workorder object"""
         generate_ls_access()
-        response = get_data(config.LS_URLS["workorder"].format(workorderID=workorder_id))
+        response = get_data(config.LS_URLS["workorder"].format(workorderID=self.workorder_id))
         return response.json().get("Workorder")

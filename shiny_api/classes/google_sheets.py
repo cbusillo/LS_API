@@ -4,7 +4,7 @@ import os
 from typing import List
 import pygsheets
 import shiny_api.modules.load_config as config
-import shiny_api.classes.sickw_results as sickw_results
+from shiny_api.classes.sickw_results import SickwResult
 
 
 print(f"Importing {os.path.basename(__file__)}...")
@@ -21,7 +21,7 @@ class GoogleSheet:
     worksheets: List[pygsheets.Worksheet]
     current_worksheet: pygsheets.Worksheet
 
-    lines = [sickw_results.SickwResults]
+    lines = [SickwResult]
 
     def __init__(self, sheet_name: str) -> str:
         self.google_client = pygsheets.authorize(outh_file=f"{config.CONFIG_SECRET_DIR}/.secret_client.json", scopes=SCOPES)
@@ -35,10 +35,7 @@ class GoogleSheet:
         self.current_worksheet.frozen_rows = 1
         self.current_worksheet.update_row(1, values=HEADERS)
 
-        # TODO: Remove after testing
-        self.del_other_worksheets()
-
-    def add_line(self, line: sickw_results.SickwResults):
+    def add_line(self, line: SickwResult):
         """Take Sickw line and add to local array and Google Sheets"""
         self.lines.append(line)
         self.current_worksheet.add_rows(1)

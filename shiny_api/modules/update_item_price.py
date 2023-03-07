@@ -29,8 +29,8 @@ def run_update_item_price(caller: Button):
     caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
     print(output)
     # label.set("Loading items")
-    items = ls_item.Item.get_items()
-    for item in items:
+    items = ls_item.Items(categories=config.DEVICE_CATEGORIES_FOR_PRICE)
+    for item in items.item_list:
         # interate through items to generate pricing and save to LS
         # Generate pricing from devices.json and apple website by item from LS
         # check to see where current item's storage falls numerically in matrix
@@ -106,7 +106,7 @@ def run_update_item_price(caller: Button):
                     output = f"Updating {item.description}"
                     caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
                     print(f"    {output}")
-                    ls_item.Item.save_item_price(item)
+                    item.save_item_price()
                 break
     caller.disabled = False
     caller.text = caller.text.split("\n")[0]

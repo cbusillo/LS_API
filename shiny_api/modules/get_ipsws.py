@@ -9,7 +9,6 @@ print(f"Importing {os.path.basename(__file__)}...")
 
 def download_ipsw(caller: Button):
     """Call get_devices"""
-
-    ipsw_me_ipsw.Devices.get_devices(caller)
+    ipsw_me_ipsw.Device.download_all_firmwares(caller)
     caller.disabled = False
     caller.text = caller.text.split("\n")[0]

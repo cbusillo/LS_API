@@ -1,6 +1,5 @@
 """Run webserver to listen for LS requests."""
 import os
-import datetime
 import locale
 from flask import Flask, request
 from kivy.uix.button import Button
@@ -31,16 +30,11 @@ def web_hd_label():
         quantity = 1
     else:
         quantity = int(request.args.get("quantity"))
-    customer = ls_customer.Customer.get_customer(request.args.get("customerID"))
-    today = datetime.date.today()
+    customer = ls_customer.Customer(request.args.get("customerID"))
     workorder = ls_workorder.Workorder(request.args.get("workorderID"))
     for line in workorder.note.split("\n"):
         if line[0:2].lower() == "pw" or line[0:2].lower() == "pc":
             password = line
-    print(password)
-    print(f"{customer.first_name} {customer.last_name}")
-    print(f"{today.month}.{today.day}.{today.year}")
-    print(workorder.note)
     label_print.print_text(
         f"{customer.first_name} {customer.last_name}",
         barcode=f'2500000{request.args.get("workorderID")}',
@@ -54,16 +48,15 @@ def web_hd_label():
 @app.route("/rc_send_message", methods=["GET"])
 def rc_send_message():
     """Web listener to generate messages and send them via text"""
-    customer = ls_customer.Customer.get_customer(request.args.get("customerID"))
+    customer = ls_customer.Customer(request.args.get("customerID"))
     workorder = ls_workorder.Workorder(request.args.get("workorderID"))
+    mobile_number = None
+
     for phone in customer.contact.phones.contact_phone:
         if phone.use_type == "Mobile":
-            phone_number = phone.number
-    try:
-        if phone_number is None:
-            return HTML_RETURN
-    except UnboundLocalError as error:
-        return HTML_ERROR.format(error=error)
+            mobile_number = phone.number
+    if mobile_number is None:
+        return HTML_RETURN
     message_number = int(request.args.get("message"))
     if workorder.total == 0 and request.args.get("message") == "2":  # if we send a message with price with $0 price
         message_number += 1
@@ -75,8 +68,7 @@ def rc_send_message():
 
     message = config.RESPONSE_MESSAGES[message_number]
     message = message.format(name=customer.first_name, product=item_description, total=locale.currency(workorder.total))
-    # message = message.replace("{{product}}", workorder)
-    ring_central.send_message(phone_number, message)
+    ring_central.send_message(mobile_number, message)
 
     return HTML_RETURN
 
@@ -84,8 +76,6 @@ def rc_send_message():
 def start_weblistener(caller: Button):
     """Start the listener"""
     caller.text = f"{caller.text.split(chr(10))[0]}\nListner Started"
-    from waitress import serve
+    from waitress import serve  # pylint: disable=import-outside-toplevel
 
     serve(app, host="0.0.0.0", port=8000)
-    caller.disabled = False
-    caller.text = caller.text.split("\n")[0]

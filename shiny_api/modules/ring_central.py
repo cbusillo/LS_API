@@ -1,4 +1,4 @@
-"""Connect to sickw and return a SickwResults object with data from serial_number and service """
+"""Connect to RingCentral API"""
 import os
 import applescript
 from shiny_api.modules import load_config as config

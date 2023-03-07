@@ -6,7 +6,6 @@ import subprocess
 import sys
 from functools import partial
 from threading import Thread
-from typing import List
 
 # pylint: disable=ungrouped-imports
 from kivy.app import App
@@ -105,10 +104,10 @@ class MainScreen(Screen):
         slide_label_printer_rob_button.bind(on_press=self.changer)
         self.grid_layout.add_widget(slide_label_printer_rob_button)
 
-        start_api_server_button = Button(text="Start API Server")
-        start_api_server_button.bind(on_press=self.start_api_server)
-        start_api_server_button.disabled = True
-        self.grid_layout.add_widget(start_api_server_button)
+        self.start_api_server_button = Button(text="Start API Server")
+        self.start_api_server_button.bind(on_press=self.start_api_server)
+        self.start_api_server_button.disabled = True
+        self.grid_layout.add_widget(self.start_api_server_button)
 
         start_discord_bot_button = Button(text="Start Discord Bot")
         start_discord_bot_button.bind(on_press=self.start_discord_bot)
@@ -117,7 +116,7 @@ class MainScreen(Screen):
         self.grid_layout.add_widget(start_discord_bot_button)
         self.add_widget(self.grid_layout)
 
-        self.start_api_server(start_api_server_button)
+        self.start_api_server(self.start_api_server_button)
         if platform.node().lower() in SERVER:
             if platform.node().lower() not in MY_COMPUTER:
                 self.start_discord_bot(start_discord_bot_button)
@@ -170,6 +169,9 @@ class MainScreen(Screen):
         caller.text += "\nrunning..."
         caller.disabled = True
         thread.start()
+
+    def update_weblistener_button_text(self, text: str):
+        self.start_api_server_button.text = text
 
 
 class LabelPrinterScreen(Screen):
@@ -225,7 +227,7 @@ class LabelPrinterScreen(Screen):
         label_grid.cols = 3
         label_grid.padding = 10
 
-        label_buttons: List[Button] = []
+        label_buttons: list[Button] = []
 
         for index, label in enumerate(labels):
             label_buttons.append(Button(text=label))

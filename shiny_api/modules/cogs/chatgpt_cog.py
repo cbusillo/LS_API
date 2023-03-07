@@ -45,11 +45,11 @@ class ChatGPTCog(commands.Cog):
             async with message.channel.typing():
                 await self.get_walle_image(message=message, prompt=prompt)
         if message.author.id not in self.user_threads:
-            self.user_threads[message.author.id] = ""
+            self.user_threads[message.author.id] = []
         if message.reference and message.reference.resolved.author.id == self.client.user.id:
-            self.user_threads[message.author.id] += f"\n{prompt}"
+            self.user_threads[message.author.id].append(prompt)
         else:
-            self.user_threads[message.author.id] = prompt
+            self.user_threads[message.author.id] = [prompt]
 
         async with message.channel.typing():
             await self.get_chatgpt_message(message=message)
@@ -80,14 +80,11 @@ class ChatGPTCog(commands.Cog):
         """Send message prompt to chatgpt and send text"""
         print(f"Sending message: {str(self.user_threads[message.author.id]).strip()}")
         try:
-            response = await openai.Completion.acreate(
-                engine="text-davinci-003",
-                prompt=self.user_threads[message.author.id],
-                max_tokens=1000,
-                n=1,
-                stop=None,
-                temperature=0,
-                top_p=1,
+            chat_messages = [{"role": "user", "content": each_prompt} for each_prompt in self.user_threads[message.author.id]]
+            # self.user_threads[message.author.id]
+            response = await openai.ChatCompletion.acreate(
+                model="gpt-3.5-turbo",
+                messages=chat_messages,
                 api_key=config.OPENAI_API_KEY,
             )
         except openai.error.InvalidRequestError as exception:
@@ -96,8 +93,8 @@ class ChatGPTCog(commands.Cog):
         except openai.error.RateLimitError as exception:
             await message.channel.send(str(exception))
             return
-        await self.wrap_lines(response["choices"][0]["text"], message=message)
-        print(f"Received response: {response['choices'][0]['text']}")
+        await self.wrap_lines(response["choices"][0]["message"]["content"], message=message)
+        print(f"Received response: {response['choices'][0]['message']['content']}")
 
     async def wrap_lines(self, lines: list[str], message: discord.Message):
         """Break up messages that are longer than 2000 chars and send multible messages to discord"""

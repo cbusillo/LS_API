@@ -3,7 +3,7 @@ import os
 import discord
 from discord import app_commands
 from discord.ext import commands
-import shiny_api.classes.sickw_results as sickw
+from shiny_api.classes.sickw_results import SickwResult
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -18,7 +18,7 @@ class SickwCog(commands.Cog):
     @commands.has_role("Shiny")
     async def sickw_lookup_command(self, context: discord.Interaction, serial_number: str):
         """Look up serial number in Sickw"""
-        device = sickw.SickwResults(serial_number=serial_number)
+        device = SickwResult(serial_number=serial_number)
         await context.response.send_message(device)
 
 
