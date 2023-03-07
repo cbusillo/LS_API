@@ -9,8 +9,6 @@ from shiny_api.modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 
-SIZEATTRIBUTES = []
-
 
 def atoi(text: str):
     """check if text is number for natrual number sort"""
@@ -31,16 +29,20 @@ def natural_keys(text: str):
 class SizeAttributes:
     """Get full list of size attributes from LS table.  Use these to import into individual items without a separate API call."""
 
+    SIZE_ATTRIBUTES = []
+
     def __init__(self, obj: Any):
         """Return items from json dict into SizeAttribute object."""
         self.item_matrix_id = str(obj.get("itemMatrixID"))
         self.attribute2_value = str(obj.get("attribute2Value"))
 
-    def return_sizes(self):
+    @staticmethod
+    def return_sizes(item_matrix_id: str):
         """Get sizes for individual item an return in list."""
         size_list = []
-        for size in SIZEATTRIBUTES:
-            if size.item_matrix_id == self:
+        SizeAttributes.check_size_attributes()
+        for size in SizeAttributes.SIZE_ATTRIBUTES:
+            if size.item_matrix_id == item_matrix_id:
                 size_list.append(size.attribute2_value)
         size_list.sort(key=natural_keys)
         return size_list
@@ -64,12 +66,11 @@ class SizeAttributes:
             current_url = response.json()["@attributes"]["next"]
         return item_matrix
 
-    @staticmethod
-    def check_size_attributes():
+    @classmethod
+    def check_size_attributes(cls):
         """Check if size attributes have been loaded."""
-        global SIZEATTRIBUTES  # pylint: disable=global-statement
-        if not SIZEATTRIBUTES:
-            SIZEATTRIBUTES = SizeAttributes.get_size_attributes()
+        if not cls.SIZE_ATTRIBUTES:
+            cls.SIZE_ATTRIBUTES = SizeAttributes.get_size_attributes()
 
 
 @dataclass
@@ -112,7 +113,6 @@ class Item:
 
     def __init__(self, item_id: int = None, ls_item: Any = None):
         """Item from dict"""
-        SizeAttributes.check_size_attributes()
         if ls_item is None:
             if item_id is None:
                 raise ValueError("Must provide item_id or ls_item")
