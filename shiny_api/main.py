@@ -170,9 +170,6 @@ class MainScreen(Screen):
         caller.disabled = True
         thread.start()
 
-    def update_weblistener_button_text(self, text: str):
-        self.start_api_server_button.text = text
-
 
 class LabelPrinterScreen(Screen):
     """Define main screen grid layout"""
