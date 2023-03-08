@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shiny_api"
-version = "0.2.53"
+version = "0.2.54"
 description = "Interface with LS and Camera Scanner"
 authors = ["Chris Busillo <info@shinycomputers.com>"]
 packages = [{include = "shiny_api"}]
@@ -30,6 +30,7 @@ black = "^23.1.0"
 pylint = "^2.16.2"
 dotenv = {version = "^0.0.5", platform = "windows"}
 python-dotenv = {version = "^0.21.1", platform = "darwin"}
+mypy = "^1.1.1"
 
 [[tool.poetry.source]]
 name = "kivy"

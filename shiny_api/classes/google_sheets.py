@@ -1,7 +1,6 @@
 """connect to Google's MySQL DB"""
 import datetime
 import os
-from typing import List
 import pygsheets
 import shiny_api.modules.load_config as config
 from shiny_api.classes.sickw_results import SickwResult
@@ -16,14 +15,9 @@ HEADERS = ["ID", "Status", "Serial Number", "Description", "Name", "A Number", "
 class GoogleSheet:
     """Object to interact with a Google Sheet"""
 
-    google_client: pygsheets.client.Client
-    sheet: pygsheets.Spreadsheet
-    worksheets: List[pygsheets.Worksheet]
-    current_worksheet: pygsheets.Worksheet
+    lines: list[SickwResult] = []
 
-    lines = [SickwResult]
-
-    def __init__(self, sheet_name: str) -> str:
+    def __init__(self, sheet_name: str):
         self.google_client = pygsheets.authorize(outh_file=f"{config.CONFIG_SECRET_DIR}/.secret_client.json", scopes=SCOPES)
 
         sheets = self.google_client.spreadsheet_titles()

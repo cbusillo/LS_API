@@ -14,9 +14,9 @@ BARCODE_HEIGHT = 35
 
 
 def print_text(
-    text: List[str] = None,
-    barcode: str = None,
-    text_bottom: str = None,
+    text: List[str] | str,
+    barcode: str | None = None,
+    text_bottom: str | None = None,
     quantity: int = 1,
     print_date: bool = True,
     printer_ip: str = config.PRINTER_HOST,

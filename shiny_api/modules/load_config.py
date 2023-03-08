@@ -33,12 +33,16 @@ CAM_HEIGHT = config_file.get("cam_height")
 
 SICKW_URL = config_file.get("sickw_url")
 
-DEBUG_CODE = True
+
 if config_file.get("debug_code").lower() == "false":
     DEBUG_CODE = False
-DEBUG_LOGGING = True
+else:
+    DEBUG_CODE = True
+
 if config_file.get("debug_logging").lower() == "false":
     DEBUG_LOGGING = False
+else:
+    DEBUG_LOGGING = True
 
 GOOGLE_SHEETS_SERIAL_NAME = config_file.get("google_sheets_serial_name")
 

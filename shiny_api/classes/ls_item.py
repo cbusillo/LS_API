@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from shiny_api.modules.connect_ls import generate_ls_access, get_data, put_data
 from shiny_api.modules import load_config as config
 
+
 print(f"Importing {os.path.basename(__file__)}...")
 
 
@@ -22,6 +23,8 @@ def natural_keys(text: str):
             text = "1024GB"
         case "2tb":
             text = "2048GB"
+        case _:
+            pass
     return [atoi(c) for c in re.split(r"(\d+)", text)]
 
 
@@ -29,7 +32,7 @@ def natural_keys(text: str):
 class SizeAttributes:
     """Get full list of size attributes from LS table.  Use these to import into individual items without a separate API call."""
 
-    SIZE_ATTRIBUTES = []
+    size_attributes = []
 
     def __init__(self, obj: Any):
         """Return items from json dict into SizeAttribute object."""
@@ -37,11 +40,11 @@ class SizeAttributes:
         self.attribute2_value = str(obj.get("attribute2Value"))
 
     @staticmethod
-    def return_sizes(item_matrix_id: str):
+    def return_sizes(item_matrix_id: str) -> list[str]:
         """Get sizes for individual item an return in list."""
-        size_list = []
+        size_list: list[str] = []
         SizeAttributes.check_size_attributes()
-        for size in SizeAttributes.SIZE_ATTRIBUTES:
+        for size in SizeAttributes.size_attributes:
             if size.item_matrix_id == item_matrix_id:
                 size_list.append(size.attribute2_value)
         size_list.sort(key=natural_keys)
@@ -53,7 +56,7 @@ class SizeAttributes:
         current_url = config.LS_URLS["itemMatrix"]
         item_matrix: list[SizeAttributes] = []
         while current_url:
-            response = get_data(current_url, current_params={"load_relations": '["ItemAttributeSet"]', "limit": 100})
+            response = get_data(current_url, current_params={"load_relations": '["ItemAttributeSet"]', "limit": "100"})
             for matrix in response.json().get("ItemMatrix"):
                 if matrix["ItemAttributeSet"]["attributeName2"]:
                     for attribute in matrix["attribute2Values"]:
@@ -69,8 +72,8 @@ class SizeAttributes:
     @classmethod
     def check_size_attributes(cls):
         """Check if size attributes have been loaded."""
-        if not cls.SIZE_ATTRIBUTES:
-            cls.SIZE_ATTRIBUTES = SizeAttributes.get_size_attributes()
+        if not cls.size_attributes:
+            cls.size_attributes = SizeAttributes.get_size_attributes()
 
 
 @dataclass
@@ -111,10 +114,10 @@ class Prices:
 class Item:
     """Item class from LS"""
 
-    def __init__(self, item_id: int = None, ls_item: Any = None):
+    def __init__(self, item_id: int = 0, ls_item: Any = None):
         """Item from dict"""
         if ls_item is None:
-            if item_id is None:
+            if item_id is 0:
                 raise ValueError("Must provide item_id or ls_item")
             self.item_id = item_id
             ls_item = self._get_item()
@@ -184,7 +187,7 @@ class Item:
 class Items:
     """Return list of Item objects from LS"""
 
-    def __init__(self, descriptions: list[str] = None, categories: list[str] = None):
+    def __init__(self, descriptions: list[str] | str | None = None, categories: list[str] | None = None):
         self.item_list: list[Item] = []
         if descriptions is not None:
             if not isinstance(descriptions, list):
@@ -197,19 +200,19 @@ class Items:
         self._get_all_items()
 
     def __repr__(self):
-        return f"Items({len(self)})"
+        return f"Items({len(self.item_list)})"
 
     def _get_all_items(self):
         """Run API auth."""
         generate_ls_access()
         current_url = config.LS_URLS["items"]
         while current_url:
-            response = get_data(current_url, {"load_relations": '["ItemAttributes"]', "limit": 100})
+            response = get_data(current_url, {"load_relations": '["ItemAttributes"]', "limit": "100"})
             for item in response.json().get("Item"):
                 self.item_list.append(Item(ls_item=item))
             current_url = response.json()["@attributes"]["next"]
 
-    def _get_items_by_category(self, categories: list[str] = None):
+    def _get_items_by_category(self, categories: list[str]):
         """Run API auth."""
         generate_ls_access()
         for category in categories:
@@ -220,7 +223,7 @@ class Items:
                     {
                         "categoryID": category,
                         "load_relations": '["ItemAttributes"]',
-                        "limit": 100,
+                        "limit": "100",
                     },
                 )
                 for item in response.json().get("Item"):

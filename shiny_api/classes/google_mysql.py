@@ -11,9 +11,6 @@ print(f"Importing {os.path.basename(__file__)}...")
 class Database:
     """Create Database class for Google mysql"""
 
-    engine = None
-    session = None
-
     def __init__(self) -> None:
         """Init db connection"""
         ssl_certs = {"ssl_ca": "config/server-ca.pem", "ssl_cert": "config/client-cert.pem", "ssl_key": "config/client-key.pem"}

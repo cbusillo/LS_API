@@ -3,9 +3,9 @@ import os
 import locale
 from flask import Flask, request
 from kivy.uix.button import Button
-from shiny_api.classes import ls_customer
-from shiny_api.classes import ls_workorder
-from shiny_api.modules import label_print
+from shiny_api.classes.ls_customer import Customer
+from shiny_api.classes.ls_workorder import Workorder
+from shiny_api.modules.label_print import print_text
 import shiny_api.modules.ring_central as ring_central
 import shiny_api.modules.load_config as config
 
@@ -26,16 +26,13 @@ locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 def web_hd_label():
     """Print customer HDD label"""
     password = ""
-    if request.args.get("quantity") is None:
-        quantity = 1
-    else:
-        quantity = int(request.args.get("quantity"))
-    customer = ls_customer.Customer(request.args.get("customerID"))
-    workorder = ls_workorder.Workorder(request.args.get("workorderID"))
+    quantity = int(request.args.get("quantity", 1))
+    customer = Customer(int(request.args.get("customerID", 0)))
+    workorder = Workorder(int(request.args.get("workorderID", 0)))
     for line in workorder.note.split("\n"):
         if line[0:2].lower() == "pw" or line[0:2].lower() == "pc":
             password = line
-    label_print.print_text(
+    print_text(
         f"{customer.first_name} {customer.last_name}",
         barcode=f'2500000{request.args.get("workorderID")}',
         quantity=quantity,
@@ -48,8 +45,8 @@ def web_hd_label():
 @app.route("/rc_send_message", methods=["GET"])
 def rc_send_message():
     """Web listener to generate messages and send them via text"""
-    customer = ls_customer.Customer(request.args.get("customerID"))
-    workorder = ls_workorder.Workorder(request.args.get("workorderID"))
+    customer = Customer(int(request.args.get("customerID", 0)))
+    workorder = Workorder(int(request.args.get("workorderID", 0)))
     mobile_number = None
 
     for phone in customer.contact.phones.contact_phone:
@@ -57,7 +54,7 @@ def rc_send_message():
             mobile_number = phone.number
     if mobile_number is None:
         return HTML_RETURN
-    message_number = int(request.args.get("message"))
+    message_number = int(request.args.get("message", 0))
     if workorder.total == 0 and request.args.get("message") == "2":  # if we send a message with price with $0 price
         message_number += 1
     item_description = workorder.item_description

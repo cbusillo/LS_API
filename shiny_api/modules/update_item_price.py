@@ -34,7 +34,7 @@ def run_update_item_price(caller: Button):
         # interate through items to generate pricing and save to LS
         # Generate pricing from devices.json and apple website by item from LS
         # check to see where current item's storage falls numerically in matrix
-        size = 0
+        size = ""
         size_mult = 0
         for size_mult, size in enumerate(item.sizes):
             if size.lower() in item.description.lower():
@@ -54,6 +54,7 @@ def run_update_item_price(caller: Button):
                 # use device.json age to calculate from current
                 # and look for that age multiplier in age.json
                 device_age = datetime.date.today().year - device_year
+                age_mult = 0
                 for age, price in age_price.items():
                     if device_age < int(age):
                         age_mult = price
@@ -75,6 +76,7 @@ def run_update_item_price(caller: Button):
 
                     # Iterage through web prices and try to find match on current item.
                     # Use deviceBasePrice to subtract from new price.  Detect if cellular
+                    apple_price = 0
                     for product in json_price["data"]["products"]:
                         if size.lower() not in product["name"].lower():
                             continue

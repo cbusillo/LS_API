@@ -38,16 +38,16 @@ class SickwResult:
         sickw_return_dict = self.html_to_dict(response_json.get("result"))
         if not sickw_return_dict:
             return
-        self.result_id: int = response_json.get("id")
+        self.result_id: int = int(response_json.get("id"))
         self.status: str = response_json.get("status")
-        self.description: str = sickw_return_dict.get("Model Desc")
-        self.name: str = sickw_return_dict.get("Model Name")
-        self.a_number: str = sickw_return_dict.get("Model Number")
-        self.model_id: str = sickw_return_dict.get("Model iD")
-        self.capacity: str = sickw_return_dict.get("Capacity")
-        self.color: str = sickw_return_dict.get("Color")
-        self.type: str = sickw_return_dict.get("Type")
-        self.year: int = sickw_return_dict.get("Year")
+        self.description: str = sickw_return_dict.get("Model Desc", "")
+        self.name: str = sickw_return_dict.get("Model Name", "")
+        self.a_number: str = sickw_return_dict.get("Model Number", "")
+        self.model_id: str = sickw_return_dict.get("Model iD", "")
+        self.capacity: str = sickw_return_dict.get("Capacity", "")
+        self.color: str = sickw_return_dict.get("Color", "")
+        self.type: str = sickw_return_dict.get("Type", "")
+        self.year: int = int(sickw_return_dict.get("Year", ""))
         return
 
     def __str__(self) -> str:
@@ -82,7 +82,7 @@ class SickwResults:
     def __init__(self):
         self.sickw_results_list: "List[SickwResult]" = []
 
-    def search_list_for_serial(self, serial: str) -> str:
+    def search_list_for_serial(self, serial: str) -> tuple[str, str] | None:
         """Return the device description from provided serial number and list of results"""
         for result in self.sickw_results_list:
             if result.serial_number == serial:

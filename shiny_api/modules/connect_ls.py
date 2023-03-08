@@ -2,6 +2,7 @@
 import os
 import time
 import logging
+from typing import Any
 import requests
 from kivy.uix.button import Button
 from shiny_api.modules import load_config as config
@@ -22,7 +23,7 @@ def generate_ls_access():
         print(response.text)
 
 
-def get_data(currenturl, current_params="", caller: Button = None):
+def get_data(currenturl: str, current_params: dict[str, str] | None = None, caller: Button | None = None):
     """Get requested data from LS API"""
     response = requests.get(currenturl, headers=config.accessHeader, params=current_params, timeout=60)
 
@@ -46,7 +47,7 @@ def get_data(currenturl, current_params="", caller: Button = None):
     return response
 
 
-def put_data(currenturl, current_data, caller: Button = None):
+def put_data(currenturl: str, current_data: dict[str, Any] | None = None, caller: Button | None = None):
     """Put requested data into LS API"""
     response = requests.put(currenturl, headers=config.accessHeader, json=current_data, timeout=60)
     while response.status_code == 429:

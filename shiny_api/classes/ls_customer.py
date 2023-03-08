@@ -29,7 +29,7 @@ class ContactAddress:
 class ContactEmail:
     """Contact email from dict"""
 
-    def __init__(self, obj: Any):
+    def __init__(self, obj: dict["str", "str"]):
         """Contact email from dict"""
         if isinstance(obj, list):
             self.address = str(obj.get("address"))
@@ -103,10 +103,10 @@ class Contact:
 class Customer:
     """Customer object from LS"""
 
-    def __init__(self, customer_id: int = None, ls_customer: Any = None):
+    def __init__(self, customer_id: int = 0, ls_customer: Any = None):
         """Customer object from dict"""
         if ls_customer is None:
-            if customer_id is None:
+            if customer_id == 0:
                 raise ValueError("Customer ID or LS Customer object required")
             self.customer_id = customer_id
             ls_customer = self._get_customer()
@@ -137,7 +137,7 @@ class Customer:
 
         return response.json().get("Customer")
 
-    def update_phones(self, caller: Button = None):
+    def update_phones(self, caller: Button | None = None):
         """call API put to update pricing"""
         if self.contact.phones is None:
             return
@@ -172,12 +172,12 @@ class Customer:
 class Customers:
     """Return list of Customers"""
 
-    def __init__(self, caller: Button = None):
+    def __init__(self, caller: Button | None = None):
         """List of customers"""
-        self.customer_list: list[Customers] = []
+        self.customer_list: list[Customer] = []
         self._get_customers(caller)
 
-    def _get_customers(self, caller: Button = None):
+    def _get_customers(self, caller: Button | None = None):
         """API call to get all items.  Walk through categories and pages.
         Convert from json dict to Item object and add to itemList list."""
         # Run API auth
@@ -186,7 +186,7 @@ class Customers:
         current_url = config.LS_URLS["customers"]
         pages = 0
         while current_url:
-            response = get_data(current_url, {"load_relations": '["Contact"]', "limit": 100}, caller)
+            response = get_data(current_url, {"load_relations": '["Contact"]', "limit": "100"}, caller)
             for customer in response.json().get("Customer"):
                 self.customer_list.append(Customer(ls_customer=customer))
             current_url = response.json()["@attributes"]["next"]
@@ -199,7 +199,7 @@ class Customers:
         print()
 
     def __repr__(self) -> str:
-        return f"{len(self)} customers"
+        return f"{len(self.customer_list)} customers"
 
 
 if __name__ == "__main__":

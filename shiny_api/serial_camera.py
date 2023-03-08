@@ -42,7 +42,8 @@ def compute_skew(source_image) -> float:
     elif len(source_image.shape) == 2:
         height, width = source_image.shape
     else:
-        print("upsupported image type")
+        print("unsupported image type")
+        return 0.0
 
     image = cv2.medianBlur(source_image, 3)
     edges = cv2.Canny(image, threshold1=30, threshold2=100, apertureSize=3, L2gradient=True)

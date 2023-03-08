@@ -15,33 +15,33 @@ class Device:
     """Describe object returned from PC_API_URL["device"]"""
 
     blacklist = ["", "Sim Reader"]
-    success: bool = False
 
     def __init__(self, serial_number: str) -> None:
         """load data from API"""
+        self.success = False
         params = {"Apikey": config.PHONECHECK_API_KEY, "imei": serial_number, "Username": "cloudshinycomputers"}
         response = requests.post(url=config.PC_API_URL["device"], data=params, timeout=60)
         response_json: dict = response.json()
 
         if response_json.get("msg") == "No Data Found":
             return
-        self.master_id: int = response_json.get("master_id")
-        self.model: str = response_json.get("Model")
-        self.memory: str = response_json.get("Memory")
-        self.serial: str = response_json.get("Serial")
-        self.esn: str = response_json.get("ESN")
-        self.failed: list[str] = response_json.get("Failed").split(",")
-        self.failed = set(self.failed) - set(self.blacklist)
-        self.passed: list[str] = response_json.get("Passed").split(",")
-        self.failed = set(self.failed) - set(self.blacklist)
-        self.imei: int = response_json.get("IMEI")
-        self.carrier: str = response_json.get("Carrier")
-        self.color: str = response_json.get("Color")
-        self.first_tested: datetime = datetime.strptime(response_json.get("DeviceCreatedDate"), "%Y-%m-%d %H:%M:%S")
-        self.battery_cycle_count: int = response_json.get("BatteryCycle")
-        self.battery_health_percentage: int = response_json.get("BatteryDesignMaxCapacity")
-        self.unlock_status: str = response_json.get("UnlockStatus")
-        self.parts_status = json.loads(response_json.get("Parts"))["Remarks"]
+        self.master_id: int = int(response_json.get("master_id", 0))
+        self.model: str = response_json.get("Model", "")
+        self.memory: str = response_json.get("Memory", "")
+        self.serial: str = response_json.get("Serial", "")
+        self.esn: str = response_json.get("ESN", "")
+        self.failed: list[str] = response_json.get("Failed", "").split(",")
+        self.failed = list(set(self.failed) - set(self.blacklist))
+        self.passed: list[str] = response_json.get("Passed", "").split(",")
+        self.failed = list(set(self.failed) - set(self.blacklist))
+        self.imei: int = response_json.get("IMEI", "")
+        self.carrier: str = response_json.get("Carrier", "")
+        self.color: str = response_json.get("Color", "")
+        self.first_tested: datetime = datetime.strptime(response_json.get("DeviceCreatedDate", ""), "%Y-%m-%d %H:%M:%S")
+        self.battery_cycle_count: int = response_json.get("BatteryCycle", "")
+        self.battery_health_percentage: int = response_json.get("BatteryDesignMaxCapacity", "")
+        self.unlock_status: str = response_json.get("UnlockStatus", "")
+        self.parts_status = json.loads(response_json.get("Parts", "")).get("Remarks")
         self.success = True
 
     def __str__(self) -> str:
@@ -59,3 +59,8 @@ class Device:
             + f"Parts: {self.parts_status}"
         )
         return print_string
+
+
+if __name__ == "__main__":
+    device = Device("G2K6K5Q1J1")
+    print(device)

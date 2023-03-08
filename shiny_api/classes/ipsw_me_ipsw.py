@@ -1,6 +1,6 @@
 """IPSW class for downloading firmwares from Apple"""
 import os
-from typing import Any, Self
+from typing import Any
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
@@ -51,14 +51,15 @@ class Device:
         self.local_path = str(obj.get("local_path"))
 
     @staticmethod
-    def _get_devices(caller: Button = None) -> list[Self]:
+    def _get_devices(caller: Button | None = None) -> list["Device"]:
         """Load Apple firmwares into IPSW list"""
 
-        response = get_data(f"{IPSW_ME_API_URL['devices']}", current_params={"keysOnly": True})
+        response = get_data(f"{IPSW_ME_API_URL['devices']}", current_params={"keysOnly": "True"})
         devices: list[Device] = []
         for device in response.json():
             output = f'{device["name"]}'
-            caller.text = f"{caller.text.split(chr(10),maxsplit=1)[0]}\n{output}"
+            if caller:
+                caller.text = f"{caller.text.split(chr(10),maxsplit=1)[0]}\n{output}"
             print(f"{output: <60}", end="\r")
             for path in IPSW_PATH:
                 if device["name"].split()[0].lower() in path.lower():
@@ -67,16 +68,16 @@ class Device:
 
         return devices
 
-    def download_firmware(self, caller: Button = None) -> None:
+    def download_firmware(self, caller: Button | None = None) -> None:
         """Download firmware from ipsw.me"""
         for firmware in self.firmwares:
             local_file = self.local_path + os.path.basename(urlparse(firmware.url).path)
             if not firmware.signed:
                 Path(local_file).unlink(missing_ok=True)
                 continue
-
             output = f"Downloading {firmware.identifier} {firmware.version}..."
-            caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
+            if caller:
+                caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
             print(f"{output: <60}", end="\r")
             if not Path(local_file).is_file():
                 response = requests.get(firmware.url, stream=True, timeout=60)
@@ -89,7 +90,7 @@ class Device:
                 print(f"{local_file} already exists")
 
     @classmethod
-    def download_all_firmwares(cls, caller: Button = None) -> None:
+    def download_all_firmwares(cls, caller: Button | None = None) -> None:
         """Download all firmwares from ipsw.me"""
         cls.delete_temp_firmwares()
         devices = Device._get_devices(caller)
