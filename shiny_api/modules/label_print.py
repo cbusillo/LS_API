@@ -19,7 +19,7 @@ def print_text(
     text_bottom: str | None = None,
     quantity: int = 1,
     print_date: bool = True,
-    printer_ip: str = config.PRINTER_HOST,
+    printer_ip: str = config.FRONT_PRINTER_IP,
 ):
     """Open socket to printer and send text"""
     if not isinstance(text, list):

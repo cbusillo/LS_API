@@ -44,6 +44,7 @@ if config.DEBUG_LOGGING:
 Config.write()
 
 LABELS = [
+    "Fully Functional",
     "Good",
     "Bad",
     "SSD Fan Control",
@@ -60,14 +61,27 @@ LABELS = [
     "TBT",
     "Donated",
     "Customer",
-    "Fully Functional",
     "eBay",
 ]
-PRINTER_HOST_ROB = "192.168.1.241"
+
 LABELS_ROB = [
     "Scrap NOT Wiped",
     "Scrap Wiped",
     "List on eBay",
+    "Fully Functional",
+    "Good",
+    "Bad",
+    "RMA",
+    "MS RMA",
+    "IG RMA",
+    "PT RMA",
+    "Grade C",
+    "Grade D",
+    "Grade F",
+    "Part out",
+    "TBT",
+    "Donated",
+    "eBay",
 ]
 
 
@@ -174,7 +188,7 @@ class MainScreen(Screen):
 class LabelPrinterScreen(Screen):
     """Define main screen grid layout"""
 
-    def __init__(self, printer_ip: str = config.PRINTER_HOST, labels: list[str] = None, **kwargs):
+    def __init__(self, printer_ip: str = config.FRONT_PRINTER_IP, labels: list[str] = None, **kwargs):
         super().__init__(**kwargs)
         if not labels:
             labels = LABELS
@@ -296,7 +310,9 @@ class APIApp(App):
         screen_manager = ScreenManager()
         main_screen = MainScreen(name="main_screen")
         label_printer_screen = LabelPrinterScreen(name="Label Printer")
-        label_printer_screen_rob = LabelPrinterScreen(name="Rob's Label Printer", printer_ip=PRINTER_HOST_ROB)
+        label_printer_screen_rob = LabelPrinterScreen(
+            name="Rob's Label Printer", printer_ip=config.BACK_PRINTER_IP, labels=LABELS_ROB
+        )
         screen_manager.add_widget(main_screen)
         screen_manager.add_widget(label_printer_screen)
         screen_manager.add_widget(label_printer_screen_rob)
