@@ -117,7 +117,7 @@ class Item:
     def __init__(self, item_id: int = 0, ls_item: Any = None):
         """Item from dict"""
         if ls_item is None:
-            if item_id is 0:
+            if item_id == 0:
                 raise ValueError("Must provide item_id or ls_item")
             self.item_id = item_id
             ls_item = self._get_item()

@@ -26,9 +26,9 @@ class ChatGPTCog(commands.Cog):
 
         roles = self.client.guilds[0].me.roles
         if any("Dev" in role.name for role in roles):
-            if "secureerase" in platform.node().lower():
+            if "imagingserver" in platform.node().lower():
                 return
-        elif "secureerase" not in platform.node().lower():
+        elif "imagingserver" not in platform.node().lower():
             return
 
         if self.client.user.mentioned_in(message) or not message.guild:

@@ -18,13 +18,13 @@ class LabelCog(commands.Cog):
     @app_commands.command(name="label")
     @commands.has_role("Shiny")
     async def label_command(
-        self, context: discord.Interaction, text: str, quantity: int = 1, date: bool = True, barcode: str = None
+        self, context: discord.Interaction, text: str, quantity: int = 1, date: bool = True, barcode: str | None = None
     ):
         """Print label"""
         await context.response.send_message(f"Printing {quantity} label with {text=} and {date=}")
-        text = text.strip().splitlines()
+        lines = text.strip().splitlines()
 
-        print_text(text, quantity=quantity, print_date=date, barcode=barcode)
+        print_text(lines, quantity=quantity, print_date=date, barcode=barcode)
 
 
 async def setup(client: commands.Cog):

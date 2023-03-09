@@ -71,7 +71,7 @@ class Device:
     def download_firmware(self, caller: Button | None = None) -> None:
         """Download firmware from ipsw.me"""
         for firmware in self.firmwares:
-            local_file = self.local_path + os.path.basename(urlparse(firmware.url).path)
+            local_file: str = self.local_path + os.path.basename(urlparse(firmware.url).path)
             if not firmware.signed:
                 Path(local_file).unlink(missing_ok=True)
                 continue

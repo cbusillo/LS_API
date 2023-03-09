@@ -15,23 +15,21 @@ class Database:
         """Init db connection"""
         ssl_certs = {"ssl_ca": "config/server-ca.pem", "ssl_cert": "config/client-cert.pem", "ssl_key": "config/client-key.pem"}
         connect_string = f'mysql+pymysql://{config["user"]}:{config["password"]}@{config["host"]}/{config["database"]}'
-        if Database.engine is None:
-            Database.engine = create_engine(connect_string, echo=False, connect_args=ssl_certs)
-            Database.session = Session(Database.engine)
-
-            print("Connection established")
+        Database.engine = create_engine(connect_string, echo=False, connect_args=ssl_certs)
+        Database.session = Session(Database.engine)
+        print("Connection established")
 
     def get_all(self, obj: object):
         """Get all serial numbers from table"""
         return self.session.query(obj).all()
 
-    def exists(self, obj: object, search_string) -> bool:
+    def exists(self, obj: object, search_string: str) -> bool:
         """Return True or False if serial exists"""
         response = self.session.query(obj).filter_by(serial_number=search_string).all()
         print(response)
         return bool(response)
 
-    def add_serial(self, serial):
+    def add_serial(self, serial: str):
         """Add serial number if not exist"""
         if not self.exists(Serial, serial):
             print(f"Adding serial {serial} to db.")

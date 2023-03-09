@@ -27,7 +27,7 @@ from kivy.core.window import Window  # pylint: disable=wrong-import-order
 from kivy.uix.textinput import TextInput  # pylint: disable=wrong-import-order
 
 MY_COMPUTER = ["chris-mbp"]
-SERVER = ["secureerase", "secureerase.local"]
+SERVER = ["imagingserver", "imagingserver.local"]
 SERVER.extend(MY_COMPUTER)
 print(platform.node().lower())
 if platform.node().lower() in MY_COMPUTER:

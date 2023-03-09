@@ -31,7 +31,7 @@ class SetupCog(commands.Cog):
     @commands.command(name="sync")
     async def sync_command(self, context: commands.Context) -> None:
         """Add slash commands to Discord guid"""
-        if "secureerase" in platform.node().lower():
+        if "imagingserver" in platform.node().lower():
             await context.defer()
             if importlib.metadata.version("shiny_api") < luddite.get_version_pypi("shiny_api"):
                 await context.send("New version available, exiting and updating")
@@ -88,7 +88,7 @@ class SetupCog(commands.Cog):
         await self.client.get_channel(BOT_CHANNEL).send(f"Synced {len(synced)} commands from {platform.node()}.")
         role = discord.utils.get(self.client.guilds[0].roles, name="Dev")
         bot_member = discord.utils.get(self.client.get_all_members(), name="Doug Bot")
-        if "secureerase" in platform.node().lower():
+        if "imagingserver" in platform.node().lower():
             print("Switching to Prod")
             await bot_member.remove_roles(role)
         else:
