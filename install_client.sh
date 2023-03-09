@@ -28,7 +28,7 @@ else
 fi
 brew upgrade
 
-brew install python@$REQPYTHON tesseract cliclick
+brew install python@$REQPYTHON tesseract cliclick pkg-config sdl2 sdl2_image sdl2_ttf sdl2_mixer
 
 python$REQPYTHON -m pip install --upgrade pip
 python$REQPYTHON -m pip install virtualenv
