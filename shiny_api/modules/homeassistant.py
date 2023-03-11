@@ -1,17 +1,20 @@
 """Home Assistant module for Shiny API."""
 import os
 from homeassistant_api import Client
+import shiny_api.modules.load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-async def get_homeassistant_client():
+def get_homeassistant_client():
     """Get Home Assistant client"""
     client = Client(
-        url="https://homeassistant.local",
-        token="",
-        verify_ssl=False,
+        "http://ha.store1.logi.wiki",
+        config.HOMEASSISTANT_API_KEY,
     )
+    client.get_entity(entity_id="input_boolean.testing")
+    print(client)
+    # client.turn_on()
     return client
 
 

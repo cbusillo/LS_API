@@ -66,6 +66,7 @@ TRELLO_APIKEY = secret_file.get("trello_apiKey")
 TRELLO_OAUTH_TOKEN = secret_file.get("trello_oauth_token")
 OPENAI_API_KEY = secret_file.get("openai_api_key")
 PHONECHECK_API_KEY = secret_file.get("phonecheck_api_key")
+HOMEASSISTANT_API_KEY = secret_file.get("homeassistant_api_key")
 
 RESPONSE_MESSAGES = [
     "Hi {name}, we are open 11-7 Tu-Sa.",

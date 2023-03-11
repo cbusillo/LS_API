@@ -1,4 +1,4 @@
-"""TEMPLATE discord cog"""
+"""Homeasssistant discord cog"""
 import os
 import discord
 from discord import app_commands
@@ -13,12 +13,12 @@ class HomeAssistantCog(commands.Cog):
     def __init__(self, client: commands.Cog):
         self.client = client
 
-    @app_commands.command(name="TEMPLATE")
+    @app_commands.command(name="ha")
     @commands.has_role("Shiny")
-    async def TEMPLATE_lookup_command(self, context: discord.Interaction, serial_number: str):
+    async def start_roomba(self, context: discord.Interaction):
         """Look up serial number in Sickw"""
 
-        await context.response.send_message("TEMPLATE")
+        await context.response.send_message("test")
 
 
 async def setup(client: commands.Cog):
