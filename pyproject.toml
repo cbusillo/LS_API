@@ -24,6 +24,7 @@ luddite = "^1.0.2"
 py-applescript = "^1.0.3"
 waitress = "^2.1.2"
 kivy = {version = "^2.2.0.dev0", allow-prereleases = true, source = "kivy"}
+homeassistant-api = "^4.1.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
