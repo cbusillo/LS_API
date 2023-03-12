@@ -25,31 +25,25 @@ class HomeAssistantCog(commands.Cog):
     @app_commands.choices(choices=get_functions(ha.Vacuum))
     @commands.has_role("Shiny")
     async def vacuum(self, context: discord.Interaction, choices: str):
-        # print(await self.get_functions())
         roomba = ha.Vacuum()
-        roomba_function = getattr(roomba, choices)
-        roomba_function()
-        await context.response.send_message(f"Vacuum is {choices}ing")
+        status = getattr(roomba, choices)()
+        await context.response.send_message(f"Vacuum is {status or choices}ing")
 
     @app_commands.command(name="alarm")
     @app_commands.choices(choices=get_functions(ha.Alarm))
     @commands.has_role("Shiny")
     async def arm(self, context: discord.Interaction, choices: str):
-        # print(await self.get_functions())
-        testing = ha.Alarm()
-        testing_function = getattr(testing, choices)
-        testing_function()
-        await context.response.send_message(f"Testing is {choices}ing")
+        alarm = ha.Alarm()
+        status = getattr(alarm, choices)()
+        await context.response.send_message(f"Alarm is {status or choices}ing")
 
-    @app_commands.command(name="tesla")
-    @app_commands.choices(choices=get_functions(ha.Lock))
+    @app_commands.command(name="taylor_swiftly")
+    @app_commands.choices(choices=get_functions(ha.TaylorSwiftly()))
     @commands.has_role("Shiny")
     async def tesla(self, context: discord.Interaction, choices: str):
-        # print(await self.get_functions())
-        testing = ha.Lock(entity_id="taylor_swiftly_doors", location="home")
-        testing_function = getattr(testing, choices)
-        testing_function()
-        await context.response.send_message(f"Testing is {choices}ing")
+        taylor = ha.TaylorSwiftly()
+        status = taylor.get_functions()[choices]()
+        await context.response.send_message(f"Taylor Swiftly is {status or choices}")
 
 
 async def setup(client: commands.Cog):

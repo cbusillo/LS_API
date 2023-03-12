@@ -1,7 +1,7 @@
 """Home Assistant module for Shiny API."""
 import inspect
 import os
-from homeassistant_api import Client, State
+from homeassistant_api import Client
 import shiny_api.modules.load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
@@ -12,6 +12,7 @@ class HomeAssistant:
 
     def __init__(self, entity_id: str, location: str = "store1"):
         """Get Home Assistant client"""
+        self.domain = self.domain or ""
         self.client = Client(
             config.HOMEASSISTANT_API[location]["url"],
             config.HOMEASSISTANT_API[location]["key"],
@@ -24,11 +25,15 @@ class HomeAssistant:
         methods = [method for method, _ in inspect.getmembers(cls, predicate=inspect.isfunction) if not method.startswith("__")]
         return methods
 
+    def status(self):
+        """Get input boolean status"""
+        return self.client.get_entity(entity_id=self.entity_id).get_state().state
+
 
 class Vacuum(HomeAssistant):
     """Class for Roomba vacuum cleaner"""
 
-    def __init__(self, entity_id: str = "roomba_pt", *args, **kwargs):
+    def __init__(self, *args, entity_id: str = "roomba_pt", **kwargs):
         self.domain = "vacuum"
         super().__init__(entity_id=entity_id, *args, **kwargs)
 
@@ -49,9 +54,9 @@ class Vacuum(HomeAssistant):
 class InputBoolean(HomeAssistant):
     """Testing class"""
 
-    def __init__(self, entity_id: str = "testing", *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.domain = "input_boolean"
-        super().__init__(entity_id=entity_id, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def turn_on(self):
         """Turn on input boolean"""
@@ -65,20 +70,13 @@ class InputBoolean(HomeAssistant):
         """Toggle input boolean"""
         self.client.get_domain(self.domain).toggle(entity_id=self.entity_id)
 
-    def status(self):
-        """Get input boolean status"""
-
-        return (
-            self.client.get_entity(entity_id=self.entity_id).get_state().state
-        )  #  self.client.get_domain(self.domain). (entity_id=self.entity_id)
-
 
 class Alarm(HomeAssistant):
     """Class for Alarm panel"""
 
-    def __init__(self, entity_id: str = "system", *args, **kwargs):
+    def __init__(self, *args, entity_id: str = "system", **kwargs):
         self.domain = "alarm_control_panel"
-        super().__init__(*args, **kwargs)
+        super().__init__(entity_id=entity_id * args, **kwargs)
 
     def arm(self):
         """Arm alarm panel"""
@@ -88,17 +86,11 @@ class Alarm(HomeAssistant):
         """Arm alarm panel"""
         self.client.get_domain(self.domain).alarm_disarm(entity_id=self.entity_id)
 
-    def status(self):
-        """Get alarm status"""
-        alarm = self.client.get_domain(self.domain)
-
-        return self.client.get_domain(self.domain).get_state(entity_id=self.entity_id)
-
 
 class Lock(HomeAssistant):
     """Class for Locks"""
 
-    def __init__(self, entity_id: str, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.domain = "lock"
         super().__init__(*args, **kwargs)
 
@@ -111,12 +103,34 @@ class Lock(HomeAssistant):
         self.client.get_domain(self.domain).unlock(entity_id=self.entity_id)
 
 
-# class Tesla
+class Sensor(HomeAssistant):
+    def __init__(self, *args, **kwargs):
+        self.domain = "sensor"
+        super().__init__(*args, **kwargs)
+
+
+class TaylorSwiftly:
+    """Class for Taylor Swiftly Lock"""
+
+    def __init__(self):
+        self.battery = Sensor("taylor_swiftly_battery", location="home")
+        self.lock = Lock("taylor_swiftly_doors", location="home")
+
+    def get_functions(self):
+        """Return functions"""
+        methods = {}
+        for class_name, class_method in vars(self).items():
+            for name in class_method.get_functions():
+                methods[f"{name} {class_name}"] = getattr(class_method, name)
+        return methods
 
 
 if __name__ == "__main__":
-    testing = InputBoolean("testing")
-    print(testing.toggle())
-    print(testing.state())
-    # alarm = Alarm()
-    # print(alarm.status())
+    # test = InputBoolean("testing")
+    # print(test.status)
+    taylor_lock = Lock("taylor_swiftly_doors", location="home")
+    taylor_batt = Sensor("taylor_swiftly_battery", location="home")
+    # taylor.lock()
+    taylor = TaylorSwiftly()
+    # taylor.get_functions()["lock lock"]()
+    print(taylor.get_functions())
