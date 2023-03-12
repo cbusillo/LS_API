@@ -37,18 +37,21 @@ class Vacuum(HomeAssistant):
         self.domain = "vacuum"
         super().__init__(entity_id=entity_id, *args, **kwargs)
 
-    def start(self):
+    def suck(self) -> str:
         """Start vacuum cleaner"""
         self.client.get_domain(self.domain).start(entity_id=self.entity_id)
+        return "starting"
 
-    def stop(self):
+    def stop(self) -> str:
         """Return vacuum cleaner to base"""
         print(f"{self.entity_id}|{self.domain}")
         self.client.get_domain(self.domain).stop(entity_id=self.entity_id)
+        return "stopping"
 
-    def go_home(self):
+    def go_home(self) -> str:
         """Return vacuum cleaner to base"""
         self.client.get_domain(self.domain).return_to_base(entity_id=self.entity_id)
+        return "going home"
 
 
 class InputBoolean(HomeAssistant):
@@ -76,15 +79,17 @@ class Alarm(HomeAssistant):
 
     def __init__(self, *args, entity_id: str = "system", **kwargs):
         self.domain = "alarm_control_panel"
-        super().__init__(entity_id=entity_id * args, **kwargs)
+        super().__init__(entity_id=entity_id, *args, **kwargs)
 
-    def arm(self):
+    def arm(self) -> str:
         """Arm alarm panel"""
         self.client.get_domain(self.domain).alarm_arm_away(entity_id=self.entity_id)
+        return "arming"
 
-    def disarm(self):
+    def disarm(self) -> str:
         """Arm alarm panel"""
         self.client.get_domain(self.domain).alarm_disarm(entity_id=self.entity_id)
+        return "disarming"
 
 
 class Lock(HomeAssistant):
@@ -94,19 +99,36 @@ class Lock(HomeAssistant):
         self.domain = "lock"
         super().__init__(*args, **kwargs)
 
-    def lock(self):
+    def lock(self) -> str:
         """Lock door"""
         self.client.get_domain(self.domain).lock(entity_id=self.entity_id)
+        return "locking"
 
-    def unlock(self):
+    def unlock(self) -> str:
         """Unlock door"""
         self.client.get_domain(self.domain).unlock(entity_id=self.entity_id)
+        return "unlocking"
 
 
 class Sensor(HomeAssistant):
+    """Sensor class"""
+
     def __init__(self, *args, **kwargs):
         self.domain = "sensor"
         super().__init__(*args, **kwargs)
+
+
+class Button(HomeAssistant):
+    """Button class"""
+
+    def __init__(self, *args, **kwargs):
+        self.domain = "button"
+        super().__init__(*args, **kwargs)
+
+    def press(self) -> str:
+        """Start button"""
+        self.client.get_domain(self.domain).press(entity_id=self.entity_id)
+        return "starting"
 
 
 class TaylorSwiftly:
@@ -115,6 +137,7 @@ class TaylorSwiftly:
     def __init__(self):
         self.battery = Sensor("taylor_swiftly_battery", location="home")
         self.lock = Lock("taylor_swiftly_doors", location="home")
+        self.start = Button("taylor_swiftly_remote_start", location="home")
 
     def get_functions(self):
         """Return functions"""
@@ -126,12 +149,5 @@ class TaylorSwiftly:
 
 
 if __name__ == "__main__":
-    # test = InputBoolean("testing")
-    # print(test.status)
-    taylor_lock = Lock("taylor_swiftly_doors", location="home")
-    taylor_batt = Sensor("taylor_swiftly_battery", location="home")
-    # taylor.lock()
     taylor = TaylorSwiftly()
-    # taylor.get_functions()["lock lock"]()
-    print(taylor.get_functions())
-    print(taylor.battery.s)
+    taylor.start.press()

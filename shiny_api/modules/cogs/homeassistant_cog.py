@@ -17,6 +17,7 @@ class HomeAssistantCog(commands.Cog):
 
     @staticmethod
     def get_functions(function_name: Type[ha.HomeAssistant]):
+        """Get all functions from a class"""
         return [
             app_commands.Choice(name=function_choice, value=function_choice) for function_choice in function_name.get_functions()
         ]
@@ -25,29 +26,28 @@ class HomeAssistantCog(commands.Cog):
     @app_commands.choices(choices=get_functions(ha.Vacuum))
     @app_commands.checks.has_role("Shiny")
     async def vacuum(self, context: discord.Interaction, choices: str):
+        """Vacuum commands"""
         roomba = ha.Vacuum()
         status = getattr(roomba, choices)()
-        await context.response.send_message(f"Vacuum is {status or choices}ing")
+        await context.response.send_message(f"Vacuum is {status or choices}")
 
     @app_commands.command(name="alarm")
     @app_commands.choices(choices=get_functions(ha.Alarm))
     @app_commands.checks.has_role("Shiny")
-    async def arm(self, context: discord.Interaction, choices: str):
+    async def alarm(self, context: discord.Interaction, choices: str):
+        """Alarm commands"""
         alarm = ha.Alarm()
         status = getattr(alarm, choices)()
-        await context.response.send_message(f"Alarm is {status or choices}ing")
+        await context.response.send_message(f"Alarm is {status or choices}")
 
     @app_commands.command(name="taylor_swiftly")
     @app_commands.choices(choices=get_functions(ha.TaylorSwiftly()))
     @app_commands.checks.has_role("Shiny")
     async def tesla(self, context: discord.Interaction, choices: str):
+        """Tesla commands"""
         taylor = ha.TaylorSwiftly()
         status = taylor.get_functions()[choices]()
-        await context.response.send_message(f"Taylor Swiftly {choices.split()[1]} is {status}")
-
-    @app_commands.errors.MissingRole
-    async def on_command_error(self, context, error):
-        await context.response.send_message(error)
+        await context.response.send_message(f"Taylor Swiftly {choices.split()[1]} is {status or choices}")
 
 
 async def setup(client: commands.Cog):

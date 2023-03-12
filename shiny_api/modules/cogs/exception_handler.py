@@ -1,3 +1,4 @@
+"""Exception handler for discord commands"""
 import os
 import discord
 from discord.ext import commands
@@ -6,6 +7,8 @@ print(f"Importing {os.path.basename(__file__)}...")
 
 
 class ExceptionHandler(commands.Cog):
+    """Exception handler for discord commands"""
+
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -16,8 +19,10 @@ class ExceptionHandler(commands.Cog):
 
     @commands.Cog.listener("on_app_command_error")
     async def get_app_command_error(self, interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
-        await interaction.channel.send(error)
+        """Handle app command errors"""
+        await interaction.response.send_message(error)
 
 
 async def setup(bot: commands.Bot):
+    """setup cog"""
     await bot.add_cog(ExceptionHandler(bot))
