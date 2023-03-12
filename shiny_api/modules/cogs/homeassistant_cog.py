@@ -43,7 +43,7 @@ class HomeAssistantCog(commands.Cog):
     async def tesla(self, context: discord.Interaction, choices: str):
         taylor = ha.TaylorSwiftly()
         status = taylor.get_functions()[choices]()
-        await context.response.send_message(f"Taylor Swiftly is {status or choices}")
+        await context.response.send_message(f"Taylor Swiftly {choices.split()[1]} is {status}")
 
 
 async def setup(client: commands.Cog):

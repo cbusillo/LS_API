@@ -134,3 +134,4 @@ if __name__ == "__main__":
     taylor = TaylorSwiftly()
     # taylor.get_functions()["lock lock"]()
     print(taylor.get_functions())
+    print(taylor.battery.s)
