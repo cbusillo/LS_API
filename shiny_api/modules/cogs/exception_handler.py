@@ -14,11 +14,13 @@ class ExceptionHandler(commands.Cog):
 
         bot.tree.error(coro=self.__dispatch_to_app_command_handler)
 
-    async def __dispatch_to_app_command_handler(self, interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
+    async def __dispatch_to_app_command_handler(
+            self, interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
         self.bot.dispatch("app_command_error", interaction, error)
 
     @commands.Cog.listener("on_app_command_error")
-    async def get_app_command_error(self, interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
+    async def get_app_command_error(
+            self, interaction: discord.Interaction, error: discord.app_commands.AppCommandError):
         """Handle app command errors"""
         await interaction.response.send_message(error)
 

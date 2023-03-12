@@ -85,9 +85,12 @@ class SetupCog(commands.Cog):
         """Set bot role and sync commands"""
         self.client.tree.copy_global_to(guild=self.client.guilds[0])
         synced = await self.client.tree.sync(guild=self.client.guilds[0])
-        await self.client.get_channel(BOT_CHANNEL).send(f"Synced {len(synced)} commands from {platform.node()}.")
+        await self.client.get_channel(BOT_CHANNEL).send(
+            f"Synced {len(synced)} commands from {platform.node()}.")
+
         role = discord.utils.get(self.client.guilds[0].roles, name="Dev")
-        bot_member = discord.utils.get(self.client.get_all_members(), name="Doug Bot")
+        bot_member = discord.utils.get(
+            self.client.get_all_members(), name="Doug Bot")
         if "imagingserver" in platform.node().lower():
             print("Switching to Prod")
             await bot_member.remove_roles(role)

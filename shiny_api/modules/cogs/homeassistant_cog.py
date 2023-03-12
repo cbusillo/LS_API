@@ -16,10 +16,11 @@ class HomeAssistantCog(commands.Cog):
         self.client = client
 
     @staticmethod
-    def get_functions(function_name: Type[ha.HomeAssistant]):
+    def get_functions(function_name: Type[ha.HomeAssistant] | ha.TaylorSwiftly):
         """Get all functions from a class"""
         return [
-            app_commands.Choice(name=function_choice, value=function_choice) for function_choice in function_name.get_functions()
+            app_commands.Choice(name=function_choice, value=function_choice)
+            for function_choice in function_name.get_functions()
         ]
 
     @app_commands.command(name="vacuum")
@@ -47,7 +48,9 @@ class HomeAssistantCog(commands.Cog):
         """Tesla commands"""
         taylor = ha.TaylorSwiftly()
         status = taylor.get_functions()[choices]()
-        await context.response.send_message(f"Taylor Swiftly {choices.split()[1]} is {status or choices}")
+        await context.response.send_message(
+            f"Taylor Swiftly {choices.split()[1]} is {status or choices}"
+        )
 
 
 async def setup(client: commands.Cog):
