@@ -17,7 +17,7 @@ class LightSpeedCog(commands.Cog):
         self.client = client
 
     @app_commands.command(name="ls_price")
-    @commands.has_role("Shiny")
+    @app_commands.checks.has_role("Shiny")
     async def ls_price_lookup_command(self, context: discord.Interaction, search: str):
         """Look up price in Lightspeed"""
         await context.response.defer()

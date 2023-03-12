@@ -16,7 +16,7 @@ class LabelCog(commands.Cog):
         self.client = client
 
     @app_commands.command(name="label")
-    @commands.has_role("Shiny")
+    @app_commands.checks.has_role("Shiny")
     async def label_command(
         self, context: discord.Interaction, text: str, quantity: int = 1, date: bool = True, barcode: str | None = None
     ):

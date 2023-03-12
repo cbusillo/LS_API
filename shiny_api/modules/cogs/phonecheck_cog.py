@@ -16,7 +16,7 @@ class PhoneCheckCog(commands.Cog):
         self.client = client
 
     @app_commands.command(name="pc")
-    @commands.has_role("Shiny")
+    @app_commands.checks.has_role("Shiny")
     async def pc_lookup_command(self, context: discord.Interaction, serial_number: str):
         """Look up serial number in PhoneCheck"""
         device = pc.Device(serial_number=serial_number)

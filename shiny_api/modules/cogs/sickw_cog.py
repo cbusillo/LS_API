@@ -15,7 +15,7 @@ class SickwCog(commands.Cog):
         self.client = client
 
     @app_commands.command(name="sick")
-    @commands.has_role("Shiny")
+    @app_commands.checks.has_role("Shiny")
     async def sickw_lookup_command(self, context: discord.Interaction, serial_number: str):
         """Look up serial number in Sickw"""
         device = SickwResult(serial_number=serial_number)

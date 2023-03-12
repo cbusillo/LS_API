@@ -23,7 +23,7 @@ class HomeAssistantCog(commands.Cog):
 
     @app_commands.command(name="vacuum")
     @app_commands.choices(choices=get_functions(ha.Vacuum))
-    @commands.has_role("Shiny")
+    @app_commands.checks.has_role("Shiny")
     async def vacuum(self, context: discord.Interaction, choices: str):
         roomba = ha.Vacuum()
         status = getattr(roomba, choices)()
@@ -31,7 +31,7 @@ class HomeAssistantCog(commands.Cog):
 
     @app_commands.command(name="alarm")
     @app_commands.choices(choices=get_functions(ha.Alarm))
-    @commands.has_role("Shiny")
+    @app_commands.checks.has_role("Shiny")
     async def arm(self, context: discord.Interaction, choices: str):
         alarm = ha.Alarm()
         status = getattr(alarm, choices)()
@@ -39,11 +39,15 @@ class HomeAssistantCog(commands.Cog):
 
     @app_commands.command(name="taylor_swiftly")
     @app_commands.choices(choices=get_functions(ha.TaylorSwiftly()))
-    @commands.has_role("Shiny")
+    @app_commands.checks.has_role("Shiny")
     async def tesla(self, context: discord.Interaction, choices: str):
         taylor = ha.TaylorSwiftly()
         status = taylor.get_functions()[choices]()
         await context.response.send_message(f"Taylor Swiftly {choices.split()[1]} is {status}")
+
+    @app_commands.errors.MissingRole
+    async def on_command_error(self, context, error):
+        await context.response.send_message(error)
 
 
 async def setup(client: commands.Cog):
