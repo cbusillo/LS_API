@@ -1,6 +1,7 @@
 import locale
 import os
 from django.shortcuts import render
+from django.views.generic import ListView
 
 from shiny_api.classes.ls_customer import Customer
 from shiny_api.classes.ls_workorder import Workorder
@@ -55,6 +56,15 @@ LABELS_ROB = [
 def index(request):
     context = {"labels": LABELS}
     return render(request, 'index.html', context=context)
+
+
+class PrintListView(ListView):
+    model = LABELS
+
+
+def about(request):
+
+    return render(request, 'about.html')
 
 # localhost:8000/label_printer/api/?quantity=4&workorderID=25644&customerID=15762
 

@@ -1,37 +1,67 @@
-<html>
-    <head>
-        <title>Label Printer</title>
-    </head>
-   <body>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-
-            <label>Quantity:</label>
-            <input type="number" name="quantity" value="1">
-
-            <label>Date:</label>
-            <input type="checkbox" name="date" checked>
-
-            <p>
-                <label>Message:</label>
-                <table>
-                    <tr>
-                    {% with count=0 %}
-                    {% for label in labels %}
-                        {% count = count + 1 %}
-                        <button type="submit" name="label" value="{{ label }}">{{ label }}</button>
-                        {% if count == 3 %}
-                            </tr>
-                            <tr>
-                            {% with count=0 %}
-                        {% endif %}
-                        {% endwith %}
-                    {% endfor %}
-                    </tr>
-                </table>
-            </p>
-        </form>
-    </body>
-
-</html>
+{% extends "base.html" %}
+{% block title %}
+{% endblock title %}
+{% block content %}
+    <form method="post">
+        <div class="container">
+            <div class="row mb-3">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="col-md-4">
+                    <textarea class="form-control" rows="5" placeholder="Custom Label Text"></textarea>
+                </div>
+                <div class="col-md-3">
+                    <input class="form-control"
+                           style="text-transform:uppercase"
+                           type="text"
+                           placeholder="Serial Number"/>
+                </div>
+                <div class="col-md-2">
+                    <div class="row">
+                        <div class="col">
+                            <input class="form-control"
+                                   type="number"
+                                   name="quantity"
+                                   style="width:75px"
+                                   value="1"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <label>Quantity</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="row">
+                        <div class="col">
+                            <input type="checkbox"
+                                   class="btn-check"
+                                   id="btncheck1"
+                                   name="date"
+                                   autocomplete="off"
+                                   checked/>
+                            <label class="btn btn-outline-secondary" style="width:100%;" for="btncheck1">Include Date</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <button type="submit" style="width:100%;" class="btn btn-primary">Print</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                {% for label in labels %}
+                    <div class="col">
+                        <button type="submit"
+                                class="btn btn-lg btn-secondary my-2 py-3"
+                                style="width: 100%">{{ label }}</button>
+                    </div>
+                    {% cycle '' '' '' '</div><div class="row">' %}
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+{% endblock content %}
