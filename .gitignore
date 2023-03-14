@@ -7,5 +7,6 @@
 *secret.json
 *pem
 *egg-info
+*sqlite3
 poetry.lock
 shiny_api/temp.html

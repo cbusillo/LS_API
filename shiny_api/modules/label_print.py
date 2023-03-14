@@ -33,7 +33,8 @@ def print_text(
     quantity = max(int(quantity), 1)
     label = ZPLDocument()
     label.add_zpl_raw("^BY2")
-    label.add_default_font(font_name=0, character_height=LABEL_TEXT_SIZE["height"], character_width=LABEL_TEXT_SIZE["width"])
+    label.add_default_font(
+        font_name=0, character_height=LABEL_TEXT_SIZE["height"], character_width=LABEL_TEXT_SIZE["width"])
     current_origin = LABEL_PADDING
     for index, line in enumerate(text):
         label.add_field_block(text_justification="C", width=label_width)
@@ -64,13 +65,16 @@ def print_text(
         barcode_zpl = Code128_Barcode(barcode, "N", BARCODE_HEIGHT, "Y", "N")
 
         label.add_field_block(width=label_width)
-        label.add_field_origin(x_pos=LABEL_PADDING + centered_left, y_pos=current_origin, justification=2)
+        label.add_field_origin(x_pos=LABEL_PADDING + centered_left,
+                               y_pos=current_origin, justification=2)
         label.add_barcode(barcode_zpl)
         current_origin = current_origin + (BARCODE_HEIGHT / 9) + 2
 
     printer = NetworkPrinter(printer_ip)
     for _ in range(quantity):
         printer.print_zpl(label)
+
+    print(f"Printed {quantity} labels to {printer_ip} with text {text}")
 
 
 def wrap_list_text(text: list[str], length: int) -> list[str]:
@@ -80,7 +84,8 @@ def wrap_list_text(text: list[str], length: int) -> list[str]:
         if len(line) <= length:
             wrapped_text.append(line)
             continue
-        wrapped_lines = textwrap.wrap(line, 20, break_long_words=True, break_on_hyphens=True, replace_whitespace=False)
+        wrapped_lines = textwrap.wrap(line, 20, break_long_words=True,
+                                      break_on_hyphens=True, replace_whitespace=False)
         for wrapped_line in wrapped_lines:
             wrapped_text.append(wrapped_line)
     return wrapped_text
