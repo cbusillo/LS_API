@@ -3,9 +3,9 @@
 /.vscode
 /build
 /dist
-*temp*
+*temp
 *secret.json
 *pem
 *egg-info
+db.sqlite3
 poetry.lock
-shiny_api/temp.html

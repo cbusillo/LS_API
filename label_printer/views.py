@@ -1,8 +1,7 @@
-"""Run webserver to listen for LS requests."""
-import os
 import locale
-from flask import Flask, request
-from kivy.uix.button import Button
+import os
+from django.shortcuts import render
+
 from shiny_api.classes.ls_customer import Customer
 from shiny_api.classes.ls_workorder import Workorder
 from shiny_api.modules.label_print import print_text
@@ -11,39 +10,74 @@ import shiny_api.modules.load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
 
-app = Flask(__name__)
+LABELS = [
+    "Fully Functional",
+    "Good",
+    "Bad",
+    "SSD Fan Control",
+    "RMA",
+    "MS RMA",
+    "IG RMA",
+    "PT RMA",
+    "Grade C",
+    "Grade D",
+    "Grade F",
+    "Part out",
+    "Bench Use",
+    "app.shinycomputers.com",
+    "TBT",
+    "Donated",
+    "Customer",
+    "eBay",
+]
 
-HTML_RETURN = """<html><script type="text/javascript">
-open(location, '_self').close(); </script>
-<a id='close_button' href="javascript:window.open('','_self').close();">Close Tab</a></html>"""
-HTML_ERROR = """<html>No mobile phone number (Maybe run format customer phone numbers)
-<br><br>{error}</html>"""
+LABELS_ROB = [
+    "Scrap NOT Wiped",
+    "Scrap Wiped",
+    "List on eBay",
+    "Fully Functional",
+    "Good",
+    "Bad",
+    "RMA",
+    "MS RMA",
+    "IG RMA",
+    "PT RMA",
+    "Grade C",
+    "Grade D",
+    "Grade F",
+    "Part out",
+    "TBT",
+    "Donated",
+    "eBay",
+]
 
-locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
+
+def index(request):
+    context = {"labels": LABELS}
+    return render(request, 'index.html', context=context)
+
+# localhost:8000/label_printer/api/?quantity=4&workorderID=25644&customerID=15762
 
 
-@app.route("/wo_label", methods=["GET"])
-def web_hd_label():
-    """Print customer HDD label"""
+def workorder_label(request):
     password = ""
-    quantity = int(request.args.get("quantity", 1))
-    customer = Customer(int(request.args.get("customerID", 0)))
-    workorder = Workorder(int(request.args.get("workorderID", 0)))
+    quantity = int(request.GET.get("quantity", 1))
+    customer = Customer(int(request.GET.get("customerID", 0)))
+    workorder = Workorder(int(request.GET.get("workorderID", 0)))
     for line in workorder.note.split("\n"):
         if line[0:2].lower() == "pw" or line[0:2].lower() == "pc":
             password = line
     print_text(
         f"{customer.first_name} {customer.last_name}",
-        barcode=f'2500000{request.args.get("workorderID")}',
+        barcode=f'2500000{workorder.workorder_id}',
         quantity=quantity,
         text_bottom=password,
         print_date=True,
     )
-    return HTML_RETURN
+    return render(request, 'close_window.html')
 
 
-@app.route("/rc_send_message", methods=["GET"])
-def rc_send_message():
+def ring_central_send_message(request):
     """Web listener to generate messages and send them via text"""
     customer = Customer(int(request.args.get("customerID", 0)))
     workorder = Workorder(int(request.args.get("workorderID", 0)))
@@ -53,7 +87,7 @@ def rc_send_message():
         if phone.use_type == "Mobile":
             mobile_number = phone.number
     if mobile_number is None:
-        return HTML_RETURN
+        return render(request, 'error.html')
     message_number = int(request.args.get("message", 0))
     if (
         workorder.total == 0 and request.args.get("message") == "2"
@@ -76,16 +110,4 @@ def rc_send_message():
     )
     ring_central.send_message(mobile_number, message)
 
-    return HTML_RETURN
-
-
-def start_weblistener(caller: Button | None = None):
-    """Start the listener"""
-    if caller:
-        caller.text = f"{caller.text.split(chr(10))[0]}\nListner Started"
-    from waitress import serve  # pylint: disable=import-outside-toplevel
-    serve(app, host="0.0.0.0", port=8000)
-
-
-if __name__ == "__main__":
-    start_weblistener()
+    return render(request, 'close_window.html')

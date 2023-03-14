@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>Label Printer</title>
+    </head>
+   <body>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <label>Quantity:</label>
+            <input type="number" name="quantity" value="1">
+
+            <label>Date:</label>
+            <input type="checkbox" name="date" checked>
+
+            <p>
+                <label>Message:</label>
+                <table>
+                    <tr>
+                    {% with count=0 %}
+                    {% for label in labels %}
+                        {% count = count + 1 %}
+                        <button type="submit" name="label" value="{{ label }}">{{ label }}</button>
+                        {% if count == 3 %}
+                            </tr>
+                            <tr>
+                            {% with count=0 %}
+                        {% endif %}
+                        {% endwith %}
+                    {% endfor %}
+                    </tr>
+                </table>
+            </p>
+        </form>
+    </body>
+
+</html>

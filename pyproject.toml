@@ -7,7 +7,6 @@ packages = [{include = "shiny_api"}]
 
 [tool.poetry.dependencies]
 python = "3.11.*"
-Flask = "^2.2.3"
 selenium = "^4.8.2"
 opencv-python = "^4.7.0.68"
 sqlalchemy = "^2.0.4"
@@ -22,9 +21,8 @@ openai = "^0.27.0"
 simple-zpl2 = "^0.3.0"
 luddite = "^1.0.2"
 py-applescript = "^1.0.3"
-waitress = "^2.1.2"
-kivy = {version = "^2.2.0.dev0", allow-prereleases = true, source = "kivy"}
 homeassistant-api = "^4.1.0"
+django = "^4.1.7"
 
 [tool.poetry.group.dev.dependencies]
 dotenv = {version = "^0.0.5", platform = "windows"}
@@ -33,19 +31,9 @@ mypy = "^1.1.1"
 flake8 = "^6.0.0"
 autopep8 = "^2.0.2"
 
-[[tool.poetry.source]]
-name = "kivy"
-url = "https://kivy.org/downloads/simple/"
-default = false
-secondary = true
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-shiny_start_gui = "shiny_api.main:start_gui"
-shiny_serial_camera = "shiny_api.shiny_serial_camera:start_gui"
 
 [tool.pylint.MASTER]
 ignore-patterns = '.*pyi'
