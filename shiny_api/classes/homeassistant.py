@@ -136,7 +136,7 @@ class Button(HomeAssistant):
 
 
 class TaylorSwiftly:
-    """Class for Taylor Swiftly Lock"""
+    """Class for Taylor Swiftly"""
 
     def __init__(self):
         self.battery = Sensor("taylor_swiftly_battery", location="home")

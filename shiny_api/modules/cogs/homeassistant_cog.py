@@ -4,7 +4,7 @@ from typing import Type
 import discord
 from discord import app_commands
 from discord.ext import commands
-import shiny_api.modules.homeassistant as ha
+import shiny_api.classes.homeassistant as ha
 
 print(f"Importing {os.path.basename(__file__)}...")
 

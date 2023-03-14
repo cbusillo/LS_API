@@ -46,3 +46,6 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 shiny_start_gui = "shiny_api.main:start_gui"
 shiny_serial_camera = "shiny_api.shiny_serial_camera:start_gui"
+
+[tool.pylint.MASTER]
+ignore-patterns = '.*pyi'
