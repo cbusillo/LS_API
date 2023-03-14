@@ -66,6 +66,7 @@ TRELLO_APIKEY = secret_file.get("trello_apiKey")
 TRELLO_OAUTH_TOKEN = secret_file.get("trello_oauth_token")
 OPENAI_API_KEY = secret_file.get("openai_api_key")
 PHONECHECK_API_KEY = secret_file.get("phonecheck_api_key")
+DJANGO_SECRET_KEY = secret_file.get("django_secret_key")
 
 HOMEASSISTANT_API = {
     store_key: {config_key: config_value for config_key, config_value in store_value.items()}
