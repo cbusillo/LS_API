@@ -10,7 +10,7 @@
 {% endblock navbar %}
 {% block content %}
 <form method="post">
-    {{ form.csrf_token }}
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <div class="container">
         <div class="row mb-3">
             <div class="col-md-4">

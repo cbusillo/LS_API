@@ -23,7 +23,7 @@ def label_printer_view(active_label_group: str = "Main Labels"):
     """View to print labels"""
     label_group_list: dict[LabelGroup] = LabelGroup.load_from_defaults()
     label_group_name_list = [label_group_name for label_group_name in label_group_list.keys()]
-    quantity = request.form.get("quantity", 1)
+    quantity = int(request.form.get("quantity", 1))
     label_text = ""
     page_error = ""
 
@@ -50,5 +50,4 @@ def label_printer_view(active_label_group: str = "Main Labels"):
                            active_labels=label_group_list[active_label_group].labels,
                            active_label_group=active_label_group,
                            error=page_error,
-                           form=request.form,
                            )

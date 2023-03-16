@@ -28,7 +28,10 @@ flask_url('label_printer.label_printer_view', [
     '/label_printer/'], methods=['GET', 'POST'])
 
 
+def start_flask_server():
+    app.run(host="0.0.0.0", port=8000)
+
 if __name__ == "__main__":
     if len(sys.argv) == 1:
         app.debug = True
-    app.run(port=8000)
+    start_flask_server()
