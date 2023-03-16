@@ -37,3 +37,4 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 discord = "run_discord:start_discord_bot"
 flask = "run_flask:start_flask_server"
+all = "run:main"
