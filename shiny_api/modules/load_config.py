@@ -94,3 +94,53 @@ STYLIZED_NAMES = [
     "Retina",
     "HDD",
 ]
+
+DEFAULT_LABELS = {"Main Labels": {
+    "printer_ip": FRONT_PRINTER_IP,
+    "labels": [
+        "Fully Functional",
+        "Good",
+        "Bad",
+        "SSD Fan Control",
+        "RMA",
+        "MS RMA",
+        "IG RMA",
+        "PT RMA",
+        "Grade C",
+        "Grade D",
+        "Grade F",
+        "Part out",
+        "Bench Use",
+        "app.shinycomputers.com",
+        "TBT",
+        "Donated",
+        "Customer",
+        "eBay",
+    ]},
+    "Rob's Labels": {
+        "printer_ip": BACK_PRINTER_IP,
+        "labels": [
+            "Scrap NOT Wiped",
+            "Scrap Wiped",
+            "List on eBay",
+            "Fully Functional",
+            "Good",
+            "Bad",
+            "RMA",
+            "MS RMA",
+            "IG RMA",
+            "PT RMA",
+            "Grade C",
+            "Grade D",
+            "Grade F",
+            "Part out",
+            "TBT",
+            "Donated",
+            "eBay",
+        ]}, "Chris's Labels": {
+            "printer_ip": FRONT_PRINTER_IP,
+            "labels": [
+                "test1",
+                "test2",
+                "test3"
+            ]}}

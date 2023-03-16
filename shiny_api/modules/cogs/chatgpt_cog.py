@@ -80,7 +80,8 @@ class ChatGPTCog(commands.Cog):
         """Send message prompt to chatgpt and send text"""
         print(f"Sending message: {str(self.user_threads[message.author.id]).strip()}")
         try:
-            chat_messages = [{"role": "user", "content": each_prompt} for each_prompt in self.user_threads[message.author.id]]
+            chat_messages = [{"role": "user", "content": each_prompt}
+                             for each_prompt in self.user_threads[message.author.id]]
             # self.user_threads[message.author.id]
             response = await openai.ChatCompletion.acreate(
                 model="gpt-3.5-turbo",
