@@ -29,7 +29,7 @@ class SetupCog(commands.Cog):
     @commands.command(name="sync")
     async def sync_command(self, context: commands.Context) -> None:
         """Add slash commands to Discord guid"""
-        if "imagingserver" in platform.node().lower():
+        if "secureerase" in platform.node().lower():
             await context.defer()
             await asyncio.sleep(2)
 
