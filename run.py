@@ -6,14 +6,14 @@ import sys
 
 def main():
     """Run front and backends until killed"""
-    print(subprocess.run(["pkill", "-f", "run_flask.py"], check=False))
-    print(subprocess.run(["pkill", "-f", "run_discord.py"], check=False))
+    print(subprocess.run(["pkill", "-f", "flask"], check=False))
+    print(subprocess.run(["pkill", "-f", "discord"], check=False))
 
     if "stop" in sys.argv:
         return
 
-    subprocess.Popen(f"{sys.executable} run_flask.py", shell=True)
-    subprocess.Popen(f"{sys.executable} run_discord.py", shell=True)
+    subprocess.Popen("poetry run flask", shell=True)
+    subprocess.Popen("poetry run discord", shell=True)
 
 
 if __name__ == "__main__":
