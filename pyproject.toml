@@ -19,22 +19,17 @@ numpi = "^0.3.1"
 pandas = "^1.5.3"
 openai = "^0.27.0"
 simple-zpl2 = "^0.3.0"
-luddite = "^1.0.2"
-py-applescript = "^1.0.3"
 homeassistant-api = "^4.1.0"
-django = "^4.1.7"
-djlint = "^1.19.16"
+flask = "^2.2.3"
+flask-wtf = "^1.1.1"
+tabula-py = "^2.7.0"
 
 [tool.poetry.group.dev.dependencies]
 dotenv = {version = "^0.0.5", platform = "windows"}
 python-dotenv = {version = "^0.21.1", platform = "darwin"}
-mypy = "^1.1.1"
-flake8 = "^6.0.0"
 autopep8 = "^2.0.2"
+pylint = "^2.17.0"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.pylint.MASTER]
-ignore-patterns = '.*pyi'

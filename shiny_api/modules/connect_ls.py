@@ -33,7 +33,7 @@ def get_data(currenturl: str, current_params: dict[str, str] | None = None):
             + f"Retry After:{response.headers['retry-after']}"
         )
         # if caller:
-        #     caller.text = f"{caller.text.split(chr(10))[0]}\n{caller.text.split(chr(10))[1]}{output}"
+        #     caller.text = f"{caller.text.split(chr(10))[0]}\n{caller.text.split(chr(10))[1]}{output}" # pylint: disable=line-too-long
         print(output, end="\r")
         time.sleep(int(response.headers["retry-after"]) + 1)
         response = requests.get(currenturl, headers=config.accessHeader,
@@ -58,7 +58,7 @@ def put_data(currenturl: str, current_data: dict[str, Any] | None = None):
             + f"Retry After:{response.headers['retry-after']}"
         )
         # if caller:
-        #     caller.text = f"{caller.text.split(chr(10))[0]}\n{caller.text.split(chr(10))[1]}{output}"
+        #     caller.text = f"{caller.text.split(chr(10))[0]}\n{caller.text.split(chr(10))[1]}{output}" #pylint: disable=line-too-long
         print(output, end="\r")
         time.sleep(int(response.headers["retry-after"]) + 1)
         response = requests.put(currenturl, headers=config.accessHeader,

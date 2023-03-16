@@ -1,9 +1,6 @@
 """Exception handler for discord commands"""
-import os
 import discord
 from discord.ext import commands
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 class ExceptionHandler(commands.Cog):

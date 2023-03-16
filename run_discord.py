@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+"""File to run discord bot"""""
 from shiny_api.modules import discord_bot
 from shiny_api.modules import load_config as config
 

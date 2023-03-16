@@ -1,10 +1,7 @@
 """Home Assistant module for Shiny API."""
 import inspect
-import os
 from homeassistant_api import Client
 import shiny_api.modules.load_config as config
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 class HomeAssistant:

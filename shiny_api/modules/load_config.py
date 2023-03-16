@@ -66,7 +66,7 @@ TRELLO_APIKEY = secret_file.get("trello_apiKey")
 TRELLO_OAUTH_TOKEN = secret_file.get("trello_oauth_token")
 OPENAI_API_KEY = secret_file.get("openai_api_key")
 PHONECHECK_API_KEY = secret_file.get("phonecheck_api_key")
-DJANGO_SECRET_KEY = secret_file.get("django_secret_key")
+FLASK_SECRET_KEY = secret_file.get("flask_secret_key")
 
 HOMEASSISTANT_API = {
     store_key: {config_key: config_value for config_key, config_value in store_value.items()}
@@ -76,8 +76,8 @@ HOMEASSISTANT_API = {
 RESPONSE_MESSAGES = [
     "Hi {name}, we are open 11-7 Tu-Sa.",
     "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  See you soon.",
-    "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  The total is {total}.  See you soon.",
-    "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  There is no charge.  See you soon.",
+    "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  The total is {total}.  See you soon.",  # pylint: disable=line-too-long
+    "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  There is no charge.  See you soon.",  # pylint: disable=line-too-long
     "Hi {name}, do you mind sending your password so we can complete the repair?",
     "Hi {name}, ",
 ]

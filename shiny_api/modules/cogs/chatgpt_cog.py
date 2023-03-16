@@ -1,14 +1,10 @@
 """Allow interaction with ChatGPT from Discord"""
-import os
 import platform
 import textwrap
 import discord
 from discord.ext import commands
 import openai
 import shiny_api.modules.load_config as config
-
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 class ChatGPTCog(commands.Cog):
@@ -59,7 +55,11 @@ class ChatGPTCog(commands.Cog):
         print(f"Sending message: {prompt} to WALL-E")
         try:
             response = await openai.Image.acreate(
-                prompt=prompt, n=1, size="1024x1024", response_format="url", api_key=config.OPENAI_API_KEY
+                prompt=prompt,
+                n=1,
+                size="1024x1024",
+                response_format="url",
+                api_key=config.OPENAI_API_KEY
             )
         except openai.error.InvalidRequestError as exception:
             await message.channel.send(str(exception))
@@ -98,7 +98,8 @@ class ChatGPTCog(commands.Cog):
         print(f"Received response: {response['choices'][0]['message']['content']}")
 
     async def wrap_lines(self, lines: list[str], message: discord.Message):
-        """Break up messages that are longer than 2000 chars and send multible messages to discord"""
+        """Break up messages that are longer than 2000
+        chars and send multible messages to discord"""
         lines = textwrap.wrap(lines, 2000, break_long_words=False, replace_whitespace=False)
         for line in lines:
             await message.channel.send(line)

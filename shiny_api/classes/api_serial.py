@@ -1,11 +1,8 @@
 """connect to Google's MySQL DB"""
-import os
 from sqlalchemy import Column
 from sqlalchemy.types import Integer, String, DateTime
 from sqlalchemy.sql import functions
 from sqlalchemy.ext.declarative import declarative_base
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 class Serial(declarative_base()):

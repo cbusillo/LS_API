@@ -1,14 +1,10 @@
 """Item Class generated from LS API"""
-import os
 import re
 import shlex
 from typing import Any
 from dataclasses import dataclass
 from shiny_api.modules.connect_ls import generate_ls_access, get_data, put_data
 from shiny_api.modules import load_config as config
-
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 def atoi(text: str):

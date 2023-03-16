@@ -30,11 +30,14 @@ def unlock_att_device(imei):
     finally:
         browser.find_element(By.CLASS_NAME, "unlockYourStatusLink").click()
         time.sleep(1.1)
-        browser.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div/div[2]/div/div[1]/div[1]/label[2]/span/span[1]').click()
+        browser.find_element(
+            By.XPATH,
+            '//*[@id="root"]/div/div/div[2]/div/div[2]/div/div[1]/div[1]/label[2]/span/span[1]').click()  # pylint: disable=line-too-long
         time.sleep(2)
         send_keys_delay_random(browser.find_element(By.XPATH, '//*[@id="imeino"]'), imei)
         time.sleep(1)
         browser.find_element(By.XPATH, '//*[@id="agree"]').click()
         time.sleep(0.5)
-        browser.find_element(By.XPATH, '//*[@id="root"]/div/div/div[2]/div/div[3]/div/button[1]').click()
+        browser.find_element(
+            By.XPATH, '//*[@id="root"]/div/div/div[2]/div/div[3]/div/button[1]').click()  # pylint: disable=line-too-long
     time.sleep(40)
