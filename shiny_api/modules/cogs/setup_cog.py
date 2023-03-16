@@ -1,11 +1,9 @@
 """Sync cogs to discord to enable /commands"""
 import asyncio
-import importlib.metadata
 import os
 import platform
 import time
 import discord
-import luddite
 from discord import app_commands
 from discord.ext import commands
 
@@ -31,11 +29,8 @@ class SetupCog(commands.Cog):
     @commands.command(name="sync")
     async def sync_command(self, context: commands.Context) -> None:
         """Add slash commands to Discord guid"""
-        if "imagingserver" in platform.node().lower():
+        if "secureerase" in platform.node().lower():
             await context.defer()
-            if importlib.metadata.version("shiny_api") < luddite.get_version_pypi("shiny_api"):
-                await context.send("New version available, exiting and updating")
-                os._exit(1)  # pylint: disable=protected-access
             await asyncio.sleep(2)
 
         try:

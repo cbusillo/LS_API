@@ -1,15 +1,11 @@
 """Connect to sickw and return a SickwResults object with data from serial_number and service """
 from dataclasses import dataclass
-import os
 from typing import List
 from bs4 import BeautifulSoup
 import requests
 from shiny_api.modules import load_config as config
 
-print(f"Importing {os.path.basename(__file__)}...")
 
-
-# Constants for sickw service codes
 class SickConstants:
     """Constants for sickw service codes"""
 
@@ -23,12 +19,15 @@ class SickwResult:
     status: str = "failed"
 
     def __init__(self, serial_number: str, service: int = SickConstants.APPLE_SERIAL_INFO):
-        """Instantiate result with data from API from passed serial number and service.  Set status to false if sickw
+        """Instantiate result with data from API from 
+        passed serial number and service.  Set status to false if sickw
         says not success or no HTML result string"""
 
-        current_params = {"imei": serial_number, "service": service, "key": config.SICKW_API_KEY, "format": "JSON"}
+        current_params = {"imei": serial_number, "service": service,
+                          "key": config.SICKW_API_KEY, "format": "JSON"}
         headers = {"User-Agent": "My User Agent 1.0"}
-        response = requests.get("https://sickw.com/api.php", params=current_params, headers=headers, timeout=60)
+        response = requests.get("https://sickw.com/api.php",
+                                params=current_params, headers=headers, timeout=60)
         response_json = response.json()
 
         self.serial_number = serial_number

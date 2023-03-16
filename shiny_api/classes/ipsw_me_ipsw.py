@@ -5,14 +5,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
 import requests
-from kivy.uix.button import Button
 from shiny_api.modules.connect_ls import get_data
 
 
-print(f"Importing {os.path.basename(__file__)}...")
-
 IPSW_PATH = ["iPad Software Updates", "iPhone Software Updates", "iPod Software Updates"]
-IPSW_ME_API_URL = {"device": "https://api.ipsw.me/v4/device/", "devices": "https://api.ipsw.me/v4/devices"}
+IPSW_ME_API_URL = {"device": "https://api.ipsw.me/v4/device/",
+                   "devices": "https://api.ipsw.me/v4/devices"}
 
 
 @dataclass
@@ -51,15 +49,15 @@ class Device:
         self.local_path = str(obj.get("local_path"))
 
     @staticmethod
-    def _get_devices(caller: Button | None = None) -> list["Device"]:
+    def _get_devices() -> list["Device"]:
         """Load Apple firmwares into IPSW list"""
 
         response = get_data(f"{IPSW_ME_API_URL['devices']}", current_params={"keysOnly": "True"})
         devices: list[Device] = []
         for device in response.json():
             output = f'{device["name"]}'
-            if caller:
-                caller.text = f"{caller.text.split(chr(10),maxsplit=1)[0]}\n{output}"
+            # if caller:
+            #     caller.text = f"{caller.text.split(chr(10),maxsplit=1)[0]}\n{output}"
             print(f"{output: <60}", end="\r")
             for path in IPSW_PATH:
                 if device["name"].split()[0].lower() in path.lower():
@@ -68,7 +66,7 @@ class Device:
 
         return devices
 
-    def download_firmware(self, caller: Button | None = None) -> None:
+    def download_firmware(self) -> None:
         """Download firmware from ipsw.me"""
         for firmware in self.firmwares:
             local_file: str = self.local_path + os.path.basename(urlparse(firmware.url).path)
@@ -76,8 +74,8 @@ class Device:
                 Path(local_file).unlink(missing_ok=True)
                 continue
             output = f"Downloading {firmware.identifier} {firmware.version}..."
-            if caller:
-                caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
+            # if caller:
+            #     caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
             print(f"{output: <60}", end="\r")
             if not Path(local_file).is_file():
                 response = requests.get(firmware.url, stream=True, timeout=60)
@@ -90,12 +88,12 @@ class Device:
                 print(f"{local_file} already exists")
 
     @classmethod
-    def download_all_firmwares(cls, caller: Button | None = None) -> None:
+    def download_all_firmwares(cls) -> None:
         """Download all firmwares from ipsw.me"""
         cls.delete_temp_firmwares()
-        devices = Device._get_devices(caller)
+        devices = Device._get_devices()
         for device in devices:
-            device.download_firmware(caller)
+            device.download_firmware()
 
     @staticmethod
     def delete_temp_firmwares() -> None:

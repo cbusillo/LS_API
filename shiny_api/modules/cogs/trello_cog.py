@@ -16,7 +16,9 @@ class TrelloCog(commands.Cog):
     def __init__(self, client: commands.Cog):
         self.client = client
 
-    async def trello_lists_list(self, _: discord.Interaction, current: str) -> list[app_commands.Choice[str]]:
+    async def trello_lists_list(
+            self, _: discord.Interaction,
+            current: str) -> list[app_commands.Choice[str]]:
         """Get list of lists as choices"""
         trello_client = TrelloClient(api_key=config.TRELLO_APIKEY, token=config.TRELLO_OAUTH_TOKEN)
         inventory_board = trello_client.get_board(config.TRELLO_INVENTORY_BOARD)
@@ -30,7 +32,11 @@ class TrelloCog(commands.Cog):
     @app_commands.command(name="trello_add")
     @app_commands.autocomplete(trello_list=trello_lists_list)
     @app_commands.checks.has_role("Shiny")
-    async def trello_add(self, context: discord.Interaction, card_name: str, trello_list: str = config.TRELLO_LIST_DEFAULT):
+    async def trello_add(
+            self,
+            context: discord.Interaction,
+            card_name: str,
+            trello_list: str = config.TRELLO_LIST_DEFAULT):
         """Add card to Trello list"""
         await context.response.defer()
         trello_client = TrelloClient(api_key=config.TRELLO_APIKEY, token=config.TRELLO_OAUTH_TOKEN)
@@ -44,7 +50,10 @@ class TrelloCog(commands.Cog):
     @app_commands.command(name="trello_list")
     @app_commands.autocomplete(trello_list=trello_lists_list)
     @app_commands.checks.has_role("Shiny")
-    async def trello_list(self, context: discord.Interaction, trello_list: str = config.TRELLO_LIST_DEFAULT):
+    async def trello_list(
+            self,
+            context: discord.Interaction,
+            trello_list: str = config.TRELLO_LIST_DEFAULT):
         """Get cards from Trello list"""
         await context.response.defer()
         trello_client = TrelloClient(api_key=config.TRELLO_APIKEY, token=config.TRELLO_OAUTH_TOKEN)

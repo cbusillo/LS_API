@@ -13,7 +13,7 @@ tell application "System Events"
                 tell checkbox 1
                     set {xPosition, yPosition} to position
                     set {xSize, ySize} to size
-                    do shell script "cliclick c:" & xPosition + (xSize div 2) & "," & yPosition + (ySize div 2)
+                    do shell script "/usr/local/bin/cliclick c:" & xPosition + (xSize div 2) & "," & yPosition + (ySize div 2)
                     delay 0.1
                 end tell
             end tell
@@ -33,7 +33,7 @@ tell application "System Events"
                 if found is true
                     set {xPosition, yPosition} to position
                     set {xSize, ySize} to size
-                    do shell script "cliclick c:" & xPosition + (xSize div 2) & "," & yPosition + (ySize div 2)
+                    do shell script "/usr/local/bin/cliclick c:" & xPosition + (xSize div 2) & "," & yPosition + (ySize div 2)
                 end if
             end tell
             if found is false

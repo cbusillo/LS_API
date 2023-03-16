@@ -66,6 +66,7 @@ TRELLO_APIKEY = secret_file.get("trello_apiKey")
 TRELLO_OAUTH_TOKEN = secret_file.get("trello_oauth_token")
 OPENAI_API_KEY = secret_file.get("openai_api_key")
 PHONECHECK_API_KEY = secret_file.get("phonecheck_api_key")
+FLASK_SECRET_KEY = secret_file.get("flask_secret_key")
 
 HOMEASSISTANT_API = {
     store_key: {config_key: config_value for config_key, config_value in store_value.items()}
@@ -75,8 +76,8 @@ HOMEASSISTANT_API = {
 RESPONSE_MESSAGES = [
     "Hi {name}, we are open 11-7 Tu-Sa.",
     "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  See you soon.",
-    "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  The total is {total}.  See you soon.",
-    "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  There is no charge.  See you soon.",
+    "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  The total is {total}.  See you soon.",  # pylint: disable=line-too-long
+    "Hi {name}, your {product} is ready for pickup any time 11-7 Tu-Sa.  There is no charge.  See you soon.",  # pylint: disable=line-too-long
     "Hi {name}, do you mind sending your password so we can complete the repair?",
     "Hi {name}, ",
 ]
@@ -93,3 +94,53 @@ STYLIZED_NAMES = [
     "Retina",
     "HDD",
 ]
+
+DEFAULT_LABELS = {"Main Labels": {
+    "printer_ip": FRONT_PRINTER_IP,
+    "labels": [
+        "Fully Functional",
+        "Good",
+        "Bad",
+        "SSD Fan Control",
+        "RMA",
+        "MS RMA",
+        "IG RMA",
+        "PT RMA",
+        "Grade C",
+        "Grade D",
+        "Grade F",
+        "Part out",
+        "Bench Use",
+        "app.shinycomputers.com",
+        "TBT",
+        "Donated",
+        "Customer",
+        "eBay",
+    ]},
+    "Rob's Labels": {
+        "printer_ip": BACK_PRINTER_IP,
+        "labels": [
+            "Scrap NOT Wiped",
+            "Scrap Wiped",
+            "List on eBay",
+            "Fully Functional",
+            "Good",
+            "Bad",
+            "RMA",
+            "MS RMA",
+            "IG RMA",
+            "PT RMA",
+            "Grade C",
+            "Grade D",
+            "Grade F",
+            "Part out",
+            "TBT",
+            "Donated",
+            "eBay",
+        ]}, "Chris's Labels": {
+            "printer_ip": FRONT_PRINTER_IP,
+            "labels": [
+                "test1",
+                "test2",
+                "test3"
+            ]}}

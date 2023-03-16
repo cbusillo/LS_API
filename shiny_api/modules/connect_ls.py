@@ -4,7 +4,6 @@ import time
 import logging
 from typing import Any
 import requests
-from kivy.uix.button import Button
 from shiny_api.modules import load_config as config
 
 print(f"Importing {os.path.basename(__file__)}...")
@@ -23,31 +22,34 @@ def generate_ls_access():
         print(response.text)
 
 
-def get_data(currenturl: str, current_params: dict[str, str] | None = None, caller: Button | None = None):
+def get_data(currenturl: str, current_params: dict[str, str] | None = None):
     """Get requested data from LS API"""
-    response = requests.get(currenturl, headers=config.accessHeader, params=current_params, timeout=60)
+    response = requests.get(currenturl, headers=config.accessHeader,
+                            params=current_params, timeout=60)
 
     while response.status_code == 429:
         output = (
             f"\nDelaying for rate limit. Level:{response.headers['x-ls-api-bucket-level']} "
             + f"Retry After:{response.headers['retry-after']}"
         )
-        if caller:
-            caller.text = f"{caller.text.split(chr(10))[0]}\n{caller.text.split(chr(10))[1]}{output}"
+        # if caller:
+        #     caller.text = f"{caller.text.split(chr(10))[0]}\n{caller.text.split(chr(10))[1]}{output}" # pylint: disable=line-too-long
         print(output, end="\r")
         time.sleep(int(response.headers["retry-after"]) + 1)
-        response = requests.get(currenturl, headers=config.accessHeader, params=current_params, timeout=60)
+        response = requests.get(currenturl, headers=config.accessHeader,
+                                params=current_params, timeout=60)
 
     if response.status_code == 401:
         generate_ls_access()
-        response = requests.get(currenturl, headers=config.accessHeader, params=current_params, timeout=60)
+        response = requests.get(currenturl, headers=config.accessHeader,
+                                params=current_params, timeout=60)
 
     if response.status_code != 200:
         print(f"Received bad status code {current_params}: {response.text}")
     return response
 
 
-def put_data(currenturl: str, current_data: dict[str, Any] | None = None, caller: Button | None = None):
+def put_data(currenturl: str, current_data: dict[str, Any] | None = None):
     """Put requested data into LS API"""
     response = requests.put(currenturl, headers=config.accessHeader, json=current_data, timeout=60)
     while response.status_code == 429:
@@ -55,15 +57,17 @@ def put_data(currenturl: str, current_data: dict[str, Any] | None = None, caller
             f"\nDelaying for rate limit. Level:{response.headers['x-ls-api-bucket-level']} "
             + f"Retry After:{response.headers['retry-after']}"
         )
-        if caller:
-            caller.text = f"{caller.text.split(chr(10))[0]}\n{caller.text.split(chr(10))[1]}{output}"
+        # if caller:
+        #     caller.text = f"{caller.text.split(chr(10))[0]}\n{caller.text.split(chr(10))[1]}{output}" #pylint: disable=line-too-long
         print(output, end="\r")
         time.sleep(int(response.headers["retry-after"]) + 1)
-        response = requests.put(currenturl, headers=config.accessHeader, json=current_data, timeout=60)
+        response = requests.put(currenturl, headers=config.accessHeader,
+                                json=current_data, timeout=60)
 
     if response.status_code == 401:
         generate_ls_access()
-        response = requests.put(currenturl, headers=config.accessHeader, json=current_data, timeout=60)
+        response = requests.put(currenturl, headers=config.accessHeader,
+                                json=current_data, timeout=60)
 
     if response.status_code != 200:
         print(f"Received bad status code on {current_data}: {response.text}")

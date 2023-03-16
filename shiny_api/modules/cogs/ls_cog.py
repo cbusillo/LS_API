@@ -30,7 +30,11 @@ class LightSpeedCog(commands.Cog):
         for item in items.item_list:
             message_output += f"{item.description} is ${item.prices.item_price[0].amount}\n"
 
-        lines = textwrap.wrap(message_output, width=2000, replace_whitespace=False, break_long_words=False)
+        lines = textwrap.wrap(
+            message_output,
+            width=2000,
+            replace_whitespace=False,
+            break_long_words=False)
         for line in lines:
             await context.followup.send(line)
 

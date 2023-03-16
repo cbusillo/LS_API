@@ -1,14 +1,10 @@
 """Item Class generated from LS API"""
-import os
 import re
 import shlex
 from typing import Any
 from dataclasses import dataclass
 from shiny_api.modules.connect_ls import generate_ls_access, get_data, put_data
 from shiny_api.modules import load_config as config
-
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 def atoi(text: str):
@@ -30,7 +26,8 @@ def natural_keys(text: str):
 
 @dataclass
 class SizeAttributes:
-    """Get full list of size attributes from LS table.  Use these to import into individual items without a separate API call."""
+    """Get full list of size attributes from LS table.
+    Use these to import into individual items without a separate API call."""
 
     size_attributes = []
 
@@ -56,7 +53,8 @@ class SizeAttributes:
         current_url = config.LS_URLS["itemMatrix"]
         item_matrix: list[SizeAttributes] = []
         while current_url:
-            response = get_data(current_url, current_params={"load_relations": '["ItemAttributeSet"]', "limit": "100"})
+            response = get_data(current_url, current_params={
+                                "load_relations": '["ItemAttributeSet"]', "limit": "100"})
             for matrix in response.json().get("ItemMatrix"):
                 if matrix["ItemAttributeSet"]["attributeName2"]:
                     for attribute in matrix["attribute2Values"]:
@@ -180,14 +178,19 @@ class Item:
     def _get_item(self):
         """Return LS Item object by item ID"""
         current_url = config.LS_URLS["item"]
-        response = get_data(current_url.format(itemID=self.item_id), {"load_relations": '["ItemAttributes"]'})
+        response = get_data(current_url.format(itemID=self.item_id),
+                            {"load_relations": '["ItemAttributes"]'})
         return response.json().get("Item")
 
 
 class Items:
     """Return list of Item objects from LS"""
 
-    def __init__(self, descriptions: list[str] | str | None = None, categories: list[str] | None = None):
+    def __init__(
+            self,
+            descriptions: list[str] | str | None = None,
+            categories: list[str] | None = None
+    ):
         self.item_list: list[Item] = []
         if descriptions is not None:
             if not isinstance(descriptions, list):
@@ -207,7 +210,8 @@ class Items:
         generate_ls_access()
         current_url = config.LS_URLS["items"]
         while current_url:
-            response = get_data(current_url, {"load_relations": '["ItemAttributes"]', "limit": "100"})
+            response = get_data(
+                current_url, {"load_relations": '["ItemAttributes"]', "limit": "100"})
             for item in response.json().get("Item"):
                 self.item_list.append(Item(ls_item=item))
             current_url = response.json()["@attributes"]["next"]
@@ -239,14 +243,16 @@ class Items:
         for word in descriptions:
             description += f"description=~,%{word}%|"
         while current_url:
-            response = get_data(current_url, {"or": description, "load_relations": '["ItemAttributes"]'})
+            response = get_data(current_url, {"or": description,
+                                "load_relations": '["ItemAttributes"]'})
             current_url = response.json()["@attributes"]["next"]
             if response.json().get("Item") is None:
                 return
             for item in response.json().get("Item"):
                 item_list.append(Item(ls_item=item))
 
-        filtered_list = [item for item in item_list if all(word.lower() in item.description.lower() for word in descriptions)]
+        filtered_list = [item for item in item_list if all(
+            word.lower() in item.description.lower() for word in descriptions)]
         self.item_list.extend(filtered_list)
 
 

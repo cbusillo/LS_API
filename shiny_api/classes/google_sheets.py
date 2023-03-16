@@ -1,15 +1,13 @@
 """connect to Google's MySQL DB"""
 import datetime
-import os
 import pygsheets
 import shiny_api.modules.load_config as config
 from shiny_api.classes.sickw_results import SickwResult
 
-
-print(f"Importing {os.path.basename(__file__)}...")
-
-SCOPES = ("https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive")
-HEADERS = ["ID", "Status", "Serial Number", "Description", "Name", "A Number", "Model ID", "Capacity", "Color", "Type", "Year"]
+SCOPES = ("https://www.googleapis.com/auth/spreadsheets",
+          "https://www.googleapis.com/auth/drive")
+HEADERS = ["ID", "Status", "Serial Number", "Description", "Name",
+           "A Number", "Model ID", "Capacity", "Color", "Type", "Year"]
 
 
 class GoogleSheet:
@@ -18,14 +16,16 @@ class GoogleSheet:
     lines: list[SickwResult] = []
 
     def __init__(self, sheet_name: str):
-        self.google_client = pygsheets.authorize(outh_file=f"{config.CONFIG_SECRET_DIR}/.secret_client.json", scopes=SCOPES)
+        self.google_client = pygsheets.authorize(
+            outh_file=f"{config.CONFIG_SECRET_DIR}/.secret_client.json", scopes=SCOPES)
 
         sheets = self.google_client.spreadsheet_titles()
         if sheet_name not in sheets:
             self.google_client.create(sheet_name)
         self.sheet = self.google_client.open(sheet_name)
         self.worksheets = self.sheet.worksheets()
-        self.current_worksheet = self.sheet.add_worksheet(title=datetime.datetime.now().strftime("%m%d%y-%H%M%S"), rows=2, cols=11)
+        self.current_worksheet = self.sheet.add_worksheet(
+            title=datetime.datetime.now().strftime("%m%d%y-%H%M%S"), rows=2, cols=11)
         self.current_worksheet.frozen_rows = 1
         self.current_worksheet.update_row(1, values=HEADERS)
 

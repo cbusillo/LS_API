@@ -1,12 +1,8 @@
 """Class to import customer objects from LS API"""
-import os
 from typing import Any
 from dataclasses import dataclass
-from kivy.uix.button import Button
 from shiny_api.modules.connect_ls import generate_ls_access, get_data, put_data
 from shiny_api.modules import load_config as config
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 @dataclass
@@ -54,7 +50,8 @@ class Emails:
     def __init__(self, obj: Any):
         """Emails from dict"""
         if obj:
-            self.contact_email: list[ContactEmail] = [ContactEmail(y) for y in obj.get("ContactEmail")]
+            self.contact_email: list[ContactEmail] = [
+                ContactEmail(y) for y in obj.get("ContactEmail")]
 
 
 @dataclass
@@ -133,11 +130,12 @@ class Customer:
     def _get_customer(self):
         """Get single customer from LS API into Customer object"""
         generate_ls_access()
-        response = get_data(config.LS_URLS["customer"].format(customerID=self.customer_id), {"load_relations": '["Contact"]'})
+        response = get_data(config.LS_URLS["customer"].format(
+            customerID=self.customer_id), {"load_relations": '["Contact"]'})
 
         return response.json().get("Customer")
 
-    def update_phones(self, caller: Button | None = None):
+    def update_phones(self):
         """call API put to update pricing"""
         if self.contact.phones is None:
             return
@@ -147,7 +145,8 @@ class Customer:
             numbers[number.use_type] = number.number
 
         numbers["Mobile"] = (
-            numbers.get("Mobile") or numbers.get("Home") or numbers.get("Work") or numbers.get("Fax") or numbers.get("Pager")
+            numbers.get("Mobile") or numbers.get("Home") or numbers.get(
+                "Work") or numbers.get("Fax") or numbers.get("Pager")
         )
         values = {value: key for key, value in numbers.items()}
         numbers = {value: key for key, value in values.items()}
@@ -165,19 +164,20 @@ class Customer:
                 }
             }
         }
-        put_data(config.LS_URLS["customer"].format(customerID=self.customer_id), put_customer, caller)
+        put_data(config.LS_URLS["customer"].format(
+            customerID=self.customer_id), put_customer)
 
 
 @dataclass
 class Customers:
     """Return list of Customers"""
 
-    def __init__(self, caller: Button | None = None):
+    def __init__(self):
         """List of customers"""
         self.customer_list: list[Customer] = []
-        self._get_customers(caller)
+        self._get_customers()
 
-    def _get_customers(self, caller: Button | None = None):
+    def _get_customers(self):
         """API call to get all items.  Walk through categories and pages.
         Convert from json dict to Item object and add to itemList list."""
         # Run API auth
@@ -186,15 +186,16 @@ class Customers:
         current_url = config.LS_URLS["customers"]
         pages = 0
         while current_url:
-            response = get_data(current_url, {"load_relations": '["Contact"]', "limit": "100"}, caller)
+            response = get_data(
+                current_url, {"load_relations": '["Contact"]', "limit": "100"})
             for customer in response.json().get("Customer"):
                 self.customer_list.append(Customer(ls_customer=customer))
             current_url = response.json()["@attributes"]["next"]
 
             pages += 1
             output = f"Loading page: {pages}"
-            if caller:
-                caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
+            # if caller:
+            #     caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
             print(f"{output: <100}", end="\r")
         print()
 

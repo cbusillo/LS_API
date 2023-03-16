@@ -1,11 +1,9 @@
 """connect to Google's MySQL DB"""
-import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from shiny_api.modules.load_config import DB_ACCESS as config
 from shiny_api.classes.api_serial import Serial
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 class Database:
@@ -13,8 +11,12 @@ class Database:
 
     def __init__(self) -> None:
         """Init db connection"""
-        ssl_certs = {"ssl_ca": "config/server-ca.pem", "ssl_cert": "config/client-cert.pem", "ssl_key": "config/client-key.pem"}
-        connect_string = f'mysql+pymysql://{config["user"]}:{config["password"]}@{config["host"]}/{config["database"]}'
+        ssl_certs = {"ssl_ca": "config/server-ca.pem",
+                     "ssl_cert": "config/client-cert.pem",
+                     "ssl_key": "config/client-key.pem"}
+        connect_string = (f'mysql+pymysql://'
+                          f'{config["user"]}:{config["password"]}@'
+                          f'{config["host"]}/{config["database"]}')
         Database.engine = create_engine(connect_string, echo=False, connect_args=ssl_certs)
         Database.session = Session(Database.engine)
         print("Connection established")
