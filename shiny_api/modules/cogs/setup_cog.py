@@ -7,8 +7,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-print(f"Importing {os.path.basename(__file__)}...")
-
 BOT_CHANNEL = 1073943829192912936
 
 
@@ -32,6 +30,7 @@ class SetupCog(commands.Cog):
         if "secureerase" in platform.node().lower():
             await context.defer()
             await asyncio.sleep(2)
+            print(os.system("git diff"))
 
         try:
             await context.message.delete()
