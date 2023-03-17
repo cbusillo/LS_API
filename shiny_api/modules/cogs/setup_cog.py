@@ -29,8 +29,9 @@ class SetupCog(commands.Cog):
         """Add slash commands to Discord guid"""
         if "imagingserver" in platform.node().lower():
             await context.defer()
-            print(os.system("git diff --quiet"))
-            print(os.system("echo $?"))
+            if os.system("git diff --quiet"):
+                os.system("ssh 127.0.0.1 ~/launch_api.sh")
+
             await asyncio.sleep(2)
 
 
