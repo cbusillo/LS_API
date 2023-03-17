@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block content %}
+<p id="demo"></p>
+<script>
+    var source = new EventSource("{{ url_for('sse.stream', channel=request.cookies.get('session')) }}");
+    source.addEventListener('update', function (event) {
+        var data = JSON.parse(event.data);
+        document.getElementById("demo").innerHTML = data["message"] + "works";
+    }, false);</script>
+{% endblock content %}

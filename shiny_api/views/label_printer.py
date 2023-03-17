@@ -31,7 +31,10 @@ def label_printer_view(active_label_group: str = "Main Labels"):
         label_text = request.form.get("custom_label_text", "")
     else:
         label_text = label_text or request.form.get("label_text", "")
-
+    lines = label_text.split("\n")
+    while "" in lines:
+        lines.remove("")
+    label_text = lines
     if label_text == "" or quantity < 1:
         page_error = "No label text"
     else:

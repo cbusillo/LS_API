@@ -18,3 +18,9 @@ class ShinyBot(commands.Bot):
             if file.endswith(".py"):
                 # await self.load_extension(file)
                 await self.load_extension(f"shiny_api.modules.cogs.{file[:-3]}")
+
+
+def start_discord_bot():
+    """Create bot and run"""
+    shiny_bot = ShinyBot()
+    shiny_bot.run(config.DISCORD_TOKEN)
