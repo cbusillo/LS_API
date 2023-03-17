@@ -30,7 +30,7 @@ class SetupCog(commands.Cog):
         if "imagingserver" in platform.node().lower():
             await context.defer()
             os.system("git fetch")
-            return_code = os.system("git diff --quiet")
+            return_code = os.system("git diff origin/main --quiet")
             print(f"return_code=")
             if return_code:
                 os.system("ssh 127.0.0.1 ~/launch_api.sh")
