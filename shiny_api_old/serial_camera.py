@@ -6,15 +6,6 @@ import re
 from functools import partial
 import cv2
 import pytesseract
-from kivy.app import App
-from kivy.clock import Clock
-from kivy.core.window import Window
-from kivy.graphics.texture import Texture
-from kivy.uix.button import Label, Button
-from kivy.uix.checkbox import CheckBox
-from kivy.uix.image import Image
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.slider import Slider
 import numpy as np
 from shiny_api.modules import load_config as config
 from shiny_api.classes.sickw_results import SickwResults, SickwResult, SickConstants

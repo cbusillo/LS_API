@@ -9,12 +9,13 @@ print(f"Importing {os.path.basename(__file__)}...")
 
 
 def get_host_user_from_ip() -> tuple[str, str]:
-    HOST_TO_USER = {"chris-mbp": "cbusillo",
+    """return user and hostname from current remote ip"""
+    host_to_user = {"chris-mbp": "cbusillo",
                     "secureerase": "tech",
                     "cornerwhinymac2": "home",
                     "countershinymac": "home"}
     hostname = socket.gethostbyaddr(request.remote_addr)[0]
-    username = HOST_TO_USER[hostname.lower()]
+    username = host_to_user[hostname.lower()]
     print(hostname)
     return hostname, username
 
