@@ -30,6 +30,7 @@ class SetupCog(commands.Cog):
         if "secureerase" in platform.node().lower():
             await context.defer()
             print(os.system("git diff --quiet"))
+            print(os.system("echo $?"))
             await asyncio.sleep(2)
 
 
