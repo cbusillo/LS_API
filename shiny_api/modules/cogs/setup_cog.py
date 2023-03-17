@@ -31,7 +31,7 @@ class SetupCog(commands.Cog):
             await context.defer()
             os.system("git fetch")
             return_code = os.system("git diff --quiet")
-            print(return_code)
+            print(f"return_code=")
             if return_code:
                 os.system("ssh 127.0.0.1 ~/launch_api.sh")
 
