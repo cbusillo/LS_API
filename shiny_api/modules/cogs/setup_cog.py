@@ -32,7 +32,7 @@ class SetupCog(commands.Cog):
             os.system("git fetch")
             return_code = os.system("git diff origin/main --quiet")
             if return_code:
-                print("Restarting server!")
+                print("Restarting server!!")
                 os.system("ssh 127.0.0.1 ~/launch_api.sh")
 
             await asyncio.sleep(2)
