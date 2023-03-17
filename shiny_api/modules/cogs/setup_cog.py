@@ -27,7 +27,7 @@ class SetupCog(commands.Cog):
     @commands.command(name="sync")
     async def sync_command(self, context: commands.Context) -> None:
         """Add slash commands to Discord guid"""
-        if "secureerase" in platform.node().lower():
+        if "imagingserver" in platform.node().lower():
             await context.defer()
             print(os.system("git diff --quiet"))
             print(os.system("echo $?"))
