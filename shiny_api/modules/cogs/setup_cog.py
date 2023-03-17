@@ -33,6 +33,7 @@ class SetupCog(commands.Cog):
             return_code = os.system("git diff origin/main --quiet")
             if return_code:
                 print("Restarting server!!!")
+                await context.channel.send("Restarting server!!!")
                 os.system("ssh 127.0.0.1 ~/launch_api.sh")
 
             await asyncio.sleep(2)
