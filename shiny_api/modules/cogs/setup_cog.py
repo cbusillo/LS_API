@@ -29,8 +29,9 @@ class SetupCog(commands.Cog):
         """Add slash commands to Discord guid"""
         if "secureerase" in platform.node().lower():
             await context.defer()
+            print(os.system("git diff --quiet"))
             await asyncio.sleep(2)
-            print(os.system("git diff"))
+
 
         try:
             await context.message.delete()
