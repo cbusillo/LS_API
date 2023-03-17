@@ -7,6 +7,8 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+from symbol import return_stmt
+
 BOT_CHANNEL = 1073943829192912936
 
 
@@ -30,7 +32,9 @@ class SetupCog(commands.Cog):
         if "imagingserver" in platform.node().lower():
             await context.defer()
             os.system("git fetch")
-            if os.system("git diff --quiet"):
+            return_code = os.system("git diff --quiet")
+            print(return_code)
+            if return_code:
                 os.system("ssh 127.0.0.1 ~/launch_api.sh")
 
             await asyncio.sleep(2)
