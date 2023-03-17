@@ -7,8 +7,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from symbol import return_stmt
-
 BOT_CHANNEL = 1073943829192912936
 
 
@@ -38,7 +36,6 @@ class SetupCog(commands.Cog):
                 os.system("ssh 127.0.0.1 ~/launch_api.sh")
 
             await asyncio.sleep(2)
-
 
         try:
             await context.message.delete()
