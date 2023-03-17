@@ -12,8 +12,8 @@ def main():
     if "stop" in sys.argv:
         return
 
-    subprocess.Popen("poetry run flask", shell=True)
-    subprocess.Popen("poetry run discord", shell=True)
+    subprocess.Popen("/usr/local/bin/poetry run flask", shell=True)
+    subprocess.Popen("/usr/local/bin/poetry run discord", shell=True)
 
 
 if __name__ == "__main__":
