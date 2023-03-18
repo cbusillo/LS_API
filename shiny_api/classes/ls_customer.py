@@ -3,6 +3,7 @@ from typing import Any
 from dataclasses import dataclass
 from shiny_api.modules.connect_ls import generate_ls_access, get_data, put_data
 from shiny_api.modules import load_config as config
+from shiny_api.views.ls_functions import send_message
 
 
 @dataclass
@@ -194,8 +195,7 @@ class Customers:
 
             pages += 1
             output = f"Loading page: {pages}"
-            # if caller:
-            #     caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
+            send_message(output)
             print(f"{output: <100}", end="\r")
         print()
 

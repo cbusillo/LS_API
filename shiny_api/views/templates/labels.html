@@ -3,7 +3,8 @@
 <ul class="nav nav-tabs justify-content-center">
     {% for label_list in label_group_name_list %}
     <li class="nav-item">
-        <a class="nav-link{% if label_list == active_label_group %} active{% endif %}" aria-current="page" href={{ url_for("label_printer_view", active_label_group=label_list) }}>{{ label_list }}</a>
+        <a class="nav-link{% if label_list == active_label_group %} active{% endif %}" aria-current="page" href={{
+            url_for("label_printer_view", active_label_group=label_list) }}>{{ label_list }}</a>
     </li>
     {% endfor %}
 </ul>
@@ -14,10 +15,12 @@
     <div class="container">
         <div class="row mb-3">
             <div class="col-md-4">
-                <textarea class="form-control" rows="5" placeholder="Custom Label Text" name="custom_label_text"></textarea>
+                <textarea class="form-control" rows="5" placeholder="Custom Label Text"
+                    name="custom_label_text"></textarea>
             </div>
             <div class="col-md-3">
-                <input class="form-control" style="text-transform:uppercase" type="text" name="barcode" placeholder="Barcode" />
+                <input class="form-control" style="text-transform:uppercase" type="text" name="barcode"
+                    placeholder="Barcode" />
             </div>
             <div class="col-md-2">
                 <div class="row">
@@ -34,13 +37,16 @@
             <div class="col-md-2">
                 <div class="row">
                     <div class="col">
-                        <input type="checkbox" class="btn-check" id="btncheck1" name="date" autocomplete="off" checked />
-                        <label class="btn btn-outline-secondary" style="width:100%;" for="btncheck1">Include Date</label>
+                        <input type="checkbox" class="btn-check" id="btncheck1" name="date" autocomplete="off"
+                            checked />
+                        <label class="btn btn-outline-secondary" style="width:100%;" for="btncheck1">Include
+                            Date</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <button type="submit" name="custom_label_print" style="width:100%" class="btn btn-primary" value="ok">Print</button>
+                        <button type="submit" name="custom_label_print" style="width:100%" class="btn btn-primary"
+                            value="ok">Print</button>
                     </div>
                 </div>
             </div>
@@ -50,7 +56,8 @@
             {% set count = namespace(current=0) %}
             {% for label in active_labels %}
             <div class="col">
-                <button type="submit" name="label_text" value="{{ label }}" class="btn btn-lg btn-secondary my-2 py-3" style="width: 100%">
+                <button type="submit" name="label_text" value="{{ label }}" class="btn btn-lg btn-secondary my-2 py-3"
+                    style="width: 100%">
                     {{ label }}
                 </button>
             </div>

@@ -1,6 +1,7 @@
 """webview to print labels"""
 from flask import render_template, request
 from pydantic import BaseModel
+
 import shiny_api.modules.load_config as config
 from shiny_api.modules.label_print import print_text
 

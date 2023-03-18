@@ -5,11 +5,12 @@ import datetime
 from selenium import webdriver
 from shiny_api.classes import ls_item
 from shiny_api.modules import load_config as config
+from shiny_api.views.ls_functions import send_message
 
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-def run_update_item_price():
+def update_item_price():
     """ "//device key": ["current model?", "year", "basePrice", "cellPrice", "store URL"]"""
 
     with open(f"{config.SCRIPT_DIR}/config/devices.json", encoding="utf8") as file:
@@ -25,9 +26,8 @@ def run_update_item_price():
 
     # call LS API to load all items and return a list of Item objects
     output = "Loading items"
-    # caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
+    send_message(output)
     print(output)
-    # label.set("Loading items")
     items = ls_item.Items(categories=config.DEVICE_CATEGORIES_FOR_PRICE)
     for item in items.item_list:
         # interate through items to generate pricing and save to LS
@@ -95,7 +95,7 @@ def run_update_item_price():
                 else:
                     device_price = device_base_price + (size_mult * age_mult)
                 output = f"{item.description} Size:{size_mult} Age:{device_age} Base:{device_base_price} Item Price: {device_price}"
-                # caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
+                send_message(output)
                 print(output)
                 # load new price into all three LS item prices in Item object
                 for item_price in item.prices.item_price:
@@ -105,7 +105,7 @@ def run_update_item_price():
                 # Item fucntion to make API put call and save price
                 if item.is_modified:
                     output = f"Updating {item.description}"
-                    # caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
+                    send_message(output)
                     print(f"    {output}")
                     item.save_item_price()
                 break

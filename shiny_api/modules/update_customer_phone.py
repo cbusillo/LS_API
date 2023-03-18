@@ -2,11 +2,12 @@
 import os
 import re
 from shiny_api.classes import ls_customer
+from shiny_api.views.ls_functions import send_message
 
 print(f"Importing {os.path.basename(__file__)}...")
 
 
-def run_update_customer_phone():
+def format_customer_phone():
     """Load and iterate through customers, updating formatting on phone numbers."""
     customers = ls_customer.Customers()
     customers_updated = 0
@@ -32,7 +33,7 @@ def run_update_customer_phone():
             customers_updated += 1
             output = (
                 f"{customers_updated}: Updating Customer #{index}"
-                f"out of {len(customers.customer_list): <60}")
-            # caller.text = f"{caller.text.split(chr(10))[0]}\n{output}"
+                f" out of {len(customers.customer_list): <60}")
+            send_message(output)
             print(output, end="\r")
             customer.update_phones()

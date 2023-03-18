@@ -1,5 +1,5 @@
 """Flask helpers."""
-from werkzeug.utils import import_string, cached_property
+from werkzeug.utils import cached_property, import_string
 
 
 class LazyView(object):

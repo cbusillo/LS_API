@@ -1,10 +1,24 @@
 {% extends "layout.html" %}
 {% block content %}
-<p id="demo"></p>
+
+<div class="container">
+    <div class="row">
+        {% for module_function, button_description in buttons.items() %}
+        <div class="col">
+            <a class="text-white text-decoration-none btn btn-lg btn-primary my-2 py-3"
+                href="{{ url_for('ls_functions_view',module_function_name=module_function) }}">{{
+                button_description }}</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+<p id="status"></p>
 <script>
-    var source = new EventSource("{{ url_for('sse.stream', channel=request.cookies.get('session')) }}");
-    source.addEventListener('update', function (event) {
+    var source = new EventSource("{{ url_for('sse.stream') }}");
+    source.addEventListener('status', function (event) {
         var data = JSON.parse(event.data);
-        document.getElementById("demo").innerHTML = data["message"] + "works";
+        document.getElementById("status").innerHTML = data["message"];
     }, false);</script>
 {% endblock content %}

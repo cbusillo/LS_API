@@ -5,6 +5,7 @@ import logging
 from typing import Any
 import requests
 from shiny_api.modules import load_config as config
+from shiny_api.views.ls_functions import send_message
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -32,8 +33,7 @@ def get_data(currenturl: str, current_params: dict[str, str] | None = None):
             f"\nDelaying for rate limit. Level:{response.headers['x-ls-api-bucket-level']} "
             + f"Retry After:{response.headers['retry-after']}"
         )
-        # if caller:
-        #     caller.text = f"{caller.text.split(chr(10))[0]}\n{caller.text.split(chr(10))[1]}{output}" # pylint: disable=line-too-long
+        send_message(output)
         print(output, end="\r")
         time.sleep(int(response.headers["retry-after"]) + 1)
         response = requests.get(currenturl, headers=config.accessHeader,
@@ -57,8 +57,7 @@ def put_data(currenturl: str, current_data: dict[str, Any] | None = None):
             f"\nDelaying for rate limit. Level:{response.headers['x-ls-api-bucket-level']} "
             + f"Retry After:{response.headers['retry-after']}"
         )
-        # if caller:
-        #     caller.text = f"{caller.text.split(chr(10))[0]}\n{caller.text.split(chr(10))[1]}{output}" #pylint: disable=line-too-long
+        send_message(output)
         print(output, end="\r")
         time.sleep(int(response.headers["retry-after"]) + 1)
         response = requests.put(currenturl, headers=config.accessHeader,

@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 """File to run flask server"""
+
 import locale
+
 from flask import Flask
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_sse import sse
 from flask_wtf.csrf import CSRFProtect
+
 from shiny_api.modules import load_config as config
 from shiny_api.modules.flask_helpers import LazyView
 
@@ -14,6 +17,7 @@ app.config['SECRET_KEY'] = config.FLASK_SECRET_KEY
 app.config["REDIS_URL"] = "redis://localhost"
 app.template_folder = '../views/templates'
 app.debug = False
+app.running_function = {}
 
 csrf = CSRFProtect(app)
 
@@ -29,7 +33,10 @@ def flask_url(import_name, url_rules=[], **options):  # pylint: disable=dangerou
         app.add_url_rule(url_rule, view_func=view, **options)
 
 
-flask_url('ls_functions.ls_functions_view', ['/ls_functions/'])
+flask_url(
+    'ls_functions.ls_functions_view',
+    ['/ls_functions/', '/ls_functions/<module_function_name>'],
+    methods=['GET', 'POST'])
 flask_url('api.workorder_label', ['/api/wo_label/'])
 flask_url('api.ring_central_send_message', ['/api/rc_send_message/'])
 flask_url('label_printer.label_printer_view', [
