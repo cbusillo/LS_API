@@ -12,9 +12,9 @@ from shiny_api.modules.flask_server import app
 def ls_functions_view(module_function_name: str = ""):
     """View for Light Speed Functions"""
     buttons = {
-        "shiny_api.modules.update_customer_phone|format_customer_phone":
+        "shiny_api.modules.light_speed|format_customer_phone":
             "Format Customer Phone Numbers",
-        "shiny_api.modules.update_item_price|update_item_price":
+        "shiny_api.modules.light_speed|update_item_price":
             "Update iPhone/iPad Prices",
 
     }

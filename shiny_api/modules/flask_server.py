@@ -2,6 +2,7 @@
 """File to run flask server"""
 
 import locale
+import webbrowser
 
 from flask import Flask
 from flask_debugtoolbar import DebugToolbarExtension
@@ -46,4 +47,5 @@ flask_url('label_printer.label_printer_view', [
 
 def start_flask_server():
     """Start flask server"""
+    webbrowser.open("http://localhost:8000/ls_functions/")
     app.run(host="0.0.0.0", port=8000)
