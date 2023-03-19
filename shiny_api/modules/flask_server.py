@@ -43,6 +43,9 @@ flask_url('api.ring_central_send_message', ['/api/rc_send_message/'])
 flask_url('label_printer.label_printer_view', [
     '/label_printer/<active_label_group>',
     '/label_printer/'], methods=['GET', 'POST'])
+flask_url('table_editor.table_editor_view', [
+    '/table_editor/<active_table>',
+    '/table/'], methods=['GET', 'POST'])
 
 
 def start_flask_server():

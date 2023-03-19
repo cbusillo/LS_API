@@ -22,7 +22,7 @@ def workorder_label():
         text_bottom=password,
         print_date=True,
     )
-    return render_template('close_window.html')
+    return render_template('close_window.jinja-html')
 
 
 def ring_central_send_message():
@@ -35,7 +35,7 @@ def ring_central_send_message():
         if phone.use_type == "Mobile":
             mobile_number = phone.number
     if mobile_number is None:
-        return render_template('error.html')
+        return render_template('error.jinja-html')
     message_number = int(request.args.get("message", 0))
     if (
         workorder.total == 0 and request.args.get("message") == "2"
@@ -58,4 +58,4 @@ def ring_central_send_message():
     )
     send_message(mobile_number, message)
 
-    return render_template('close_window.html')
+    return render_template('close_window.jinja-html')

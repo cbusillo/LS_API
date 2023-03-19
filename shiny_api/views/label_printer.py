@@ -48,7 +48,7 @@ def label_printer_view(active_label_group: str = "Main Labels"):
         except TimeoutError as error:
             page_error = error
 
-    return render_template('labels.html',
+    return render_template('labels.jinja-html',
                            title="Label Printer",
                            label_group_name_list=label_group_name_list,
                            active_labels=label_group_list[active_label_group].labels,

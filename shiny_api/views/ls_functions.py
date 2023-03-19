@@ -21,7 +21,7 @@ def ls_functions_view(module_function_name: str = ""):
 
     if module_function_name == "" or app.running_function.get(module_function_name, False):
         return render_template(
-            'ls_functions.html',
+            'ls_functions.jinja-html',
             title="Light Speed Functions",
             buttons=buttons
         )
@@ -46,7 +46,7 @@ def run_function(function_to_exec: Callable, module_function_name, status: str =
     with app.app_context():
         function_to_exec()
         app.running_function[module_function_name] = False
-        sse.publish({"message": f"{status}Finished!"}, type='update')
+        sse.publish({"message": f"{status}Finished!"}, type='status')
 
 
 def send_message(message) -> None:

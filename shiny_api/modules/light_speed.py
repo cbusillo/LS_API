@@ -2,11 +2,28 @@
 import re
 import json
 import datetime
+from functools import lru_cache
 from selenium import webdriver
 from shiny_api.classes import ls_customer
 from shiny_api.classes import ls_item
 from shiny_api.modules import load_config as config
 from shiny_api.views.ls_functions import send_message
+
+
+@lru_cache
+def get_website_prices(browser: webdriver.Safari, url: str):
+    """decode Apple website price data and return json"""
+    browser.get(url)
+    price = browser.find_element("id", "metrics")
+    json_price = price.text.replace("//", "")
+    browser.minimize_window()
+    json_price = json_price.split("[[")
+    json_price = json_price[0] + "}}"
+    json_price = json_price.replace(',"sectionEngagement":', "")
+    json_price = json_price.replace('"}]}}}}', '"}]}}')
+    json_price = json_price.replace('"shop"}}}}', '"shop"}}')
+    json_price = json_price.replace('{"step":"select"}}}}}', '{"step":"select"}}}')
+    return json.loads(json_price)
 
 
 def update_item_price():
@@ -60,17 +77,7 @@ def update_item_price():
                 # if device is currently sold (documented in ages.json),
                 # load json from Apple web store and find price. Use URL key from devices.json
                 if device_current:
-                    browser.get(scrape_url.format(deviceURL=device_url))
-                    price = browser.find_element("id", "metrics")
-                    json_price = price.text.replace("//", "")
-                    browser.minimize_window()
-                    json_price = json_price.split("[[")
-                    json_price = json_price[0] + "}}"
-                    json_price = json_price.replace(',"sectionEngagement":', "")
-                    json_price = json_price.replace('"}]}}}}', '"}]}}')
-                    json_price = json_price.replace('"shop"}}}}', '"shop"}}')
-                    json_price = json_price.replace('{"step":"select"}}}}}', '{"step":"select"}}}')
-                    json_price = json.loads(json_price)
+                    json_price = get_website_prices(browser, scrape_url.format(deviceURL=device_url))
 
                     # Iterage through web prices and try to find match on current item.
                     # Use deviceBasePrice to subtract from new price.  Detect if cellular
