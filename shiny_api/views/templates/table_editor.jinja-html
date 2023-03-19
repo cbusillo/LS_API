@@ -1,0 +1,22 @@
+{% extends "layout.jinja-html" %}
+{% block content %}
+<link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
+<script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+<div class="container">
+    <div class="row">
+        {% for table_name, table_location in buttons.items() %}
+        <div class="col">
+            <a class="text-white text-decoration-none btn btn-lg btn-primary my-2 py-3"
+                href="{{ url_for('table_editor_view',active_table=table_name) }}">{{
+                table_name.title() }}</a>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col">
+            {% block table %}
+            {% endblock table %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

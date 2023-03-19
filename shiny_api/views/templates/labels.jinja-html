@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "layout.jinja-html" %}
 {% block navbar %}
 <ul class="nav nav-tabs justify-content-center">
     {% for label_list in label_group_name_list %}
@@ -9,6 +9,7 @@
     {% endfor %}
 </ul>
 {% endblock navbar %}
+
 {% block content %}
 <form method="post">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
