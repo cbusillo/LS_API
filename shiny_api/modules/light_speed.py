@@ -44,8 +44,8 @@ def update_item_price():
     output = "Loading items"
     send_message(output)
     print(output)
-    items = ls_item.Items(categories=config.DEVICE_CATEGORIES_FOR_PRICE)
-    for item in items.item_list:
+    items = ls_item.Item.get_items_by_category(categories=config.DEVICE_CATEGORIES_FOR_PRICE)
+    for item in items:
         # interate through items to generate pricing and save to LS
         # Generate pricing from devices.json and apple website by item from LS
         # check to see where current item's storage falls numerically in matrix

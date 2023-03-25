@@ -5,7 +5,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from shiny_api.modules.connect_ls import generate_ls_access
-from shiny_api.classes.ls_item import Items
+from shiny_api.classes.ls_item import Item
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -22,7 +22,7 @@ class LightSpeedCog(commands.Cog):
         """Look up price in Lightspeed"""
         await context.response.defer()
         generate_ls_access()
-        items = Items(descriptions=search)
+        items = Item.get_items_by_desciption(descriptions=search)
         if len(items.item_list) == 0:
             await context.followup.send("No results")
             return
