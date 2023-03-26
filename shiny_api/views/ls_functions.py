@@ -53,4 +53,5 @@ def send_message(message) -> None:
     """Pass SSE message to browser"""
     if app is None:
         return
-    sse.publish({"message": message}, type='status')
+    with app.app_context():
+        sse.publish({"message": message}, type='status')

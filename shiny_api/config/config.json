@@ -14,12 +14,12 @@
     "debug_logging": "false",
     "ls_urls": {
         "access": "https://cloud.lightspeedapp.com/oauth/access_token.php",
-        "items": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Item.json",
-        "item": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Item/{itemID}.json",
-        "itemMatrix": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/ItemMatrix.json",
-        "customers": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Customer.json",
-        "customer": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/Customer/{customerID}.json",
-        "workorder": "https://api.lightspeedapp.com/API/V3/Account/{ACCOUNT_ID}/DisplayTemplate/Workorder/{workorderID}.json"
+        "items": "Item.json",
+        "item": "Item/{itemID}.json",
+        "itemMatrix": "ItemMatrix.json",
+        "customers": "Customer.json",
+        "customer": "Customer/{customerID}.json",
+        "workorder": "DisplayTemplate/Workorder/{workorderID}.json"
     },
     "google_sheets_serial_name": "Shiny API",
     "google_sheets_serial_print": "true"

@@ -1,9 +1,9 @@
 """Class to import customer objects from LS API"""
-from typing import Any
+from typing import Any, Self
 from dataclasses import dataclass
-from shiny_api.modules.connect_ls import generate_ls_access, get_data, put_data
+from rich import print as pprint
+from shiny_api.classes.ls_client import Client
 from shiny_api.modules import load_config as config
-from shiny_api.views.ls_functions import send_message
 
 
 @dataclass
@@ -100,6 +100,7 @@ class Contact:
 @dataclass
 class Customer:
     """Customer object from LS"""
+    client = Client()
 
     def __init__(self, customer_id: int = 0, ls_customer: Any = None):
         """Customer object from dict"""
@@ -107,7 +108,7 @@ class Customer:
             if customer_id == 0:
                 raise ValueError("Customer ID or LS Customer object required")
             self.customer_id = customer_id
-            ls_customer = self._get_customer()
+            ls_customer = self.client.get_customer_json(self.customer_id)
         self.customer_id = ls_customer.get("customerID")
 
         self.first_name = str(ls_customer.get("firstName")).strip()
@@ -127,14 +128,6 @@ class Customer:
 
     def __repr__(self) -> str:
         return f"{self.first_name} {self.last_name}"
-
-    def _get_customer(self):
-        """Get single customer from LS API into Customer object"""
-        generate_ls_access()
-        response = get_data(config.LS_URLS["customer"].format(
-            customerID=self.customer_id), {"load_relations": '["Contact"]'})
-
-        return response.json().get("Customer")
 
     def update_phones(self):
         """call API put to update pricing"""
@@ -165,44 +158,15 @@ class Customer:
                 }
             }
         }
-        put_data(config.LS_URLS["customer"].format(
-            customerID=self.customer_id), put_customer)
-
-
-@dataclass
-class Customers:
-    """Return list of Customers"""
-
-    def __init__(self):
-        """List of customers"""
-        self.customer_list: list[Customer] = []
-        self._get_customers()
-
-    def _get_customers(self):
-        """API call to get all items.  Walk through categories and pages.
-        Convert from json dict to Item object and add to itemList list."""
-        # Run API auth
-        generate_ls_access()
-
-        current_url = config.LS_URLS["customers"]
-        pages = 0
-        while current_url:
-            response = get_data(
-                current_url, {"load_relations": '["Contact"]', "limit": "100"})
-            for customer in response.json().get("Customer"):
-                self.customer_list.append(Customer(ls_customer=customer))
-            current_url = response.json()["@attributes"]["next"]
-
-            pages += 1
-            output = f"Loading page: {pages}"
-            send_message(output)
-            print(f"{output: <100}", end="\r")
-        print()
-
-    def __repr__(self) -> str:
-        return f"{len(self.customer_list)} customers"
+        url = config.LS_URLS["customer"].format(customerID=self.customer_id)
+        self.client.put(url, json=put_customer)
+        
+    @classmethod
+    def get_all_customers(cls):
+        for customer in cls.client.get_customers_json():
+            yield Customer(ls_customer= customer)
 
 
 if __name__ == "__main__":
-    test = Customers()
-    print(test)
+    test = Customer.get_all_customers()
+    pprint(test)

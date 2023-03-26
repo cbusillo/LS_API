@@ -1,9 +1,10 @@
 """Item Class generated from LS API"""
+from datetime import datetime
 import re
 import shlex
 from typing import Any
 from dataclasses import dataclass
-from shiny_api.modules.connect_ls import generate_ls_access, get_data, put_data
+from shiny_api.classes.ls_client import Client, string_to_datetime
 from shiny_api.modules import load_config as config
 
 
@@ -50,21 +51,17 @@ class SizeAttributes:
     @staticmethod
     def get_size_attributes():
         """Get data from API and return a dict."""
-        current_url = config.LS_URLS["itemMatrix"]
         item_matrix: list[SizeAttributes] = []
-        while current_url:
-            response = get_data(current_url, current_params={
-                                "load_relations": '["ItemAttributeSet"]', "limit": "100"})
-            for matrix in response.json().get("ItemMatrix"):
-                if matrix["ItemAttributeSet"]["attributeName2"]:
-                    for attribute in matrix["attribute2Values"]:
-                        attr_obj = {
-                            "itemMatrixID": matrix["itemMatrixID"],
-                            "attribute2Value": attribute,
-                        }
-                        item_matrix.append(SizeAttributes(attr_obj))
-                        # itemList.append(Item.from_dict(item))
-            current_url = response.json()["@attributes"]["next"]
+        client = Client()
+        for matrix in client.get_size_attributes_json():
+            if matrix["ItemAttributeSet"]["attributeName2"]:
+                for attribute in matrix["attribute2Values"]:
+                    attr_obj = {
+                        "itemMatrixID": matrix["itemMatrixID"],
+                        "attribute2Value": attribute,
+                    }
+                    item_matrix.append(SizeAttributes(attr_obj))
+                    # itemList.append(Item.from_dict(item))
         return item_matrix
 
     @classmethod
@@ -111,40 +108,35 @@ class Prices:
 @dataclass
 class Item:
     """Item class from LS"""
+    client = Client()
 
     def __init__(self, item_id: int = 0, ls_item: Any = None):
-        """Item from dict"""
+
         if ls_item is None:
             if item_id == 0:
                 raise ValueError("Must provide item_id or ls_item")
             self.item_id = item_id
-            ls_item = self._get_item()
-        self.item_id: int = ls_item.get("itemID")
+            ls_item = self.client.get_item_json(self.item_id)
+        self.item_id: int = int(ls_item.get("itemID"))
 
-        self.system_sku = str(ls_item.get("systemSku"))
-        self.default_cost = str(ls_item.get("defaultCost"))
-        self.avg_cost = str(ls_item.get("avgCost"))
-        self.discountable = str(ls_item.get("discountable"))
-        self.tax = str(ls_item.get("tax"))
-        self.archived = str(ls_item.get("archived"))
+        self.system_sku = int(ls_item.get("systemSku"))
+        self.default_cost = float(ls_item.get("defaultCost"))
+        self.avg_cost = float(ls_item.get("avgCost"))
+        self.tax = bool(ls_item.get("tax"))
+        self.archived = bool(ls_item.get("archived"))
         self.item_type = str(ls_item.get("itemType"))
-        self.serialized = str(ls_item.get("serialized"))
+        self.serialized = bool(ls_item.get("serialized"))
         self.description = str(ls_item.get("description"))
-        self.model_year = str(ls_item.get("modelYear"))
-        self.upc = str(ls_item.get("upc"))
-        self.ean = str(ls_item.get("ean"))
+        self.upc = int(ls_item.get("upc") or 0) or None
         self.custom_sku = str(ls_item.get("customSku"))
         self.manufacturer_sku = str(ls_item.get("manufacturerSku"))
-        self.create_time = str(ls_item.get("createTime"))
-        self.time_stamp = str(ls_item.get("timeStamp"))
-        self.publish_to_ecom = str(ls_item.get("publishToEcom"))
-        self.category_id = str(ls_item.get("categoryID"))
-        self.tax_class_id = str(ls_item.get("taxClassID"))
-        self.department_id = str(ls_item.get("departmentID"))
-        self.item_matrix_id = str(ls_item.get("itemMatrixID"))
-        self.manufacturer_id = str(ls_item.get("manufacturerID"))
-        self.season_id = str(ls_item.get("seasonID"))
-        self.default_vendor_id = str(ls_item.get("defaultVendorID"))
+        self.create_time = string_to_datetime(ls_item.get("createTime"))
+        self.time_stamp = string_to_datetime(ls_item.get("timeStamp"))
+        self.category_id = int(ls_item.get("categoryID"))
+        self.tax_class_id = int(ls_item.get("taxClassID"))
+        self.item_matrix_id = int(ls_item.get("itemMatrixID"))
+        self.manufacturer_id = int(ls_item.get("manufacturerID"))
+        self.default_vendor_id = int(ls_item.get("defaultVendorID"))
         self.item_attributes = ItemAttributes(ls_item.get("ItemAttributes"))
         self.prices = Prices(ls_item.get("Prices"))
         self.sizes = SizeAttributes.return_sizes(ls_item.get("itemMatrixID"))
@@ -173,88 +165,45 @@ class Item:
                 ]
             }
         }
-        put_data(config.LS_URLS["item"].format(itemID=self.item_id), put_item)
+        url = config.LS_URLS["item"].format(itemID=self.item_id)
+        self.client.put(url, json=put_item)
 
-    def _get_item(self):
-        """Return LS Item object by item ID"""
-        current_url = config.LS_URLS["item"]
-        response = get_data(current_url.format(itemID=self.item_id),
-                            {"load_relations": '["ItemAttributes"]'})
-        return response.json().get("Item")
-
-
-class Items:
-    """Return list of Item objects from LS"""
-
-    def __init__(
-            self,
-            descriptions: list[str] | str | None = None,
-            categories: list[str] | None = None
-    ):
-        self.item_list: list[Item] = []
-        if descriptions is not None:
-            if not isinstance(descriptions, list):
-                descriptions = shlex.split(descriptions)
-            self._get_items_by_desciption(descriptions)
-            return
-        if categories is not None:
-            self._get_items_by_category(categories)
-            return
-        self._get_all_items()
-
-    def __repr__(self):
-        return f"Items({len(self.item_list)})"
-
-    def _get_all_items(self):
+    @classmethod
+    def get_all_items(cls, date_filter: datetime | None = None):
         """Run API auth."""
-        generate_ls_access()
-        current_url = config.LS_URLS["items"]
-        while current_url:
-            response = get_data(
-                current_url, {"load_relations": '["ItemAttributes"]', "limit": "100"})
-            for item in response.json().get("Item"):
-                self.item_list.append(Item(ls_item=item))
-            current_url = response.json()["@attributes"]["next"]
+        for item in cls.client.get_items_json(date_filter=date_filter):
+            yield Item(ls_item=item)
 
-    def _get_items_by_category(self, categories: list[str]):
+    @classmethod
+    def get_items_by_category(cls, categories: list[str], date_filter: datetime | None = None):
         """Run API auth."""
-        generate_ls_access()
+        if not isinstance(categories, list):
+            categories = [categories]
         for category in categories:
-            current_url = config.LS_URLS["items"]
-            while current_url:
-                response = get_data(
-                    current_url,
-                    {
-                        "categoryID": category,
-                        "load_relations": '["ItemAttributes"]',
-                        "limit": "100",
-                    },
-                )
-                for item in response.json().get("Item"):
-                    self.item_list.append(Item(ls_item=item))
-                current_url = response.json()["@attributes"]["next"]
+            for item in cls.client.get_items_json(category_id=category, date_filter=date_filter):
+                yield Item(ls_item=item)
 
-    def _get_items_by_desciption(self, descriptions: list[str]):
+    @classmethod
+    def get_items_by_desciption(cls, descriptions: list[str]):
         """Return LS Item by searching description using OR and then filtering for all words"""
-
+        if not isinstance(descriptions, list):
+            descriptions = shlex.split(descriptions)
         item_list: list[Item] = []
-        current_url = config.LS_URLS["items"]
         description = ""
         for word in descriptions:
             description += f"description=~,%{word}%|"
-        while current_url:
-            response = get_data(current_url, {"or": description,
-                                "load_relations": '["ItemAttributes"]'})
-            current_url = response.json()["@attributes"]["next"]
-            if response.json().get("Item") is None:
-                return
-            for item in response.json().get("Item"):
+
+            for item in cls.client.get_items_json(description=description):
                 item_list.append(Item(ls_item=item))
 
         filtered_list = [item for item in item_list if all(
             word.lower() in item.description.lower() for word in descriptions)]
-        self.item_list.extend(filtered_list)
+        return filtered_list
 
 
 if __name__ == "__main__":
-    print(Items())
+    items = Item.get_all_items()
+    for index, item in enumerate(items):
+        print(item)
+        if index == 4:
+            break
