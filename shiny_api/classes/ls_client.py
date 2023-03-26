@@ -138,7 +138,7 @@ class Client(requests.Session):
 
     def get_size_attributes_json(self):
         """Get all size attributes"""
-        url = config.LS_URLS["Workorder"]
+        url = config.LS_URLS["itemMatrix"]
         return self._entries(url, "ItemMatrix", params={"load_relations": '["ItemAttributeSet"]'})
 
 

@@ -202,10 +202,8 @@ class Item:
 
 
 if __name__ == "__main__":
-    # items = Item.get_items_by_desciption(descriptions="oled display")
-    # for i in items:
-    #    print(f"{i.item_id} {i.description}")
-    # print(Item(3988))
     items = Item.get_all_items()
-    for i in items:
-        print(i)
+    for index, item in enumerate(items):
+        print(item)
+        if index == 4:
+            break
