@@ -4,7 +4,7 @@ import json
 import datetime
 from functools import lru_cache
 from selenium import webdriver
-from shiny_api.classes import ls_customer
+from shiny_api.classes.ls_customer import Customer
 from shiny_api.classes import ls_item
 from shiny_api.modules import load_config as config
 from shiny_api.views.ls_functions import send_message
@@ -119,9 +119,9 @@ def update_item_price():
 
 def format_customer_phone():
     """Load and iterate through customers, updating formatting on phone numbers."""
-    customers = ls_customer.Customers()
+    customers = Customer.get_all_customers()
     customers_updated = 0
-    for index, customer in enumerate(customers.customer_list):
+    for index, customer in enumerate(customers):
         if len(customer.contact.phones.contact_phone) == 0:
             continue
         has_mobile = False
@@ -142,8 +142,7 @@ def format_customer_phone():
         if customer.is_modified or has_mobile is False:
             customers_updated += 1
             output = (
-                f"{customers_updated}: Updating Customer #{index}"
-                f" out of {len(customers.customer_list): <60}")
+                f"{customers_updated}: Updating Customer #{index}")
             send_message(output)
             print(output, end="\r")
             customer.update_phones()
