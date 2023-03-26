@@ -1,4 +1,5 @@
 """discord Python cog"""
+import os
 import sys
 from subprocess import Popen, PIPE
 import discord
@@ -23,23 +24,28 @@ class DiscordPyCog(commands.Cog):
     async def post_python(self, message: discord.Message):
         if not any("Shiny" in role.name for role in message.author.roles):
             return
-
+        print(os.getcwd())
         if message.author == self.client.user:
             return
         if '```py\nrun' not in message.content:
             return
 
-        code_result, code_error = self.run_python(message.content)
+        code_result, code_error = await self.run_python(message)
 
         await message.channel.send(f"Results:\n {code_result}")
         if code_error:
             await message.channel.send(f"Errors:\n {code_error}")
 
-    def run_python(self, message: str) -> tuple:
+    async def run_python(self, message: discord.Message) -> tuple:
         """Run python code"""
-        message_code = message.split('```py\nrun')[1].split('```')[0]
-        popen = Popen([sys.executable, '-'], stderr=PIPE, stdout=PIPE, stdin=PIPE)
-        code_result, code_error = popen.communicate(bytes(message_code, encoding="utf8"))
+        if message.attachments:
+            message_code = await message.attachments[0].read()
+        else:
+            message_code = message.content.split('```py\nrun')[1].split('```')[0]
+            message_code = bytes(message_code, encoding="utf8")
+
+        popen = Popen([sys.executable, '-'], stderr=PIPE, stdout=PIPE, stdin=PIPE, cwd=os.getcwd())
+        code_result, code_error = popen.communicate(message_code)
         code_result = code_result.decode("utf8")
         code_error = code_error.decode("utf8")
         return code_result, code_error
