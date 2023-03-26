@@ -15,6 +15,7 @@ from shiny_api.modules.flask_helpers import LazyView
 locale.setlocale(locale.LC_ALL, "en_US.UTF-8")
 app = Flask(__name__)
 app.config['SECRET_KEY'] = config.FLASK_SECRET_KEY
+app.config['WTF_CSRF_TIME_LIMIT'] = None
 app.config["REDIS_URL"] = "redis://localhost"
 app.template_folder = '../views/templates'
 app.debug = False
