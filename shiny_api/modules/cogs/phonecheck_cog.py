@@ -1,12 +1,8 @@
 """Allow PhoneCheck lookup from discord cog"""
-import os
 import discord
 from discord import app_commands
 from discord.ext import commands
 import shiny_api.classes.phonecheck as pc
-
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 class PhoneCheckCog(commands.Cog):

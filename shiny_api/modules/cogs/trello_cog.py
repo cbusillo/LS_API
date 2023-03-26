@@ -1,13 +1,9 @@
 """Allow Trello interaction from discord cog"""
-import os
 import discord
 from discord import app_commands
 from discord.ext import commands
 from trello import TrelloClient
 import shiny_api.modules.load_config as config
-
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 class TrelloCog(commands.Cog):

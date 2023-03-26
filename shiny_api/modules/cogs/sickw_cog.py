@@ -1,11 +1,8 @@
 """Allow Sickw lookup from discord cog"""
-import os
 import discord
 from discord import app_commands
 from discord.ext import commands
 from shiny_api.classes.sickw_results import SickwResult
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 class SickwCog(commands.Cog):
