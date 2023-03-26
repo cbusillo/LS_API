@@ -1,12 +1,10 @@
 """Zebra printing module"""
 import datetime
-import os
 import textwrap
 from typing import List
 from simple_zpl2 import ZPLDocument, Code128_Barcode, NetworkPrinter
 from shiny_api.modules import load_config as config
 
-print(f"Importing {os.path.basename(__file__)}...")
 LABEL_SIZE = {"width": 2, "height": 1.3}
 LABEL_TEXT_SIZE = {"width": 40, "height": 40, "small_width": 20, "small_height": 20}
 LABEL_PADDING = 10

@@ -1,12 +1,9 @@
 """Allow LightSpped lookup from discord cog"""
-import os
 import textwrap
 import discord
 from discord import app_commands
 from discord.ext import commands
 from shiny_api.classes.ls_item import Item
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 class LightSpeedCog(commands.Cog):

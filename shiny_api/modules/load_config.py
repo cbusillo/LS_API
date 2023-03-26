@@ -2,9 +2,6 @@
 import os
 import json
 
-print(f"Importing {os.path.basename(__file__)}...")
-
-
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__)) + "/../"
 CONFIG_SECRET_DIR = os.path.expanduser("~")
 COG_DIR = SCRIPT_DIR + "/modules/cogs"
