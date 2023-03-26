@@ -4,6 +4,7 @@ import sys
 from subprocess import Popen, PIPE
 import discord
 from discord.ext import commands
+from shiny_api.modules.discord_bot import wrap_lines
 
 
 class DiscordPyCog(commands.Cog):
@@ -18,13 +19,11 @@ class DiscordPyCog(commands.Cog):
 
     @commands.Cog.listener("on_message_edit")
     async def python_listener_edit(self, _before_message: discord.Message, after_message: discord.Message):
-        print("Update")
         await self.post_python(after_message)
 
     async def post_python(self, message: discord.Message):
-        if not any("Shiny" in role.name for role in message.author.roles):
+        if not any("Shiny" == role.name for role in message.author.roles):
             return
-        print(os.getcwd())
         if message.author == self.client.user:
             return
         if '```py\nrun' not in message.content:
@@ -32,9 +31,9 @@ class DiscordPyCog(commands.Cog):
 
         code_result, code_error = await self.run_python(message)
 
-        await message.channel.send(f"Results:\n {code_result}")
+        await wrap_lines(f"Results:\n {code_result}", message=message)
         if code_error:
-            await message.channel.send(f"Errors:\n {code_error}")
+            await wrap_lines(f"Errors:\n {code_error}", message=message)
 
     async def run_python(self, message: discord.Message) -> tuple:
         """Run python code"""

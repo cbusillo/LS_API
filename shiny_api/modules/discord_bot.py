@@ -3,8 +3,7 @@ import os
 import discord
 from discord.ext import commands
 import shiny_api.modules.load_config as config
-
-print(f"Importing {os.path.basename(__file__)}...")
+import textwrap
 
 
 class ShinyBot(commands.Bot):
@@ -24,3 +23,11 @@ def start_discord_bot():
     """Create bot and run"""
     shiny_bot = ShinyBot()
     shiny_bot.run(config.DISCORD_TOKEN)
+
+
+async def wrap_lines(lines: str, message: discord.Message):
+    """Break up messages that are longer than 2000
+    chars and send multible messages to discord"""
+    lines = textwrap.wrap(lines, 2000, break_long_words=False, replace_whitespace=False)
+    for line in lines:
+        await message.channel.send(line)

@@ -1,10 +1,10 @@
 """Allow interaction with ChatGPT from Discord"""
 import platform
-import textwrap
 import discord
 from discord.ext import commands
 import openai
 import shiny_api.modules.load_config as config
+from shiny_api.modules.discord_bot import wrap_lines
 
 
 class ChatGPTCog(commands.Cog):
@@ -94,15 +94,8 @@ class ChatGPTCog(commands.Cog):
         except openai.error.RateLimitError as exception:
             await message.channel.send(str(exception))
             return
-        await self.wrap_lines(response["choices"][0]["message"]["content"], message=message)
+        await wrap_lines(response["choices"][0]["message"]["content"], message=message)
         print(f"Received response: {response['choices'][0]['message']['content']}")
-
-    async def wrap_lines(self, lines: list[str], message: discord.Message):
-        """Break up messages that are longer than 2000
-        chars and send multible messages to discord"""
-        lines = textwrap.wrap(lines, 2000, break_long_words=False, replace_whitespace=False)
-        for line in lines:
-            await message.channel.send(line)
 
 
 async def setup(client: commands.Cog):
