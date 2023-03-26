@@ -9,7 +9,7 @@ from shiny_api.classes.ls_item import Item
 class LightSpeedCog(commands.Cog):
     """Lightspeed functions"""
 
-    def __init__(self, client: commands.Cog):
+    def __init__(self, client: discord.Client):
         self.client = client
 
     @app_commands.command(name="ls_price")

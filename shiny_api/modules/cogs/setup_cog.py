@@ -13,7 +13,7 @@ BOT_CHANNEL = 1073943829192912936
 class SetupCog(commands.Cog):
     """Add anything related to setting up bot here"""
 
-    def __init__(self, client: commands.Bot) -> None:
+    def __init__(self, client: discord.Client) -> None:
         self.client = client
         self.enable_commands = True
         super().__init__()

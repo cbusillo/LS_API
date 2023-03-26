@@ -8,7 +8,7 @@ from shiny_api.modules.label_print import print_text
 class LabelCog(commands.Cog):
     """Print to label printer in config"""
 
-    def __init__(self, client: commands.Cog):
+    def __init__(self, client: discord.Client):
         self.client = client
 
     @app_commands.command(name="label")

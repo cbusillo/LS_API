@@ -9,7 +9,7 @@ import shiny_api.classes.homeassistant as ha
 class HomeAssistantCog(commands.Cog):
     """Homeassistant API plugin"""
 
-    def __init__(self, client: commands.Cog):
+    def __init__(self, client: discord.Client):
         self.client = client
 
     @staticmethod

@@ -10,7 +10,7 @@ from shiny_api.modules.discord_bot import wrap_lines
 class ChatGPTCog(commands.Cog):
     """Class to interact with ChatGPT"""
 
-    def __init__(self, client: commands.Cog):
+    def __init__(self, client: discord.Client):
         self.client = client
         self.user_threads = {}
 
@@ -28,10 +28,11 @@ class ChatGPTCog(commands.Cog):
             return
 
         if self.client.user.mentioned_in(message) or not message.guild:
-            await self.generage_prompt(message)
+            await self.generate_prompt(message)
 
-    async def generage_prompt(self, message: discord.Message):
+    async def generate_prompt(self, message: discord.Message):
         """Generage prompt from message and thread"""
+        run_code = False
         prompt = message.content
         while self.client.user.mention in prompt:
             prompt = prompt.replace(self.client.user.mention, "").strip()
@@ -40,6 +41,23 @@ class ChatGPTCog(commands.Cog):
             prompt = " ".join(prompt.split()[1:]).strip()
             async with message.channel.typing():
                 await self.get_walle_image(message=message, prompt=prompt)
+
+        elif prompt.split()[0:2] == ["py", "run"] and len(prompt.split()) > 3:
+            run_code = True
+            prompt = "I want you to generate python code to " + " ".join(prompt.split()[2:]).strip(
+            ) + ".  Return python code only.  Do not return any explanatory text.  Do not respond with anything except the code."
+
+        elif prompt.split()[0:2] == ["py", "generate"] and len(prompt.split()) > 3:
+            run_code = False
+            prompt = "I want you to generate python code to " + " ".join(prompt.split()[2:]).strip(
+            ) + ".  Return python code only.  Do not return any explanatory text.  Do not respond with anything except the code."
+
+        elif prompt.split()[0:2] == ["py", "explain"] and len(prompt.split()) > 3:
+            run_code = False
+            prompt = "I want you to generate python code to " + " ".join(prompt.split()[2:]).strip()
+
+        if message.attachments and run_code is False:
+            prompt = prompt + (await message.attachments[0].read()).decode("utf-8")
         if message.author.id not in self.user_threads:
             self.user_threads[message.author.id] = []
         if message.reference and message.reference.resolved.author.id == self.client.user.id:
@@ -48,7 +66,11 @@ class ChatGPTCog(commands.Cog):
             self.user_threads[message.author.id] = [prompt]
 
         async with message.channel.typing():
-            await self.get_chatgpt_message(message=message)
+            ai_response = await self.get_chatgpt_message(message=message)
+            if run_code:
+                ai_response = ai_response.replace("```python", "").replace("```py", "").replace("```", "").replace("`", "")
+                ai_response = f'```py\nrun\n{ai_response}\n```'
+            await wrap_lines(ai_response, message=message)
 
     async def get_walle_image(self, message: discord.Message, prompt: str):
         """Send message prompt to walle and display image"""
@@ -94,8 +116,8 @@ class ChatGPTCog(commands.Cog):
         except openai.error.RateLimitError as exception:
             await message.channel.send(str(exception))
             return
-        await wrap_lines(response["choices"][0]["message"]["content"], message=message)
         print(f"Received response: {response['choices'][0]['message']['content']}")
+        return response["choices"][0]["message"]["content"]
 
 
 async def setup(client: commands.Cog):

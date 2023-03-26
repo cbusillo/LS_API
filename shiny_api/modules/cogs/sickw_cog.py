@@ -8,7 +8,7 @@ from shiny_api.classes.sickw_results import SickwResult
 class SickwCog(commands.Cog):
     """Sickw functions"""
 
-    def __init__(self, client: commands.Cog):
+    def __init__(self, client: discord.Client):
         self.client = client
 
     @app_commands.command(name="sick")

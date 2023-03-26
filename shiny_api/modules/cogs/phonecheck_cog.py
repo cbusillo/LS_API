@@ -8,7 +8,7 @@ import shiny_api.classes.phonecheck as pc
 class PhoneCheckCog(commands.Cog):
     """PhoneCheck functions"""
 
-    def __init__(self, client: commands.Cog):
+    def __init__(self, client: discord.Client):
         self.client = client
 
     @app_commands.command(name="pc")

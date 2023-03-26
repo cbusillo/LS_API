@@ -10,7 +10,7 @@ from shiny_api.modules.discord_bot import wrap_lines
 class DiscordPyCog(commands.Cog):
     """Run Python from Discord"""
 
-    def __init__(self, client: commands.Cog):
+    def __init__(self, client: discord.Client):
         self.client = client
 
     @commands.Cog.listener("on_message")
@@ -22,10 +22,10 @@ class DiscordPyCog(commands.Cog):
         await self.post_python(after_message)
 
     async def post_python(self, message: discord.Message):
-        if not any("Shiny" == role.name for role in message.author.roles):
+        if not any("Shiny" == role.name for role in message.author.roles) and message.author != self.client.user:
             return
-        if message.author == self.client.user:
-            return
+        # if message.author == self.client.user:
+        #     return
         if '```py\nrun' not in message.content:
             return
 

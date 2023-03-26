@@ -28,6 +28,6 @@ def start_discord_bot():
 async def wrap_lines(lines: str, message: discord.Message):
     """Break up messages that are longer than 2000
     chars and send multible messages to discord"""
-    lines = textwrap.wrap(lines, 2000, break_long_words=False, replace_whitespace=False)
+    lines = textwrap.wrap(lines, 2000, break_long_words=True, replace_whitespace=False)
     for line in lines:
         await message.channel.send(line)

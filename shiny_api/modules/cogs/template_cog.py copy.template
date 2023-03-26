@@ -6,7 +6,7 @@ from discord.ext import commands
 class TEMPLATECog(commands.Cog):
     """TEMPLATE"""
 
-    def __init__(self, client: commands.Cog):
+    def __init__(self, client: discord.Client):
         self.client = client
 
     @app_commands.command(name="TEMPLATE")

@@ -9,7 +9,7 @@ import shiny_api.modules.load_config as config
 class TrelloCog(commands.Cog):
     """Communicate to Trello"""
 
-    def __init__(self, client: commands.Cog):
+    def __init__(self, client: discord.Client):
         self.client = client
 
     async def trello_lists_list(
