@@ -9,13 +9,16 @@ from shiny_api.views.ls_functions import send_message
 
 import shiny_api.modules.load_config as config
 
+
 def string_to_datetime(date_string: str) -> datetime:
     """Convert date string to datetime object"""
     return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S%z")
 
+
 def datetime_to_string(date_string: datetime) -> str:
     """Convert datetime object to string"""
     return date_string.strftime("%Y-%m-%dT%H:%M:%S%z")
+
 
 class Client(requests.Session):
     """Client class for Lightspeed API Inherited from requests.Session"""
@@ -35,9 +38,9 @@ class Client(requests.Session):
 
                 logging.info("rate: %i/%i", rate_level, rate_limit)
                 if rate_limit-rate_level < 10:
-                    time.sleep(1)
                     logging.warning("Rate limit reached, sleeping for 1 second")
                     send_message("Rate limit reached, sleeping for 1 second")
+                    time.sleep(1)
 
             if response_hook.status_code == 200:
                 return
@@ -77,7 +80,7 @@ class Client(requests.Session):
         """Iterate over all items in the API"""
 
         next_url = url
-        page=0
+        page = 0
         while next_url != "":
             send_message(f"Getting page {page}")
             self._response = self.get(next_url, params=params)
@@ -94,11 +97,16 @@ class Client(requests.Session):
             next_url = self._response.json()["@attributes"]["next"]
             page += 1
 
+    def _entry(self, url: str, key_name: str, params: str = ""):
+        """Get single item from API"""
+        self._response = self.get(url, params=params)
+        return self._response.json().get(key_name)
+
     def get_items_json(self, category_id: str = None, description: str = None, date_filter: datetime | None = None):
         """Get all items"""
         params = {"load_relations": '["ItemAttributes"]', "limit": "100"}
         if date_filter:
-            params["timeStamp"]=f">,{date_filter}"
+            params["timeStamp"] = f">,{date_filter}"
 
         if category_id:
             params["categoryID"] = category_id
@@ -114,16 +122,23 @@ class Client(requests.Session):
     def get_customer_json(self, customer_id: str):
         """Get customer"""
         url = config.LS_URLS['customer'].format(customerID=customer_id)
-        return self.get(url, params={"load_relations": '["Contact"]'}).json()
+        params = {"load_relations": '["Contact"]'}
+        return self._entry(url, key_name="Customer", params=params)
+
+    def get_workorder_json(self, workorder_id: str):
+        """Get workorder"""
+        url = config.LS_URLS['workorder'].format(workorderID=workorder_id)
+        return self._entry(url, key_name="Workorder")
 
     def get_item_json(self, item_id: str):
         """Get item"""
         url = config.LS_URLS['item'].format(itemID=item_id)
-        return next(self._entries(url, "Item", params={"load_relations": '["ItemAttributes"]'}))
+        params = {"load_relations": '["ItemAttributes"]'}
+        return self._entry(url, key_name="Item", params=params)
 
     def get_size_attributes_json(self):
         """Get all size attributes"""
-        url = config.LS_URLS["itemMatrix"]
+        url = config.LS_URLS["Workorder"]
         return self._entries(url, "ItemMatrix", params={"load_relations": '["ItemAttributeSet"]'})
 
 
