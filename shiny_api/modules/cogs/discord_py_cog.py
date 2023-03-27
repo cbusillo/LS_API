@@ -43,7 +43,7 @@ class DiscordPyCog(commands.Cog):
             message_code = message.content.split('```py\nrun')[1].split('```')[0]
             message_code = bytes(message_code, encoding="utf8")
 
-        keywords = ['.secret_client.json', '.secret.json', 'exec(', 'eval(', 'open(', 'os.', 'sys.']
+        keywords = ['.secret_client.json', '.secret.json', 'exec(', 'eval(', 'open(', 'os.', 'sys.', '.load_config', 'subprocess.']
         if any("Shiny" == role.name for role in message.author.roles):
             keywords = []
         for work in keywords:
