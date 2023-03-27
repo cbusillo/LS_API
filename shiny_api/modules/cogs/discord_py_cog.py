@@ -43,6 +43,10 @@ class DiscordPyCog(commands.Cog):
             message_code = message.content.split('```py\nrun')[1].split('```')[0]
             message_code = bytes(message_code, encoding="utf8")
 
+        keywords = ['.secret_client.json', '.secret.json', 'exec(', 'eval(', 'open(', 'os.', 'sys.']
+        for work in keywords:
+            message_code.replace(work, '***')
+
         popen = Popen([sys.executable, '-'], stderr=PIPE, stdout=PIPE, stdin=PIPE, cwd=os.getcwd())
         code_result, code_error = popen.communicate(message_code)
         code_result = code_result.decode("utf8")

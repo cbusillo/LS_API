@@ -77,9 +77,6 @@ class ChatGPTCog(commands.Cog):
             ai_response = await self.get_chatgpt_message(message=message)
             if run_code:
                 ai_response = ai_response.replace("```python", "").replace("```py", "").replace("```", "").replace("`", "")
-                keywords = ['.secret_client.json', '.secret.json', 'exec(', 'eval(', 'open(', 'os.', 'sys.']
-                for work in keywords:
-                    ai_response.replace(work, '***')
                 ai_response = f'```py\nrun\n{ai_response}\n```'
             await wrap_lines(ai_response, message=message)
 
