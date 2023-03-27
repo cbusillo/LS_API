@@ -40,3 +40,13 @@ build-backend = "poetry.core.masonry.api"
 discord = "run_discord:start_discord_bot"
 flask = "run_flask:start_flask_server"
 all = "run:main"
+
+[tool.pyright]
+exclude = [
+    "**/homebrew/**",
+    "**/Caches/**"
+    ]
+ignore = [
+    "**/homebrew/**",
+    "**/Caches/**"
+    ]
