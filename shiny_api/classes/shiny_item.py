@@ -1,16 +1,22 @@
 """Shiny Item class."""
 from datetime import datetime
 from typing import Optional
-from pydantic import condecimal
+from pydantic import ConstrainedDecimal
 from sqlmodel import Field, SQLModel
 from sqlalchemy import UniqueConstraint, Column, Integer
+
+
+class ShinyMoney(ConstrainedDecimal):
+    """Shiny Money class."""
+    max_digits = 11
+    decimal_places = 2
 
 
 class Item(SQLModel, table=True):
     """Model for Shiny Item table."""
     id: Optional[int] = Field(default=None, primary_key=True, nullable=False)
     ls_item_id: int = Field(sa_column=Column("ls_item_id", Integer, unique=True))
-    average_cost: condecimal(max_digits=7, decimal_places=2) = Field(nullable=True)
+    average_cost: ShinyMoney = Field(nullable=True)
     archived: bool = Field()
     created_at: datetime = Field(default=datetime.now())
     updated_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)

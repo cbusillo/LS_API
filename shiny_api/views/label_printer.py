@@ -22,7 +22,7 @@ class LabelGroup(BaseModel):
 
 def label_printer_view(active_label_group: str = "Main Labels"):
     """View to print labels"""
-    label_group_list: dict[LabelGroup] = LabelGroup.load_from_defaults()
+    label_group_list: dict[str, LabelGroup] = LabelGroup.load_from_defaults()
     label_group_name_list = [label_group_name for label_group_name in label_group_list.keys()]
     quantity = int(request.form.get("quantity", 1))
     label_text = ""

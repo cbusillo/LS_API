@@ -1,4 +1,4 @@
-"""Home Assistant module for Shiny API."""
+"""Home Assistant module for Shiny API."""  # pyright: reportOptionalMemberAccess=false, reportOptionalCall=false
 import inspect
 from homeassistant_api import Client
 import shiny_api.modules.load_config as config

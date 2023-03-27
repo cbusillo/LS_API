@@ -62,7 +62,7 @@ class Client(requests.Session):
         self._response = None
         self.hooks["response"].append(rate_hook)
 
-    def request(self, method, url, *args, **kwargs):
+    def request(self, method: str, url: str, *args, **kwargs) -> requests.Response:
         """extened request method to add base url"""
         if "://" not in url:
             url = urljoin(self.base_url, url)
@@ -74,9 +74,9 @@ class Client(requests.Session):
             retries -= 1
             if retries == 0:
                 raise TimeoutError
-        return request_response
+        return request_response  # type: ignore
 
-    def _entries(self, url: str, key_name: str, params: str = ""):
+    def _entries(self, url: str, key_name: str, params: dict | None = None):
         """Iterate over all items in the API"""
 
         next_url = url
@@ -97,12 +97,12 @@ class Client(requests.Session):
             next_url = self._response.json()["@attributes"]["next"]
             page += 1
 
-    def _entry(self, url: str, key_name: str, params: str = ""):
+    def _entry(self, url: str, key_name: str, params: dict | None = None):
         """Get single item from API"""
         self._response = self.get(url, params=params)
         return self._response.json().get(key_name)
 
-    def get_items_json(self, category_id: str = None, description: str = None, date_filter: datetime | None = None):
+    def get_items_json(self, category_id: str = "", description: str = "", date_filter: datetime | None = None):
         """Get all items"""
         params = {"load_relations": '["ItemAttributes"]', "limit": "100"}
         if date_filter:
@@ -119,18 +119,18 @@ class Client(requests.Session):
         """Get all items"""
         return self._entries(config.LS_URLS["customers"], "Customer", params={"load_relations": '["Contact"]', "limit": "100"})
 
-    def get_customer_json(self, customer_id: str):
+    def get_customer_json(self, customer_id: int):
         """Get customer"""
         url = config.LS_URLS['customer'].format(customerID=customer_id)
         params = {"load_relations": '["Contact"]'}
         return self._entry(url, key_name="Customer", params=params)
 
-    def get_workorder_json(self, workorder_id: str):
+    def get_workorder_json(self, workorder_id: int):
         """Get workorder"""
         url = config.LS_URLS['workorder'].format(workorderID=workorder_id)
         return self._entry(url, key_name="Workorder")
 
-    def get_item_json(self, item_id: str):
+    def get_item_json(self, item_id: int):
         """Get item"""
         url = config.LS_URLS['item'].format(itemID=item_id)
         params = {"load_relations": '["ItemAttributes"]'}
@@ -145,7 +145,7 @@ class Client(requests.Session):
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     client = Client()
-    for index, item in enumerate(client.get_customers_json()):
-        pprint(f"Count:{index} ID:{item['customerID']} ")
+    for index, item in enumerate(client.get_items_json()):
+        pprint(f"Count:{index} ID:{item['itemID']} ")
     # response = client.get_item_json("19")
     # pprint(response.json())
