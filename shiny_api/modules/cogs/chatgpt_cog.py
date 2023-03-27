@@ -117,6 +117,7 @@ class ChatGPTCog(commands.Cog):
                 model="gpt-3.5-turbo",
                 messages=chat_messages,
                 api_key=config.OPENAI_API_KEY,
+                temperature=1.5,
             )
         except openai.error.InvalidRequestError as exception:
             await message.channel.send(str(exception))
