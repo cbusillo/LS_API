@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 import openai
 import shiny_api.modules.load_config as config
-from shiny_api.modules.discord_bot import wrap_lines
+from shiny_api.modules.discord_bot import wrap_reply_lines
 
 
 class ChatGPTCog(commands.Cog):
@@ -13,56 +13,64 @@ class ChatGPTCog(commands.Cog):
     def __init__(self, client: discord.Client):
         self.client = client
         self.user_threads = {}
+        self.prompt_dict = {
+            "run": "I want you to generate python code to {prompt}.  Return python code only.  "
+            "Do not return any explanatory text.  Do not respond with anything except the code.",
+            "generate": "I want you to generate python code to {prompt}.  Return python code only."
+            "Do not return any explanatory text.  Do not respond with anything except the code.",
+            "explain": "I want you to generate python code to {prompt}"
+        }
 
     @commands.Cog.listener("on_message")
     async def chatgpt_listener(self, message: discord.Message):
-        """if text starts with image, get an image from WALL-E"""
-        await self.check_user_and_send(message)
+        """On new message, check user and send to ChatGPT"""
+        if await self.check_user(message) is True:
+            await self.generate_prompt(message)
 
     @commands.Cog.listener("on_message_edit")
     async def chatgpt_listener_edit(self, _before_message: discord.Message, after_message: discord.Message):
-        """if text starts with image, get an image from WALL-E"""
-        await self.check_user_and_send(after_message)
+        """On message edit, check user and sent to ChatGPT"""
+        if await self.check_user(after_message) is True:
+            await self.generate_prompt(after_message)
 
-    async def check_user_and_send(self, message: discord.Message):
+    async def check_user(self, message: discord.Message) -> bool:
+        """Return True if we want to send to ChatGPT"""
         if message.author == self.client.user:
-            return
+            return False
 
         roles = self.client.guilds[0].me.roles
         if any("Dev" in role.name for role in roles):
             if "imagingserver" in platform.node().lower():
-                return
+                return False
         elif "imagingserver" not in platform.node().lower():
-            return
+            return False
 
-        if self.client.user.mentioned_in(message) or not message.guild:
-            await self.generate_prompt(message)
+        if self.client.user.mentioned_in(message):
+            return True
+        if message.guild is None:
+            return True
+        return False
 
     async def generate_prompt(self, message: discord.Message):
         """Generage prompt from message and thread"""
         run_code = False
         prompt = message.content
+
         while self.client.user.mention in prompt:
             prompt = prompt.replace(self.client.user.mention, "").strip()
 
-        if prompt.split()[0].lower() == "image" and len(prompt.split()) > 1:
+        prompt_list = [each.lower() for each in prompt.split()[:3]]
+
+        if prompt_list[0] == "image" and len(prompt_list) > 1:
             prompt = " ".join(prompt.split()[1:]).strip()
             async with message.channel.typing():
                 await self.get_walle_image(message=message, prompt=prompt)
 
-        elif prompt.split()[0:2] == ["py", "run"] and len(prompt.split()) > 3:
-            run_code = True
-            prompt = "I want you to generate python code to " + " ".join(prompt.split()[2:]).strip(
-            ) + ".  Return python code only.  Do not return any explanatory text.  Do not respond with anything except the code."
-
-        elif prompt.split()[0:2] == ["py", "generate"] and len(prompt.split()) > 3:
-            run_code = False
-            prompt = "I want you to generate python code to " + " ".join(prompt.split()[2:]).strip(
-            ) + ".  Return python code only.  Do not return any explanatory text.  Do not respond with anything except the code."
-
-        elif prompt.split()[0:2] == ["py", "explain"] and len(prompt.split()) > 3:
-            run_code = False
-            prompt = "I want you to generate python code to " + " ".join(prompt.split()[2:]).strip()
+        elif prompt_list[0] == "py" and len(prompt_list) > 2:
+            prompt_code = " ".join(prompt.split()[2:]).strip()
+            prompt = self.prompt_dict.get(prompt_list[1]).format(prompt=prompt_code)
+            if prompt_list[1] == "run":
+                run_code = True
 
         if message.attachments and run_code is False:
             prompt = prompt + (await message.attachments[0].read()).decode("utf-8")
@@ -78,7 +86,8 @@ class ChatGPTCog(commands.Cog):
             if run_code:
                 ai_response = ai_response.replace("```python", "").replace("```py", "").replace("```", "").replace("`", "")
                 ai_response = f'```py\nrun\n{ai_response}\n```'
-            await wrap_lines(ai_response, message=message)
+
+            await wrap_reply_lines(ai_response, message=message)
 
     async def get_walle_image(self, message: discord.Message, prompt: str):
         """Send message prompt to walle and display image"""
@@ -125,8 +134,9 @@ class ChatGPTCog(commands.Cog):
         except openai.error.RateLimitError as exception:
             await message.channel.send(str(exception))
             return
-        print(f"Received response: {response['choices'][0]['message']['content']}")
-        return response["choices"][0]["message"]["content"]
+        text_response = response['choices'][0]['message']['content']
+        print(f"Received response: {text_response}")
+        return text_response
 
 
 async def setup(client: commands.Cog):
