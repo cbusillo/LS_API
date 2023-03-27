@@ -17,6 +17,14 @@ class ChatGPTCog(commands.Cog):
     @commands.Cog.listener("on_message")
     async def chatgpt_listener(self, message: discord.Message):
         """if text starts with image, get an image from WALL-E"""
+        await self.check_user_and_send(message)
+
+    @commands.Cog.listener("on_message_edit")
+    async def chatgpt_listener(self, _before_message: discord.Message, after_message: discord.Message):
+        """if text starts with image, get an image from WALL-E"""
+        await self.check_user_and_send(after_message)
+
+    async def check_user_and_send(self, message: discord.Message):
         if message.author == self.client.user:
             return
 
