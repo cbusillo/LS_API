@@ -49,7 +49,7 @@ class DiscordPyCog(commands.Cog):
         for work in keywords:
             message_code.replace(b"{work}", b'***')
 
-        popen = Popen([sys.executable, '-'], stderr=PIPE, stdout=PIPE, stdin=PIPE, cwd=os.getcwd())
+        popen = Popen(['gtimeout', '15', sys.executable, '-'], stderr=PIPE, stdout=PIPE, stdin=PIPE, cwd=os.getcwd())
         code_result, code_error = popen.communicate(message_code)
         code_result = code_result.decode("utf8")
         code_error = code_error.decode("utf8")
