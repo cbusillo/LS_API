@@ -45,7 +45,7 @@ class ChatGPTCog(commands.Cog):
         while self.client.user.mention in prompt:
             prompt = prompt.replace(self.client.user.mention, "").strip()
 
-        if prompt.split()[0].lower() == "image" and len(prompt.split()) > 2:
+        if prompt.split()[0].lower() == "image" and len(prompt.split()) > 1:
             prompt = " ".join(prompt.split()[1:]).strip()
             async with message.channel.typing():
                 await self.get_walle_image(message=message, prompt=prompt)
