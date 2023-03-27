@@ -47,7 +47,7 @@ class DiscordPyCog(commands.Cog):
         if any("Shiny" == role.name for role in message.author.roles):
             keywords = []
         for work in keywords:
-            message_code.replace(work, '***')
+            message_code.replace(work, b'***')
 
         popen = Popen([sys.executable, '-'], stderr=PIPE, stdout=PIPE, stdin=PIPE, cwd=os.getcwd())
         code_result, code_error = popen.communicate(message_code)
