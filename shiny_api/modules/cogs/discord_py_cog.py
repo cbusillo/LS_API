@@ -44,13 +44,14 @@ class DiscordPyCog(commands.Cog):
 
         keywords = ['.secret_client.json', '.secret.json', 'exec(', 'eval(', 'open(', 'os.', 'sys.', '.load_config', 'subprocess.']
 
+        is_shiny = False
         if "Shiny" in [role.name for role in message.author.roles]:
-            keywords = []
+            is_shiny = True
         if any("Shiny" in [role.name for role in mention.roles] for mention in message.mentions):
-            keywords = []
+            is_shiny = True
 
-        for word in keywords:
-            message_code = message_code.replace(word, '***')
+        if any(keyword in message_code for keyword in keywords) and is_shiny is False:
+            return "Contains protected keywords", ""
 
         popen = Popen(['gtimeout', '15', sys.executable, '-'], stderr=PIPE, stdout=PIPE, stdin=PIPE, cwd=os.getcwd())
         code_result, code_error = popen.communicate(bytes(message_code, encoding="utf-8"))
