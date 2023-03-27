@@ -1,3 +1,4 @@
+"""Import items from LightSpeed to Shiny."""
 from datetime import datetime
 import logging
 import pytz
@@ -9,6 +10,7 @@ from shiny_api.classes.shiny_client import create_db_and_tables, drop_db_and_tab
 
 
 def import_item(ls_item: LsItem):
+    """Relate LS item to Shiny item"""
     with Session(engine) as session:
         results = session.exec(select(ShinyItem).where(ShinyItem.ls_item_id == ls_item.item_id))
         shiny_item = results.one_or_none()
@@ -39,35 +41,38 @@ def import_item(ls_item: LsItem):
 
 
 def date_last_updated_from_ls(time_zone: str = "America/New_York"):
-    tz = pytz.timezone(time_zone)
+    """Convert LS date string to datetime"""
+    local_tz = pytz.timezone(time_zone)
     with Session(engine) as session:
-        last_item_query = select(ShinyItem.updated_from_ls_at).order_by(ShinyItem.updated_from_ls_at.desc()).limit(1)
+        last_item_query = select(ShinyItem.updated_from_ls_at).order_by(ShinyItem.updated_from_ls_at).limit(1)
         item_updated_date = session.exec(last_item_query).one_or_none()
         if item_updated_date is None:
-            return datetime(2000, 1, 1, 0, 0, 0, 0, tzinfo=tz)
-        item_updated_date = tz.localize(item_updated_date, is_dst=None).astimezone(pytz.utc)
+            return datetime(2000, 1, 1, 0, 0, 0, 0, tzinfo=local_tz)
+        item_updated_date = local_tz.localize(item_updated_date, is_dst=None).astimezone(pytz.utc)
         return item_updated_date
 
 
 def list_items(item_id: int = 0):
-
+    """List items from Shiny db"""
     with Session(engine) as session:
         if item_id:
             items = session.query(ShinyItem).where(ShinyItem.ls_item_id == item_id).one_or_none()
         else:
             items = session.query(ShinyItem).all()
-        pprint(f"Shiny {item} {item.time_stamp.astimezone(pytz.timezone('America/New_York'))}")
+        for item in items:
+            pprint(f"Shiny {item} {item.time_stamp.astimezone(pytz.timezone('America/New_York'))}")
 
 
 if __name__ == "__main__":
-
     logging.basicConfig(level=logging.DEBUG)
-    # drop_db_and_tables()
+    DELETE_DB = False
+    if DELETE_DB:
+        drop_db_and_tables()
     create_db_and_tables()
-    items = LsItem.get_all_items(date_filter=date_last_updated_from_ls())
-    for item in items:
-        import_item(item)
-        pprint(f"LightSpeed {item} {item.time_stamp.astimezone(pytz.timezone('America/New_York'))}")
+    test_items = LsItem.get_all_items(date_filter=date_last_updated_from_ls())
+    for test_item in test_items:
+        import_item(test_item)
+        pprint(f"LightSpeed {test_item} {test_item.time_stamp.astimezone(pytz.timezone('America/New_York'))}")
 
     print()
     # pprint(f"Shiny: {date_last_updated_from_ls()}")

@@ -202,8 +202,8 @@ class Item:
 
 
 if __name__ == "__main__":
-    items = Item.get_all_items()
-    for index, item in enumerate(items):
-        print(item)
+    test_items = Item.get_all_items()
+    for index, test_item in enumerate(test_items):
+        print(test_item)
         if index == 4:
             break

@@ -1,6 +1,5 @@
 """Class to import workorder objects from LS API"""
 from dataclasses import dataclass
-from shiny_api.modules import load_config as config
 from shiny_api.classes.ls_client import Client
 from shiny_api.classes.ls_customer import Customer
 
@@ -13,7 +12,7 @@ class Workorder:
     def __init__(self, workorder_id: int):
         """Workorder object from dict"""
         self.workorder_id = workorder_id
-        ls_workorder = self.client.get_workorder_json(workorder_id) 
+        ls_workorder = self.client.get_workorder_json(workorder_id)
 
         self.system_sku = int(ls_workorder.get("systemSku"))
         self.time_in = str(ls_workorder.get("timeIn"))

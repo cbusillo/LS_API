@@ -1,11 +1,13 @@
+"""Shiny Item class."""
+from datetime import datetime
 from typing import Optional
 from pydantic import condecimal
-from sqlmodel import Field, SQLModel, Relationship
+from sqlmodel import Field, SQLModel
 from sqlalchemy import UniqueConstraint, Column, Integer
-from datetime import datetime
 
 
 class Item(SQLModel, table=True):
+    """Model for Shiny Item table."""
     id: Optional[int] = Field(default=None, primary_key=True, nullable=False)
     ls_item_id: int = Field(sa_column=Column("ls_item_id", Integer, unique=True))
     average_cost: condecimal(max_digits=7, decimal_places=2) = Field(nullable=True)
@@ -30,6 +32,7 @@ class Item(SQLModel, table=True):
 
 
 class ItemAttributes(SQLModel, table=True):
+    """Model for Shiny Item Attributes table."""
     id: Optional[int] = Field(default=None, primary_key=True, nullable=False)
     item_id: int = Field()
     attribute_id: int = Field()

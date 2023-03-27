@@ -1,5 +1,5 @@
 """Class to import customer objects from LS API"""
-from typing import Any, Self
+from typing import Any
 from dataclasses import dataclass
 from rich import print as pprint
 from shiny_api.classes.ls_client import Client
@@ -160,11 +160,12 @@ class Customer:
         }
         url = config.LS_URLS["customer"].format(customerID=self.customer_id)
         self.client.put(url, json=put_customer)
-        
+
     @classmethod
     def get_all_customers(cls):
+        """Generator to return all customers from LS API"""
         for customer in cls.client.get_customers_json():
-            yield Customer(ls_customer= customer)
+            yield Customer(ls_customer=customer)
 
 
 if __name__ == "__main__":

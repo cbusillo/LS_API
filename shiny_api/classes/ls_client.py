@@ -48,7 +48,7 @@ class Client(requests.Session):
             if response_hook.status_code == 429:
                 retry_seconds = int(float(response_hook.headers["Retry-After"]))
                 logging.info("rate limit reached, sleeping for %i", retry_seconds)
-                send_message("Rate limit reached, sleeping for %i", retry_seconds)
+                send_message(f"Rate limit reached, sleeping for {retry_seconds}")
                 time.sleep(retry_seconds)
             if response_hook.status_code == 401:
                 self.auth_header = get_auth_header()
