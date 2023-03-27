@@ -20,6 +20,18 @@ class ChatGPTCog(commands.Cog):
             "Do not return any explanatory text.  Do not respond with anything except the code.",
             "explain": "I want you to generate python code to {prompt}"
         }
+        self.keywords_dict = {
+            "macos": "macOS is the bestOS.  Fight me!",
+            "linux os": "Linux is ok, macOS is better"
+        }
+
+    @commands.Cog.listener("on_message")
+    async def keyword_listener(self, message: discord.Message):
+        if message.author == self.client.user:
+            return
+        for keyword in self.keywords_dict.keys():
+            if keyword in message.clean_content.lower():
+                await message.channel.send(self.keywords_dict.get(keyword))
 
     @commands.Cog.listener("on_message")
     async def chatgpt_listener(self, message: discord.Message):
