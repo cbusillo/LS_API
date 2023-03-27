@@ -15,17 +15,16 @@ class DiscordPyCog(commands.Cog):
 
     @commands.Cog.listener("on_message")
     async def python_listener(self, message: discord.Message):
+        """listen for messages call check for python"""
         await self.post_python(message)
 
     @commands.Cog.listener("on_message_edit")
     async def python_listener_edit(self, _before_message: discord.Message, after_message: discord.Message):
+        """listen for message edits call check for python"""
         await self.post_python(after_message)
 
     async def post_python(self, message: discord.Message):
-        # if not any("Shiny" == role.name for role in message.author.roles) and message.author != self.client.user:
-        #     return
-        # if message.author == self.client.user:
-        #     return
+        """Check for python code and run"""
         if '```py\nrun' not in message.content:
             return
 
