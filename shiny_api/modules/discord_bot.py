@@ -1,9 +1,9 @@
 """Class to import cogs from cog dir"""
 import os
+import textwrap
 import discord
 from discord.ext import commands
 import shiny_api.modules.load_config as config
-import textwrap
 
 
 class ShinyBot(commands.Bot):
@@ -25,9 +25,12 @@ def start_discord_bot():
     shiny_bot.run(config.DISCORD_TOKEN)
 
 
-async def wrap_lines(lines: str, message: discord.Message):
+async def wrap_reply_lines(lines: str, message: discord.Message):
     """Break up messages that are longer than 2000
     chars and send multible messages to discord"""
+    if lines is None:
+        lines = "No lines to send"
     lines = textwrap.wrap(lines, 2000, break_long_words=True, replace_whitespace=False)
+    lines[0] = f"{message.author.mention} {lines[0]}"
     for line in lines:
         await message.channel.send(line)
