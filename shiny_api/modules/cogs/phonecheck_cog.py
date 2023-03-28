@@ -8,8 +8,8 @@ import shiny_api.classes.phonecheck as pc
 class PhoneCheckCog(commands.Cog):
     """PhoneCheck functions"""
 
-    def __init__(self, client: discord.Client):
-        self.client = client
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
 
     @app_commands.command(name="pc")
     @app_commands.checks.has_role("Shiny")
@@ -19,6 +19,6 @@ class PhoneCheckCog(commands.Cog):
         await context.response.send_message(device)
 
 
-async def setup(client: commands.Cog):
+async def setup(bot: commands.Bot):
     """Add cog"""
-    await client.add_cog(PhoneCheckCog(client))
+    await bot.add_cog(PhoneCheckCog(bot))

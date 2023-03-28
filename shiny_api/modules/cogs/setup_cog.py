@@ -7,14 +7,15 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
+
 BOT_CHANNEL = 1073943829192912936
 
 
 class SetupCog(commands.Cog):
     """Add anything related to setting up bot here"""
 
-    def __init__(self, client: discord.Client) -> None:
-        self.client = client
+    def __init__(self, bot: commands.Bot) -> None:
+        self.bot = bot
         self.enable_commands = True
         super().__init__()
 
@@ -56,6 +57,9 @@ class SetupCog(commands.Cog):
     )
     async def clear_command(self, context: discord.Interaction, scope: str) -> None:
         """Clear all or bot messages in bot-config"""
+
+        if not isinstance(context.channel, discord.TextChannel):
+            return
         if context.channel.id != BOT_CHANNEL:
             await context.channel.send("Cannot use in this channel")
             return
@@ -74,7 +78,10 @@ class SetupCog(commands.Cog):
     @commands.Cog.listener("on_ready")
     async def shiny_bot_connect(self):
         """Print console message that bot is connected"""
-        print(f"{self.client.user.display_name} has connected to Discord!")
+        if not isinstance(self.bot.user, discord.ClientUser):
+            print("Bot is not connected to Discord")
+            return
+        print(f"{self.bot.user.display_name} has connected to Discord!")
 
     @commands.Cog.listener("on_ready")
     async def set_dev_rol(self):
@@ -83,14 +90,18 @@ class SetupCog(commands.Cog):
 
     async def check_server(self):
         """Set bot role and sync commands"""
-        self.client.tree.copy_global_to(guild=self.client.guilds[0])
-        synced = await self.client.tree.sync(guild=self.client.guilds[0])
-        await self.client.get_channel(BOT_CHANNEL).send(
-            f"Synced {len(synced)} commands from {platform.node()}.")
 
-        role = discord.utils.get(self.client.guilds[0].roles, name="Dev")
-        bot_member = discord.utils.get(
-            self.client.get_all_members(), name="Doug Bot")
+        self.bot.tree.copy_global_to(guild=self.bot.guilds[0])
+        synced = await self.bot.tree.sync(guild=self.bot.guilds[0])
+        current_channel = self.bot.get_channel(BOT_CHANNEL)
+        if isinstance(current_channel, discord.TextChannel):
+            await current_channel.send(f"Synced {len(synced)} commands from {platform.node()}.")
+
+        role = discord.utils.get(self.bot.guilds[0].roles, name="Dev")
+        bot_member = discord.utils.get(self.bot.get_all_members(), name="Doug Bot")
+        if bot_member is None or role is None:
+            return
+
         if "imagingserver" in platform.node().lower():
             print("Switching to Prod")
             await bot_member.remove_roles(role)

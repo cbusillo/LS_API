@@ -14,6 +14,8 @@ def get_host_user_from_ip() -> tuple[str, str]:
                     "secureerase": "tech",
                     "cornerwhinymac2": "home",
                     "countershinymac": "home"}
+    if request.remote_addr is None:
+        return "", ""
     hostname = socket.gethostbyaddr(request.remote_addr)[0]
     username = host_to_user[hostname.lower()]
     print(hostname)

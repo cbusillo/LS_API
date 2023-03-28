@@ -9,8 +9,8 @@ from shiny_api.classes.ls_item import Item
 class LightSpeedCog(commands.Cog):
     """Lightspeed functions"""
 
-    def __init__(self, client: discord.Client):
-        self.client = client
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
 
     @app_commands.command(name="ls_price")
     @app_commands.checks.has_role("Shiny")
@@ -18,11 +18,11 @@ class LightSpeedCog(commands.Cog):
         """Look up price in Lightspeed"""
         await context.response.defer()
         items = Item.get_items_by_desciption(descriptions=search)
-        if len(items.item_list) == 0:
+        if len(items) == 0:
             await context.followup.send("No results")
             return
         message_output = ""
-        for item in items.item_list:
+        for item in items:
             message_output += f"{item.description} is ${item.prices.item_price[0].amount}\n"
 
         lines = textwrap.wrap(
@@ -34,6 +34,6 @@ class LightSpeedCog(commands.Cog):
             await context.followup.send(line)
 
 
-async def setup(client: commands.Cog):
+async def setup(bot: commands.Bot):
     """Add cog"""
-    await client.add_cog(LightSpeedCog(client))
+    await bot.add_cog(LightSpeedCog(bot))

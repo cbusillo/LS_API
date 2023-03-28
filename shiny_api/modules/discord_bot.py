@@ -28,9 +28,10 @@ def start_discord_bot():
 async def wrap_reply_lines(lines: str, message: discord.Message):
     """Break up messages that are longer than 2000
     chars and send multible messages to discord"""
-    if lines is None:
+    if lines is None or lines == "":
         lines = "No lines to send"
-    lines = textwrap.wrap(lines, 2000, break_long_words=True, replace_whitespace=False)
-    lines[0] = f"{message.author.mention} {lines[0]}"
-    for line in lines:
+    lines_list = textwrap.wrap(lines, 2000, break_long_words=True, replace_whitespace=False)
+    if message.author.bot is False:
+        lines_list[0] = f"{message.author.mention} {lines_list[0]}"
+    for line in lines_list:
         await message.channel.send(line)

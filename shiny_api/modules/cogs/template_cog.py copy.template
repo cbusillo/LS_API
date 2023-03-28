@@ -6,8 +6,8 @@ from discord.ext import commands
 class TEMPLATECog(commands.Cog):
     """TEMPLATE"""
 
-    def __init__(self, client: discord.Client):
-        self.client = client
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
 
     @app_commands.command(name="TEMPLATE")
     @commands.has_role("Shiny")
@@ -17,6 +17,6 @@ class TEMPLATECog(commands.Cog):
         await context.response.send_message("TEMPLATE")
 
 
-async def setup(client: commands.Cog):
+async def setup(bot: commands.Bot):
     """Add cog"""
-    await client.add_cog(TEMPLATECog(client))
+    await bot.add_cog(TEMPLATECog(bot))

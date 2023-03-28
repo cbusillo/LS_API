@@ -1,5 +1,6 @@
 """Item Class generated from LS API"""
 from datetime import datetime
+from decimal import Decimal
 import re
 import shlex
 from typing import Any
@@ -120,14 +121,14 @@ class Item:
         self.item_id: int = int(ls_item.get("itemID"))
 
         self.system_sku = int(ls_item.get("systemSku"))
-        self.default_cost = float(ls_item.get("defaultCost"))
-        self.avg_cost = float(ls_item.get("avgCost"))
+        self.default_cost = Decimal(ls_item.get("defaultCost"))
+        self.avg_cost = Decimal(ls_item.get("avgCost"))
         self.tax = bool(ls_item.get("tax"))
         self.archived = bool(ls_item.get("archived"))
         self.item_type = str(ls_item.get("itemType"))
         self.serialized = bool(ls_item.get("serialized"))
         self.description = str(ls_item.get("description"))
-        self.upc = int(ls_item.get("upc") or 0) or None
+        self.upc = int(ls_item.get("upc") or 0)
         self.custom_sku = str(ls_item.get("customSku"))
         self.manufacturer_sku = str(ls_item.get("manufacturerSku"))
         self.create_time = string_to_datetime(ls_item.get("createTime"))
@@ -184,7 +185,7 @@ class Item:
                 yield Item(ls_item=item)
 
     @classmethod
-    def get_items_by_desciption(cls, descriptions: list[str]):
+    def get_items_by_desciption(cls, descriptions: str | list[str]):
         """Return LS Item by searching description using OR and then filtering for all words"""
         if not isinstance(descriptions, list):
             descriptions = shlex.split(descriptions)

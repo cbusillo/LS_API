@@ -59,6 +59,10 @@ def list_items(item_id: int = 0):
             items = session.query(ShinyItem).where(ShinyItem.ls_item_id == item_id).one_or_none()
         else:
             items = session.query(ShinyItem).all()
+
+        if not items:
+            pprint("No items found")
+            return
         for item in items:
             pprint(f"Shiny {item} {item.time_stamp.astimezone(pytz.timezone('America/New_York'))}")
 

@@ -19,7 +19,7 @@ app.config['WTF_CSRF_TIME_LIMIT'] = None
 app.config["REDIS_URL"] = "redis://localhost"
 app.template_folder = '../views/templates'
 app.debug = False
-app.running_function = {}
+running_function: dict = {}
 
 csrf = CSRFProtect(app)
 

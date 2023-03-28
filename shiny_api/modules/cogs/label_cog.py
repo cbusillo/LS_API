@@ -8,8 +8,8 @@ from shiny_api.modules.label_print import print_text
 class LabelCog(commands.Cog):
     """Print to label printer in config"""
 
-    def __init__(self, client: discord.Client):
-        self.client = client
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
 
     @app_commands.command(name="label")
     @app_commands.checks.has_role("Shiny")
@@ -28,6 +28,7 @@ class LabelCog(commands.Cog):
         print_text(lines, quantity=quantity, print_date=date, barcode=barcode)
 
 
-async def setup(client: commands.Cog):
+async def setup(bot: commands.Bot):
     """Add cog"""
-    await client.add_cog(LabelCog(client))
+
+    await bot.add_cog(LabelCog(bot))

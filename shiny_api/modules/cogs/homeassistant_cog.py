@@ -9,8 +9,8 @@ import shiny_api.classes.homeassistant as ha
 class HomeAssistantCog(commands.Cog):
     """Homeassistant API plugin"""
 
-    def __init__(self, client: discord.Client):
-        self.client = client
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
 
     @staticmethod
     def get_functions(function_name: Type[ha.HomeAssistant] | ha.TaylorSwiftly):
@@ -50,6 +50,6 @@ class HomeAssistantCog(commands.Cog):
         )
 
 
-async def setup(client: commands.Cog):
+async def setup(bot: commands.Bot):
     """Add cog"""
-    await client.add_cog(HomeAssistantCog(client))
+    await bot.add_cog(HomeAssistantCog(bot))

@@ -10,8 +10,8 @@ from shiny_api.modules.discord_bot import wrap_reply_lines
 class DiscordPyCog(commands.Cog):
     """Run Python from Discord"""
 
-    def __init__(self, client: discord.Client):
-        self.client = client
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
 
     @commands.Cog.listener("on_message")
     async def python_listener(self, message: discord.Message):
@@ -44,9 +44,14 @@ class DiscordPyCog(commands.Cog):
         keywords = ['.secret_client.json', '.secret.json', 'exec(', 'eval(', 'open(', 'os.', 'sys.', '.load_config', 'subprocess.']
 
         is_shiny = False
+
+        if isinstance(message.author, discord.User):
+            return "", ""
+
         if "Shiny" in [role.name for role in message.author.roles]:
             is_shiny = True
-        if any("Shiny" in [role.name for role in mention.roles] for mention in message.mentions):
+        if any("Shiny" in [role.name for role in mention.roles]
+               for mention in message.mentions if isinstance(mention, discord.Member)):
             is_shiny = True
 
         if any(keyword in message_code for keyword in keywords) and is_shiny is False:
@@ -59,6 +64,6 @@ class DiscordPyCog(commands.Cog):
         return code_result, code_error
 
 
-async def setup(client: commands.Cog):
+async def setup(bot: commands.Bot):
     """Add cog"""
-    await client.add_cog(DiscordPyCog(client))
+    await bot.add_cog(DiscordPyCog(bot))

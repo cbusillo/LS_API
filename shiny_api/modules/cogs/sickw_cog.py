@@ -8,8 +8,8 @@ from shiny_api.classes.sickw_results import SickwResult
 class SickwCog(commands.Cog):
     """Sickw functions"""
 
-    def __init__(self, client: discord.Client):
-        self.client = client
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
 
     @app_commands.command(name="sick")
     @app_commands.checks.has_role("Shiny")
@@ -19,6 +19,6 @@ class SickwCog(commands.Cog):
         await context.response.send_message(device)
 
 
-async def setup(client: commands.Cog):
+async def setup(bot: commands.Bot):
     """Add cog"""
-    await client.add_cog(SickwCog(client))
+    await bot.add_cog(SickwCog(bot))

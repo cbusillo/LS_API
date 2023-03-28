@@ -9,8 +9,8 @@ import shiny_api.modules.load_config as config
 class TrelloCog(commands.Cog):
     """Communicate to Trello"""
 
-    def __init__(self, client: discord.Client):
-        self.client = client
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
 
     async def trello_lists_list(
             self, _: discord.Interaction,
@@ -41,7 +41,7 @@ class TrelloCog(commands.Cog):
         inventory_list.add_card(
             card_name,
         )
-        await context.folloup.send(f"Added '{card_name}' to list {inventory_list.name}")
+        await context.followup.send(f"Added '{card_name}' to list {inventory_list.name}")
 
     @app_commands.command(name="trello_list")
     @app_commands.autocomplete(trello_list=trello_lists_list)
@@ -66,6 +66,6 @@ class TrelloCog(commands.Cog):
         return
 
 
-async def setup(client: commands.Cog):
+async def setup(bot: commands.Bot):
     """Add cog"""
-    await client.add_cog(TrelloCog(client))
+    await bot.add_cog(TrelloCog(bot))
