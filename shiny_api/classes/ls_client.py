@@ -26,10 +26,6 @@ class Client(requests.Session):
     def __init__(self) -> None:
         super().__init__()
 
-        def get_auth_header() -> dict[str, str]:
-            auth_response = requests.post(self.auth_url, data=self.token, timeout=60)
-            return {"Authorization": f"Bearer {auth_response.json()['access_token']}"}
-
         def rate_hook(response_hook, *_args, **_kwargs):
             if 'x-ls-api-bucket-level' in response_hook.headers:
                 rate_level, rate_limit = response_hook.headers['x-ls-api-bucket-level'].split('/')
@@ -51,16 +47,21 @@ class Client(requests.Session):
                 send_message(f"Rate limit reached, sleeping for {retry_seconds}")
                 time.sleep(retry_seconds)
             if response_hook.status_code == 401:
-                self.auth_header = get_auth_header()
+                self.auth_header = self.get_auth_header()
             logging.error("received bad status code: %s", response_hook.text)
 
         self.token = config.ACCESS_TOKEN
         self.auth_url = config.LS_URLS["access"]
         self.base_url = f"https://api.lightspeedapp.com/API/V3/Account/{config.LS_ACCOUNT_ID}/"
-        self.auth_header = get_auth_header()
+        self.auth_header = self.get_auth_header()
         self.headers.update(self.auth_header)
         self._response = None
         self.hooks["response"].append(rate_hook)
+
+    def get_auth_header(self) -> dict[str, str]:
+        """get or reauthorize the auth header"""
+        auth_response = requests.post(self.auth_url, data=self.token, timeout=60)
+        return {"Authorization": f"Bearer {auth_response.json()['access_token']}"}
 
     def request(self, method: str, url: str, *args, **kwargs) -> requests.Response:
         """extened request method to add base url"""
