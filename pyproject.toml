@@ -18,13 +18,8 @@ pandas = "^1.5.3"
 openai = "^0.27.0"
 simple-zpl2 = "^0.3.0"
 homeassistant-api = "^4.1.0"
-flask = "^2.2.3"
-flask-wtf = "^1.1.1"
 tabula-py = "^2.7.0"
-flask-debugtoolbar = "^0.13.1"
-flask-sse = "^1.0.0"
 rich = "^13.3.2"
-sqlmodel = "^0.0.8"
 
 [tool.poetry.group.dev.dependencies]
 dotenv = {version = "^0.0.5", platform = "windows"}
@@ -38,5 +33,5 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 discord = "run_discord:start_discord_bot"
-flask = "run_flask:start_flask_server"
+django = "run_django:start_django_server"
 all = "run:main"
