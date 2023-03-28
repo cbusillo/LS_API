@@ -16,7 +16,7 @@ class ShinyBot(commands.Bot):
         for file in os.listdir(config.COG_DIR):
             if file.endswith(".py"):
                 # await self.load_extension(file)
-                await self.load_extension(f"shiny_api.modules.cogs.{file[:-3]}")
+                await self.load_extension(f"shiny_api.discord_cogs.{file[:-3]}")
 
 
 def start_discord_bot():
