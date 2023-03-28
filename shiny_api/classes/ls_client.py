@@ -48,6 +48,7 @@ class Client(requests.Session):
                 time.sleep(retry_seconds)
             if response_hook.status_code == 401:
                 self.auth_header = self.get_auth_header()
+                self.headers.update(self.auth_header)
             logging.error("received bad status code: %s", response_hook.text)
 
         self.token = config.ACCESS_TOKEN
