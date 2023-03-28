@@ -30,7 +30,7 @@ async def wrap_reply_lines(lines: str, message: discord.Message):
     chars and send multible messages to discord"""
     if lines is None or lines == "":
         lines = "No lines to send"
-    lines_list = textwrap.wrap(lines, 2000, break_long_words=True, replace_whitespace=False)
+    lines_list = textwrap.wrap(lines, 2000 - len(message.author.mention), break_long_words=True, replace_whitespace=False)
     if message.author.bot is False:
         lines_list[0] = f"{message.author.mention} {lines_list[0]}"
     for line in lines_list:
