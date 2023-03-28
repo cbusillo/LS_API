@@ -44,7 +44,8 @@ def label_printer_view(active_label_group: str = "Main Labels"):
             print_text(quantity=quantity,
                        barcode=request.form.get("barcode", ""),
                        print_date=bool(request.form.get("date", False)),
-                       text=label_text)
+                       text=label_text,
+                       printer_ip=label_group_list[active_label_group].printer_ip)
         except TimeoutError as error:
             page_error = error
 
