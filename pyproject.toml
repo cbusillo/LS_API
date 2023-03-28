@@ -29,8 +29,8 @@ sqlmodel = "^0.0.8"
 [tool.poetry.group.dev.dependencies]
 dotenv = {version = "^0.0.5", platform = "windows"}
 python-dotenv = {version = "^0.21.1", platform = "darwin"}
+pylint = "^2.17.1"
 autopep8 = "^2.0.2"
-pylint = "^2.17.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -40,13 +40,3 @@ build-backend = "poetry.core.masonry.api"
 discord = "run_discord:start_discord_bot"
 flask = "run_flask:start_flask_server"
 all = "run:main"
-
-[tool.pyright]
-exclude = [
-    "**/homebrew/**",
-    "**/Caches/**"
-    ]
-ignore = [
-    "**/homebrew/**",
-    "**/Caches/**"
-    ]

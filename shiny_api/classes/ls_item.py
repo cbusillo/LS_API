@@ -79,7 +79,7 @@ class ItemAttributes:
     def __init__(self, obj: Any):
         """Load ItemAttributes object from json dict."""
         if obj is None:
-            return None
+            return
         self.attribute1 = str(obj.get("attribute1"))
         self.attribute2 = str(obj.get("attribute2"))
         self.attribute3 = str(obj.get("attribute3"))
