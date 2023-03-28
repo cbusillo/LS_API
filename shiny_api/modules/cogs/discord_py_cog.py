@@ -30,7 +30,7 @@ class DiscordPyCog(commands.Cog):
 
         code_result, code_error = await self.run_python(message)
 
-        await wrap_reply_lines(f"Results:\n {code_result}", message=message)
+        await wrap_reply_lines(f"Results:\n{code_result}", message=message)
         if code_error:
             await wrap_reply_lines(f"Errors:\n {code_error}", message=message)
 
