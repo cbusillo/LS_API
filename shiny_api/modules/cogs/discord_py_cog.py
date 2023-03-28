@@ -32,7 +32,7 @@ class DiscordPyCog(commands.Cog):
 
         await wrap_reply_lines(f"Results:\n{code_result}", message=message)
         if code_error:
-            await wrap_reply_lines(f"Errors:\n {code_error}", message=message)
+            await wrap_reply_lines(f"Errors:\n{code_error}", message=message)
 
     async def run_python(self, message: discord.Message) -> tuple:
         """Run python code"""
