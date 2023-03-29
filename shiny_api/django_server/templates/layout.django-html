@@ -14,10 +14,10 @@
 <body class="bg-black text-secondary">
     <nav class="navbar">
         <div class="container-fluid">
-            <a class="nav-link" href="{{ url_for('label_printer_view') }}" class="link-secondary">Label Printer</a>
-            <a class="nav-link" href="{{ url_for('ls_functions_view') }}" class="link-secondary">Lightspeed
+            <a class="nav-link" href="{% url 'label_printer' %}" class="link-secondary">Label Printer</a>
+            <a class="nav-link" href="{% url 'ls_functions' %}" class="link-secondary">Lightspeed
                 Functions</a>
-            <a class="nav-link" href="{{ url_for('table_editor_view') }}" class="link-secondary">Table Editor</a>
+            <a class="nav-link" href="{% url 'label_printer' %}" class="link-secondary">Label Printer</a>
         </div>
     </nav>
     {% block navbar %}{% endblock navbar %}

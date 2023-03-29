@@ -17,7 +17,7 @@ def workorder_label(request: WSGIRequest):
     workorder_id = int(request.GET.get("workorderID", 0))
     if workorder_id == 0:
         context["title"] = "No workorder ID"
-        return render(request, 'error.jinja-html', context)
+        return render(request, 'error.django-html', context)
     workorder = Workorder(workorder_id)
     for line in workorder.note.split("\n"):
         if line[0:2].lower() == "pw" or line[0:2].lower() == "pc":
@@ -31,7 +31,7 @@ def workorder_label(request: WSGIRequest):
     )
     if str(request.GET.get("manual")).lower() != "true":
         context["auto_close"] = True
-    return render(request, 'close_window.jinja-html', context)
+    return render(request, 'close_window.django-html', context)
 
 
 def ring_central_send_message(request: WSGIRequest):
@@ -46,7 +46,7 @@ def ring_central_send_message(request: WSGIRequest):
             mobile_number = phone.number
     if mobile_number is None:
         context["title"] = "No mobile number"
-        return render(request, 'error.jinja-html', context)
+        return render(request, 'error.django-html', context)
     message_number = int(request.GET.get("message", 0))
     if (
         workorder.total == 0 and request.GET.get("message") == "2"
@@ -70,7 +70,7 @@ def ring_central_send_message(request: WSGIRequest):
     ip_address = request.META.get('REMOTE_ADDR')
     if ip_address is None:
         context["title"] = "No IP address"
-        return render(request, 'error.jinja-html', context)
+        return render(request, 'error.django-html', context)
 
     hostname = socket.gethostbyaddr(ip_address)[0]
 
@@ -78,4 +78,4 @@ def ring_central_send_message(request: WSGIRequest):
     if str(request.GET.get("manual")).lower() != "true":
         context["auto_close"] = True
 
-    return render(request, 'close_window.jinja-html', context)
+    return render(request, 'close_window.django-html', context)

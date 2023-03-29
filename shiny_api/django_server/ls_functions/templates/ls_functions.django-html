@@ -1,13 +1,13 @@
-{% extends "layout.jinja-html" %}
+{% extends "layout.django-html" %}
 {% block content %}
 
 <div class="container">
     <div class="row">
-        {% for module_function, button_description in buttons.items() %}
+        {% for module_function, button_description in buttons.items %}
         <div class="col">
             <a class="text-white text-decoration-none btn btn-lg btn-primary my-2 py-3"
-                href="{{ url_for('ls_functions_view',module_function_name=module_function) }}">{{
-                button_description }}</a>
+                href="{% url 'ls_functions' module_function_name=module_function %}">
+                {{ button_description }}</a>
         </div>
         {% endfor %}
     </div>
@@ -16,7 +16,7 @@
 
 <p id="status"></p>
 <script>
-    var source = new EventSource("{{ url_for('sse.stream') }}");
+    var source = new EventSource("{% url 'ls_functions' %}");
     source.addEventListener('status', function (event) {
         var data = JSON.parse(event.data);
         document.getElementById("status").innerHTML = data["message"];

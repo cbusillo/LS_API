@@ -1,8 +1,0 @@
-{% extends "base.jinja-html" %}
-
-{% block title %}
-{% endblock title %}
-{% block content %}
-
-About
-{% endblock content %}

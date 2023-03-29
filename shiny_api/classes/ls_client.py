@@ -5,7 +5,7 @@ import time
 from urllib.parse import urljoin
 import requests
 from rich import print as pprint
-from shiny_api.views.ls_functions import send_message
+# from shiny_api.views.ls_functions import send_message
 
 import shiny_api.modules.load_config as config
 
@@ -35,7 +35,7 @@ class Client(requests.Session):
                 logging.info("rate: %i/%i", rate_level, rate_limit)
                 if rate_limit-rate_level < 10:
                     logging.warning("Rate limit reached, sleeping for 1 second")
-                    send_message("Rate limit reached, sleeping for 1 second")
+                    # send_message("Rate limit reached, sleeping for 1 second")
                     time.sleep(1)
 
             if response_hook.status_code == 200:
@@ -44,7 +44,7 @@ class Client(requests.Session):
             if response_hook.status_code == 429:
                 retry_seconds = int(float(response_hook.headers["Retry-After"]))
                 logging.info("rate limit reached, sleeping for %i", retry_seconds)
-                send_message(f"Rate limit reached, sleeping for {retry_seconds}")
+                # send_message(f"Rate limit reached, sleeping for {retry_seconds}")
                 time.sleep(retry_seconds)
             if response_hook.status_code == 401:
                 self.auth_header = self.get_auth_header()
@@ -84,7 +84,7 @@ class Client(requests.Session):
         next_url = url
         page = 0
         while next_url != "":
-            send_message(f"Getting page {page}")
+            # send_message(f"Getting page {page}")
             self._response = self.get(next_url, params=params)
             entries = self._response.json().get(key_name)
             if isinstance(entries, dict):

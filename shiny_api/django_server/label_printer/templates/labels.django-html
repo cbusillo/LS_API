@@ -1,10 +1,9 @@
-{% extends "layout.jinja-html" %}
+{% extends "layout.django-html" %}
 {% block navbar %}
 <ul class="nav nav-tabs justify-content-center">
     {% for label_list in label_group_name_list %}
     <li class="nav-item">
-        <a class="nav-link{% if label_list == active_label_group %} active{% endif %}" aria-current="page" href={{
-            url_for("label_printer_view", active_label_group=label_list) }}>{{ label_list }}</a>
+        <a class="nav-link{% if label_list == active_label_group %} active{% endif %}" aria-current="page" href={% url 'label_printer' active_label_group=label_list %}>{{ label_list }}</a>
     </li>
     {% endfor %}
 </ul>
@@ -20,7 +19,7 @@ document.addEventListener('keydown', function(event) {
 });
 </script>
 <form method="post">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    {% csrf_token %}
     <div class="container">
         <div class="row mb-3">
             <div class="col-md-4">
@@ -62,7 +61,6 @@ document.addEventListener('keydown', function(event) {
         </div>
         <hr />
         <div class="row">
-            {% set count = namespace(current=0) %}
             {% for label in active_labels %}
             <div class="col">
                 <button type="submit" name="label_text" value="{{ label }}" class="btn btn-lg btn-secondary my-2 py-3"
@@ -70,11 +68,8 @@ document.addEventListener('keydown', function(event) {
                     {{ label }}
                 </button>
             </div>
-            {% set count.current = count.current + 1 %}
-            {% if count.current == 3 %}
-            {% set count.current = 0 %}
-        </div>
-        <div class="row">{% endif %}
+            {% cycle '' '' '</div><div class="row">' %}
+        
             {% endfor %}
         </div>
     </div>

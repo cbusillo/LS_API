@@ -6,7 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'shiny_api.django_server.settings')
+    os.environ.setdefault(key='DJANGO_SETTINGS_MODULE', value='shiny_api.django_server.settings')
     try:
         from django.core.management import execute_from_command_line  # pylint: disable=import-outside-toplevel
     except ImportError as exc:
