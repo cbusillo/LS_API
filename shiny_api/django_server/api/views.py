@@ -1,17 +1,24 @@
-"""Flask app for API functions"""
+"""View for API access to Shiny Stuff"""
 import locale
-from flask import render_template, request
+import socket
+from django.core.handlers.wsgi import WSGIRequest
+from django.shortcuts import render
 from shiny_api.classes.ls_workorder import Workorder
-from shiny_api.modules.label_print import print_text
 import shiny_api.modules.load_config as config
+from shiny_api.modules.label_print import print_text
 from shiny_api.modules.ring_central import send_message_ssh as send_message
 
 
-def workorder_label():
+def workorder_label(request: WSGIRequest):
     """print a label for a workorder"""
+    context = {}
     password = ""
-    quantity = int(request.args.get("quantity", 1))
-    workorder = Workorder(int(request.args.get("workorderID", 0)))
+    quantity = int(request.GET.get("quantity", 1))
+    workorder_id = int(request.GET.get("workorderID", 0))
+    if workorder_id == 0:
+        context["title"] = "No workorder ID"
+        return render(request, 'error.jinja-html', context)
+    workorder = Workorder(workorder_id)
     for line in workorder.note.split("\n"):
         if line[0:2].lower() == "pw" or line[0:2].lower() == "pc":
             password = line
@@ -22,23 +29,27 @@ def workorder_label():
         text_bottom=password,
         print_date=True,
     )
-    return render_template('close_window.jinja-html')
+    if str(request.GET.get("manual")).lower() != "true":
+        context["auto_close"] = True
+    return render(request, 'close_window.jinja-html', context)
 
 
-def ring_central_send_message():
+def ring_central_send_message(request: WSGIRequest):
     """Web listener to generate messages and send them via text"""
+    context = {}
 
-    workorder = Workorder(int(request.args.get("workorderID", 0)))
+    workorder = Workorder(int(request.GET.get("workorderID", 0)))
     mobile_number = None
 
     for phone in workorder.customer.contact.phones.contact_phone:
         if phone.use_type == "Mobile":
             mobile_number = phone.number
     if mobile_number is None:
-        return render_template('error.jinja-html')
-    message_number = int(request.args.get("message", 0))
+        context["title"] = "No mobile number"
+        return render(request, 'error.jinja-html', context)
+    message_number = int(request.GET.get("message", 0))
     if (
-        workorder.total == 0 and request.args.get("message") == "2"
+        workorder.total == 0 and request.GET.get("message") == "2"
     ):  # if we send a message with price with $0 price
         message_number += 1
     item_description = workorder.item_description
@@ -56,6 +67,15 @@ def ring_central_send_message():
         product=item_description,
         total=locale.currency(workorder.total),
     )
-    send_message(mobile_number, message)
+    ip_address = request.META.get('REMOTE_ADDR')
+    if ip_address is None:
+        context["title"] = "No IP address"
+        return render(request, 'error.jinja-html', context)
 
-    return render_template('close_window.jinja-html')
+    hostname = socket.gethostbyaddr(ip_address)[0]
+
+    send_message(mobile_number, message, hostname)
+    if str(request.GET.get("manual")).lower() != "true":
+        context["auto_close"] = True
+
+    return render(request, 'close_window.jinja-html', context)

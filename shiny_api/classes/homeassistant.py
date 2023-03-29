@@ -151,4 +151,4 @@ class TaylorSwiftly:
 
 if __name__ == "__main__":
     taylor = TaylorSwiftly()
-    taylor.start.press()
+    taylor.lock.lock()

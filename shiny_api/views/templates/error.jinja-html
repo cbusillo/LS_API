@@ -1,7 +1,0 @@
-<html>
-    <h1>No mobile phone number</h1>
-    <h2>(Maybe run format customer phone numbers)</h2>
-    <p>
-        {{error}}
-    </p>
-</html>

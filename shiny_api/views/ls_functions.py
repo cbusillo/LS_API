@@ -3,11 +3,6 @@ from threading import Thread
 from typing import Callable
 from importlib import import_module
 
-from flask import render_template, redirect, url_for
-from flask_sse import sse
-
-from shiny_api.modules.flask_server import app, running_function
-
 
 def ls_functions_view(module_function_name: str = ""):
     """View for Light Speed Functions"""

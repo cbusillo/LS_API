@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""File to run flask server"""
+"""File to run django server"""
 import logging
 from shiny_api.modules.django_server import main
 

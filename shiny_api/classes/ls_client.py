@@ -63,7 +63,7 @@ class Client(requests.Session):
         self.hooks["response"].append(rate_hook)
 
     def request(self, method: str, url: str, *args, **kwargs) -> requests.Response:
-        """extened request method to add base url"""
+        """extened request method to add base url and timeouts"""
         if "://" not in url:
             url = urljoin(self.base_url, url)
         response_code = 0
@@ -74,7 +74,7 @@ class Client(requests.Session):
             retries -= 1
             if retries == 0:
                 raise TimeoutError
-        return request_response  # type: ignore
+        return request_response  # pyright: reportUnboundVariable=false
 
     def _entries(self, url: str, key_name: str, params: dict | None = None):
         """Iterate over all items in the API"""

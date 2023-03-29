@@ -1,0 +1,9 @@
+<html>
+<script type="text/javascript">
+    if ('{{ auto_close }}') {
+        open(location, '_self').close();
+    } 
+</script>
+<a id='close_button' href="javascript:window.open('','_self','').close();">Close Tab</a>
+
+</html>

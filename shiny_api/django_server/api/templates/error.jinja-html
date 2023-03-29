@@ -1,0 +1,9 @@
+<html>
+<title>{{ title }}</title>
+<h1>{{ title }}</h1>
+<h2>{{ error_name }}</h2>
+<p>
+    {{ error_description }}
+</p>
+
+</html>

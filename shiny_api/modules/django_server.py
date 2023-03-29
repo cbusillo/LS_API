@@ -17,6 +17,7 @@ def main():
         ) from exc
     if len(sys.argv) == 1:
         execute_from_command_line([sys.argv[0], 'runserver'])
+
     else:
         execute_from_command_line(sys.argv)
 

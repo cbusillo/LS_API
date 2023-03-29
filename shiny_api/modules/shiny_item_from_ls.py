@@ -48,7 +48,7 @@ def date_last_updated_from_ls(time_zone: str = "America/New_York"):
         item_updated_date = session.exec(last_item_query).one_or_none()
         if item_updated_date is None:
             return datetime(2000, 1, 1, 0, 0, 0, 0, tzinfo=local_tz)
-        item_updated_date = local_tz.localize(item_updated_date, is_dst=None).astimezone(pytz.utc)
+        item_updated_date = local_tz.localize(item_updated_date, is_dst=False).astimezone(pytz.utc)
         return item_updated_date
 
 
