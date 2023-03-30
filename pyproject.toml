@@ -24,6 +24,9 @@ django = "^4.1.7"
 channels = "^4.0.0"
 daphne = "^4.0.0"
 channels-redis = "^4.1.0"
+django-pwa = "^1.1.0"
+django-extensions = "^3.2.1"
+werkzeug = "^2.2.3"
 
 [tool.poetry.group.dev.dependencies]
 dotenv = {version = "^0.0.5", platform = "windows"}
