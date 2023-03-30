@@ -1,21 +1,20 @@
 """Class to import cogs from cog dir"""
 import textwrap
-import logging
 import discord
 from discord.ext import commands
 from shiny_api.modules.load_config import Config
 
 
-async def start_discord_bot():
-    """Create bot and run"""
-    shiny_bot = commands.Bot(intents=discord.Intents.all(), command_prefix="/")
-    shiny_bot.intents
-    for file in Config.COG_DIR.iterdir():
-        if file.suffix == ".py" and file.name != "__init__.py":
-            await shiny_bot.load_extension(file.stem)
-            logging.info(f"Loaded cog: {file.stem}")
+class ShinyBot(commands.Bot):
+    """Class to import cogs from cog dir"""
 
-    shiny_bot.run(Config.DISCORD_TOKEN)
+    def __init__(self):
+        super().__init__(intents=discord.Intents.all(), command_prefix="/")
+
+    async def setup_hook(self):
+        for file in Config.COG_DIR.iterdir():
+            if file.suffix == ".py" and file.name != "__init__.py":
+                await self.load_extension(f"shiny_api.discord_cogs.{file.stem}")
 
 
 async def wrap_reply_lines(lines: str, message: discord.Message):
