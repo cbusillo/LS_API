@@ -6,9 +6,12 @@ import paramiko
 def is_host_available(host: str) -> bool:
     """Test if ping is successful"""
     command = ["ping", "-c", "1", host]
-    response = subprocess.check_output(
-        command, stderr=subprocess.STDOUT, universal_newlines=True
-    )
+    try:
+        response = subprocess.check_output(
+            command, stderr=subprocess.STDOUT, universal_newlines=True
+        )
+    except subprocess.CalledProcessError:
+        return False
     if "1 packets received" in response:
         return True
     return False
