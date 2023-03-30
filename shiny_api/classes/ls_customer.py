@@ -3,7 +3,7 @@ from typing import Any
 from dataclasses import dataclass
 from rich import print as pprint
 from shiny_api.classes.ls_client import Client
-from shiny_api.modules import load_config as config
+from shiny_api.modules.load_config import Config
 
 
 @dataclass
@@ -158,7 +158,7 @@ class Customer:
                 }
             }
         }
-        url = config.LS_URLS["customer"].format(customerID=self.customer_id)
+        url = Config.LS_URLS["customer"].format(customerID=self.customer_id)
         self.client.put(url, json=put_customer)
 
     @classmethod

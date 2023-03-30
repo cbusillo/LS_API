@@ -4,7 +4,7 @@ import socket
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render
 from shiny_api.classes.ls_workorder import Workorder
-import shiny_api.modules.load_config as config
+from shiny_api.modules.load_config import Config
 from shiny_api.modules.label_print import print_text
 from shiny_api.modules.ring_central import send_message_ssh as send_message
 
@@ -53,7 +53,7 @@ def ring_central_send_message(request: WSGIRequest):
     ):  # if we send a message with price with $0 price
         message_number += 1
     item_description = workorder.item_description
-    for word in config.STYLIZED_NAMES:
+    for word in Config.STYLIZED_NAMES:
         if word.lower() in item_description.lower() and word not in item_description:
             index = item_description.lower().find(word.lower())
             item_description = (
@@ -61,7 +61,7 @@ def ring_central_send_message(request: WSGIRequest):
                 item_description[index + len(word):]
             )
 
-    message = config.RESPONSE_MESSAGES[message_number]
+    message = Config.RESPONSE_MESSAGES[message_number]
     message = message.format(
         name=workorder.customer.first_name,
         product=item_description,

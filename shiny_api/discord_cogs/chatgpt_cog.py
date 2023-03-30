@@ -3,7 +3,7 @@ import platform
 import discord
 from discord.ext import commands
 from openai import Image, openai_object, error, ChatCompletion
-import shiny_api.modules.load_config as config
+from shiny_api.modules.load_config import Config
 from shiny_api.modules.discord_bot import wrap_reply_lines
 
 
@@ -117,7 +117,7 @@ class ChatGPTCog(commands.Cog):
                 n=1,
                 size="1024x1024",
                 response_format="url",
-                api_key=config.OPENAI_API_KEY
+                api_key=Config.OPENAI_API_KEY
             )
         except error.InvalidRequestError as exception:
             await message.channel.send(str(exception))
@@ -145,7 +145,7 @@ class ChatGPTCog(commands.Cog):
             response = await ChatCompletion.acreate(
                 model="gpt-3.5-turbo",
                 messages=chat_messages,
-                api_key=config.OPENAI_API_KEY,
+                api_key=Config.OPENAI_API_KEY,
                 temperature=0.5,
             )
         except error.InvalidRequestError as exception:

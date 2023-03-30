@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
     <!-- Required meta tags -->
@@ -11,13 +11,12 @@
     <title>{{ title }}</title>
 </head>
 
-<body class="bg-black text-secondary">
+<body>
     <nav class="navbar">
         <div class="container-fluid">
-            <a class="nav-link" href="{% url 'label_printer' %}" class="link-secondary">Label Printer</a>
-            <a class="nav-link" href="{% url 'ls_functions' %}" class="link-secondary">Lightspeed
-                Functions</a>
-            <a class="nav-link" href="{% url 'label_printer' %}" class="link-secondary">Label Printer</a>
+            <a class="nav-link" href="{% url 'label_printer' %}">Label Printer</a>
+            <a class="nav-link" href="{% url 'ls_functions' %}">Lightspeed Functions</a>
+            <a class="nav-link" href="{% url 'label_printer' %}" >Label Printer</a>
         </div>
     </nav>
     {% block navbar %}{% endblock navbar %}
@@ -33,5 +32,4 @@
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
 </body>
-
 </html>

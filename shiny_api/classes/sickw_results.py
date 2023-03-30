@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import List
 from bs4 import BeautifulSoup
 import requests
-from shiny_api.modules import load_config as config
+from shiny_api.modules.load_config import Config
 
 
 class SickConstants:
@@ -24,7 +24,7 @@ class SickwResult:
         says not success or no HTML result string"""
 
         current_params = {"imei": serial_number, "service": service,
-                          "key": config.SICKW_API_KEY, "format": "JSON"}
+                          "key": Config.SICKW_API_KEY, "format": "JSON"}
         headers = {"User-Agent": "My User Agent 1.0"}
         response = requests.get("https://sickw.com/api.php",
                                 params=current_params, headers=headers, timeout=60)

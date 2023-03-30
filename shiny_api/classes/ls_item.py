@@ -6,7 +6,7 @@ import shlex
 from typing import Any
 from dataclasses import dataclass
 from shiny_api.classes.ls_client import Client, string_to_datetime
-from shiny_api.modules import load_config as config
+from shiny_api.modules.load_config import Config
 
 
 def atoi(text: str):
@@ -166,7 +166,7 @@ class Item:
                 ]
             }
         }
-        url = config.LS_URLS["item"].format(itemID=self.item_id)
+        url = Config.LS_URLS["item"].format(itemID=self.item_id)
         self.client.put(url, json=put_item)
 
     @classmethod

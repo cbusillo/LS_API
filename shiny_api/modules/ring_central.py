@@ -1,7 +1,7 @@
 """Connect to RingCentral API"""
 import os
 from subprocess import Popen, PIPE
-from shiny_api.modules import load_config as config
+from shiny_api.modules.load_config import Config
 
 print(f"Importing {os.path.basename(__file__)}...")
 
@@ -22,7 +22,7 @@ def get_user_from_host(hostname: str) -> tuple[str, str]:
 def send_message_ssh(phone_number: str, message: str, ip_address: str):
     """Run Applescript to open RingCentral serach for phone number and load message"""
     with open(
-            f"{config.SCRIPT_DIR}/applescript/rc_search_by_number.applescript", encoding="utf8") as file:
+            f"{Config.SCRIPT_DIR}/applescript/rc_search_by_number.applescript", encoding="utf8") as file:
         script_source: str = file.read()
 
     script_source = script_source.replace("{phone_number}", phone_number)

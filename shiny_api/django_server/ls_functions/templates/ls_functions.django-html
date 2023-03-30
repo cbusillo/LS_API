@@ -5,20 +5,43 @@
     <div class="row">
         {% for module_function, button_description in buttons.items %}
         <div class="col">
-            <a class="text-white text-decoration-none btn btn-lg btn-primary my-2 py-3"
+            <a class="text-decoration-none btn btn-lg btn-secondary my-2 py-3"
                 href="{% url 'ls_functions' module_function_name=module_function %}">
                 {{ button_description }}</a>
         </div>
         {% endfor %}
     </div>
 </div>
+<hr />
 
+<div>
+    <textarea class="form-control" id="status" cols="100" rows="5"></textarea>
+</div>
+    <script>
 
-<p id="status"></p>
-<script>
-    var source = new EventSource("{% url 'ls_functions' %}");
-    source.addEventListener('status', function (event) {
-        var data = JSON.parse(event.data);
-        document.getElementById("status").innerHTML = data["message"];
-    }, false);</script>
+        const updateSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ls_functions/stream/'
+        );
+        document.querySelector('#status').value = "no message received yet...\n"
+        updateSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            document.querySelector('#status').value = data.message + 
+            '\n' + 
+            document.querySelector('#status').value;
+        };
+
+        updateSocket.onclose = function(e) {
+            console.error('Update socket closed unexpectedly');
+        };
+
+         document.querySelector('#status').onclick = function(e) {
+            console.error("Clicked");
+            updateSocket.send(JSON.stringify({
+                'message': "sending message from JS"
+            }));
+        };
+
+    </script>
 {% endblock content %}

@@ -3,7 +3,7 @@ import datetime
 import textwrap
 from typing import List
 from simple_zpl2 import ZPLDocument, Code128_Barcode, NetworkPrinter
-from shiny_api.modules import load_config as config
+from shiny_api.modules.load_config import Config
 
 LABEL_SIZE = {"width": 2, "height": 1.3}
 LABEL_TEXT_SIZE = {"width": 40, "height": 40, "small_width": 20, "small_height": 20}
@@ -17,7 +17,7 @@ def print_text(
     text_bottom: str | None = None,
     quantity: int = 1,
     print_date: bool = True,
-    printer_ip: str = config.FRONT_PRINTER_IP,
+    printer_ip: str = Config.FRONT_PRINTER_IP,
 ):
     """Open socket to printer and send text"""
     if not isinstance(text, list):

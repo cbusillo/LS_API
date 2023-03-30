@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from shiny_api.django_server.settings import running_function
 from pydantic import BaseModel
 
-import shiny_api.modules.load_config as config
+from shiny_api.modules.load_config import Config
 from shiny_api.modules.label_print import print_text
 
 
@@ -22,7 +22,7 @@ class LabelGroup(BaseModel):
     def load_from_defaults():
         """Load label groups from config.DEFAULT_LABELS"""
         return {name: LabelGroup(name=name, labels=label_group["labels"], printer_ip=label_group["printer_ip"])
-                for name, label_group in config.DEFAULT_LABELS.items()}
+                for name, label_group in Config.DEFAULT_LABELS.items()}
 
 
 def label_printer(request: WSGIRequest, active_label_group: str = "Main Labels"):

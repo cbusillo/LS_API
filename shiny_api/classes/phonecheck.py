@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 from dataclasses import dataclass
 import requests
-import shiny_api.modules.load_config as config
+from shiny_api.modules.load_config import Config
 
 
 @dataclass
@@ -15,9 +15,9 @@ class Device:
     def __init__(self, serial_number: str) -> None:
         """load data from API"""
         self.success = False
-        params = {"Apikey": config.PHONECHECK_API_KEY,
+        params = {"Apikey": Config.PHONECHECK_API_KEY,
                   "imei": serial_number, "Username": "cloudshinycomputers"}
-        response = requests.post(url=config.PC_API_URL["device"], data=params, timeout=60)
+        response = requests.post(url=Config.PC_API_URL["device"], data=params, timeout=60)
         response_json: dict = response.json()
 
         if response_json.get("msg") == "No Data Found":

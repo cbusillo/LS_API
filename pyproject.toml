@@ -21,12 +21,16 @@ homeassistant-api = "^4.1.0"
 tabula-py = "^2.7.0"
 rich = "^13.3.2"
 django = "^4.1.7"
+channels = "^4.0.0"
+daphne = "^4.0.0"
+channels-redis = "^4.1.0"
 
 [tool.poetry.group.dev.dependencies]
 dotenv = {version = "^0.0.5", platform = "windows"}
 python-dotenv = {version = "^0.21.1", platform = "darwin"}
 pylint = "^2.17.1"
 autopep8 = "^2.0.2"
+black = "^23.3.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -36,3 +40,6 @@ build-backend = "poetry.core.masonry.api"
 discord = "run_discord:start_discord_bot"
 django = "run_django:start_django_server"
 all = "run:main"
+
+[tool.pyright]
+exclude = ["**/homebrew/**"]

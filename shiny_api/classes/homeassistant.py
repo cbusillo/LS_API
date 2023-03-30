@@ -1,7 +1,7 @@
 """Home Assistant module for Shiny API."""  # pyright: reportOptionalMemberAccess=false, reportOptionalCall=false
 import inspect
 from homeassistant_api import Client
-import shiny_api.modules.load_config as config
+from shiny_api.modules.load_config import Config
 
 
 class HomeAssistant:
@@ -11,8 +11,8 @@ class HomeAssistant:
         """Get Home Assistant client"""
         self.domain = self.domain or ""
         self.client = Client(
-            config.HOMEASSISTANT_API[location]["url"],
-            config.HOMEASSISTANT_API[location]["key"],
+            Config.HOMEASSISTANT_API[location]["url"],
+            Config.HOMEASSISTANT_API[location]["key"],
         )
         self.entity_id = f"{self.domain}.{entity_id}"
 

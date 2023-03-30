@@ -5,9 +5,9 @@ import time
 from urllib.parse import urljoin
 import requests
 from rich import print as pprint
-# from shiny_api.views.ls_functions import send_message
+from shiny_api.django_server.ls_functions.views import send_message
 
-import shiny_api.modules.load_config as config
+from shiny_api.modules.load_config import Config
 
 
 def string_to_datetime(date_string: str) -> datetime:
@@ -27,15 +27,17 @@ class Client(requests.Session):
         super().__init__()
 
         def rate_hook(response_hook, *_args, **_kwargs):
-            if 'x-ls-api-bucket-level' in response_hook.headers:
-                rate_level, rate_limit = response_hook.headers['x-ls-api-bucket-level'].split('/')
+            if "x-ls-api-bucket-level" in response_hook.headers:
+                rate_level, rate_limit = response_hook.headers[
+                    "x-ls-api-bucket-level"
+                ].split("/")
                 rate_level = int(float(rate_level))
                 rate_limit = int(float(rate_limit))
 
                 logging.info("rate: %i/%i", rate_level, rate_limit)
-                if rate_limit-rate_level < 10:
+                if rate_limit - rate_level < 10:
                     logging.warning("Rate limit reached, sleeping for 1 second")
-                    # send_message("Rate limit reached, sleeping for 1 second")
+                    send_message("Rate limit reached, sleeping for 1 second")
                     time.sleep(1)
 
             if response_hook.status_code == 200:
@@ -44,16 +46,18 @@ class Client(requests.Session):
             if response_hook.status_code == 429:
                 retry_seconds = int(float(response_hook.headers["Retry-After"]))
                 logging.info("rate limit reached, sleeping for %i", retry_seconds)
-                # send_message(f"Rate limit reached, sleeping for {retry_seconds}")
+                send_message(f"Rate limit reached, sleeping for {retry_seconds}")
                 time.sleep(retry_seconds)
             if response_hook.status_code == 401:
                 self.auth_header = self.get_auth_header()
                 self.headers.update(self.auth_header)
             logging.error("received bad status code: %s", response_hook.text)
 
-        self.token = config.ACCESS_TOKEN
-        self.auth_url = config.LS_URLS["access"]
-        self.base_url = f"https://api.lightspeedapp.com/API/V3/Account/{config.LS_ACCOUNT_ID}/"
+        self.token = Config.ACCESS_TOKEN
+        self.auth_url = Config.LS_URLS["access"]
+        self.base_url = (
+            f"https://api.lightspeedapp.com/API/V3/Account/{Config.LS_ACCOUNT_ID}/"
+        )
         self.auth_header = self.get_auth_header()
         self.headers.update(self.auth_header)
         self._response = None
@@ -84,7 +88,7 @@ class Client(requests.Session):
         next_url = url
         page = 0
         while next_url != "":
-            # send_message(f"Getting page {page}")
+            send_message(f"Getting page {page} of {key_name}")
             self._response = self.get(next_url, params=params)
             entries = self._response.json().get(key_name)
             if isinstance(entries, dict):
@@ -104,7 +108,12 @@ class Client(requests.Session):
         self._response = self.get(url, params=params)
         return self._response.json().get(key_name)
 
-    def get_items_json(self, category_id: str = "", description: str = "", date_filter: datetime | None = None):
+    def get_items_json(
+        self,
+        category_id: str = "",
+        description: str = "",
+        date_filter: datetime | None = None,
+    ):
         """Get all items"""
         params = {"load_relations": '["ItemAttributes"]', "limit": "100"}
         if date_filter:
@@ -115,33 +124,39 @@ class Client(requests.Session):
         if description:
             params["or"] = description
 
-        return self._entries(config.LS_URLS["items"], "Item", params=params)
+        return self._entries(Config.LS_URLS["items"], "Item", params=params)
 
     def get_customers_json(self):
         """Get all items"""
-        return self._entries(config.LS_URLS["customers"], "Customer", params={"load_relations": '["Contact"]', "limit": "100"})
+        return self._entries(
+            Config.LS_URLS["customers"],
+            "Customer",
+            params={"load_relations": '["Contact"]', "limit": "100"},
+        )
 
     def get_customer_json(self, customer_id: int):
         """Get customer"""
-        url = config.LS_URLS['customer'].format(customerID=customer_id)
+        url = Config.LS_URLS["customer"].format(customerID=customer_id)
         params = {"load_relations": '["Contact"]'}
         return self._entry(url, key_name="Customer", params=params)
 
     def get_workorder_json(self, workorder_id: int):
         """Get workorder"""
-        url = config.LS_URLS['workorder'].format(workorderID=workorder_id)
+        url = Config.LS_URLS["workorder"].format(workorderID=workorder_id)
         return self._entry(url, key_name="Workorder")
 
     def get_item_json(self, item_id: int):
         """Get item"""
-        url = config.LS_URLS['item'].format(itemID=item_id)
+        url = Config.LS_URLS["item"].format(itemID=item_id)
         params = {"load_relations": '["ItemAttributes"]'}
         return self._entry(url, key_name="Item", params=params)
 
     def get_size_attributes_json(self):
         """Get all size attributes"""
-        url = config.LS_URLS["itemMatrix"]
-        return self._entries(url, "ItemMatrix", params={"load_relations": '["ItemAttributeSet"]'})
+        url = Config.LS_URLS["itemMatrix"]
+        return self._entries(
+            url, "ItemMatrix", params={"load_relations": '["ItemAttributeSet"]'}
+        )
 
 
 if __name__ == "__main__":

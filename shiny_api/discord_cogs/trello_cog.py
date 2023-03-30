@@ -3,7 +3,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from trello import TrelloClient
-import shiny_api.modules.load_config as config
+from shiny_api.modules.load_config import Config
 
 
 class TrelloCog(commands.Cog):
@@ -16,8 +16,8 @@ class TrelloCog(commands.Cog):
             self, _: discord.Interaction,
             current: str) -> list[app_commands.Choice[str]]:
         """Get list of lists as choices"""
-        trello_client = TrelloClient(api_key=config.TRELLO_APIKEY, token=config.TRELLO_OAUTH_TOKEN)
-        inventory_board = trello_client.get_board(config.TRELLO_INVENTORY_BOARD)
+        trello_client = TrelloClient(api_key=Config.TRELLO_APIKEY, token=Config.TRELLO_OAUTH_TOKEN)
+        inventory_board = trello_client.get_board(Config.TRELLO_INVENTORY_BOARD)
         inventory_lists = inventory_board.get_lists(list_filter="open")
         return [
             app_commands.Choice(name=trello_list.name, value=trello_list.id)
@@ -32,11 +32,11 @@ class TrelloCog(commands.Cog):
             self,
             context: discord.Interaction,
             card_name: str,
-            trello_list: str = config.TRELLO_LIST_DEFAULT):
+            trello_list: str = Config.TRELLO_LIST_DEFAULT):
         """Add card to Trello list"""
         await context.response.defer()
-        trello_client = TrelloClient(api_key=config.TRELLO_APIKEY, token=config.TRELLO_OAUTH_TOKEN)
-        inventory_board = trello_client.get_board(config.TRELLO_INVENTORY_BOARD)
+        trello_client = TrelloClient(api_key=Config.TRELLO_APIKEY, token=Config.TRELLO_OAUTH_TOKEN)
+        inventory_board = trello_client.get_board(Config.TRELLO_INVENTORY_BOARD)
         inventory_list = inventory_board.get_list(list_id=trello_list)
         inventory_list.add_card(
             card_name,
@@ -49,11 +49,11 @@ class TrelloCog(commands.Cog):
     async def trello_list(
             self,
             context: discord.Interaction,
-            trello_list: str = config.TRELLO_LIST_DEFAULT):
+            trello_list: str = Config.TRELLO_LIST_DEFAULT):
         """Get cards from Trello list"""
         await context.response.defer()
-        trello_client = TrelloClient(api_key=config.TRELLO_APIKEY, token=config.TRELLO_OAUTH_TOKEN)
-        inventory_board = trello_client.get_board(config.TRELLO_INVENTORY_BOARD)
+        trello_client = TrelloClient(api_key=Config.TRELLO_APIKEY, token=Config.TRELLO_OAUTH_TOKEN)
+        inventory_board = trello_client.get_board(Config.TRELLO_INVENTORY_BOARD)
         message_output = ""
         inventory_list = inventory_board.get_list(list_id=trello_list)
         for card in inventory_list.list_cards(card_filter="open"):

@@ -6,8 +6,9 @@ from functools import lru_cache
 from selenium import webdriver
 from shiny_api.classes.ls_customer import Customer
 from shiny_api.classes import ls_item
-from shiny_api.modules import load_config as config
-# from shiny_api.views.ls_functions import send_message
+from shiny_api.modules.load_config import Config
+
+from shiny_api.django_server.ls_functions.views import send_message
 
 
 @lru_cache
@@ -29,22 +30,26 @@ def get_website_prices(browser: webdriver.Safari, url: str):
 def update_item_price():
     """ "//device key": ["current model?", "year", "basePrice", "cellPrice", "store URL"]"""
 
-    with open(f"{config.SCRIPT_DIR}/config/devices.json", encoding="utf8") as file:
+    with open(f"{Config.SCRIPT_DIR}/config/devices.json", encoding="utf8") as file:
         devices = json.load(file)
 
     # "//max age": "price multiplier"
-    with open(f"{config.SCRIPT_DIR}/config/age.json", encoding="utf8") as file:
+    with open(f"{Config.SCRIPT_DIR}/config/age.json", encoding="utf8") as file:
         age_price = json.load(file)
 
     # Apple URL to load pricing from
     scrape_url = "https://www.apple.com/shop/buy-{deviceURL}"
-    browser = webdriver.Safari(port=0, executable_path="/usr/bin/safaridriver", quiet=False)
+    browser = webdriver.Safari(
+        port=0, executable_path="/usr/bin/safaridriver", quiet=False
+    )
 
     # call LS API to load all items and return a list of Item objects
     output = "Loading items"
-    # send_message(output)
+    send_message(output)
     print(output)
-    items = ls_item.Item.get_items_by_category(categories=config.DEVICE_CATEGORIES_FOR_PRICE)
+    items = ls_item.Item.get_items_by_category(
+        categories=Config.DEVICE_CATEGORIES_FOR_PRICE
+    )
     for item in items:
         # interate through items to generate pricing and save to LS
         # Generate pricing from devices.json and apple website by item from LS
@@ -77,7 +82,9 @@ def update_item_price():
                 # if device is currently sold (documented in ages.json),
                 # load json from Apple web store and find price. Use URL key from devices.json
                 if device_current:
-                    json_price = get_website_prices(browser, scrape_url.format(deviceURL=device_url))
+                    json_price = get_website_prices(
+                        browser, scrape_url.format(deviceURL=device_url)
+                    )
 
                     # Iterage through web prices and try to find match on current item.
                     # Use deviceBasePrice to subtract from new price.  Detect if cellular
@@ -101,8 +108,8 @@ def update_item_price():
                 else:
                     device_price = device_base_price + (size_mult * age_mult)
                 output = f"{item.description} Size:{size_mult} Age:{device_age} Base:{device_base_price} Item Price: {device_price}"
-                # (output)
                 print(output)
+                send_message(output)
                 # load new price into all three LS item prices in Item object
                 for item_price in item.prices.item_price:
                     if float(item_price.amount) != float(device_price):
@@ -111,7 +118,7 @@ def update_item_price():
                 # Item fucntion to make API put call and save price
                 if item.is_modified:
                     output = f"Updating {item.description}"
-                    # send_message(output)
+                    send_message(output)
                     print(f"    {output}")
                     item.save_item_price()
                 break
@@ -121,6 +128,8 @@ def format_customer_phone():
     """Load and iterate through customers, updating formatting on phone numbers."""
     customers = Customer.get_all_customers()
     customers_updated = 0
+    print(f"Updating customers")
+    send_message(f"Updating customers")
     for index, customer in enumerate(customers):
         if len(customer.contact.phones.contact_phone) == 0:
             continue
@@ -141,8 +150,11 @@ def format_customer_phone():
                 has_mobile = True
         if customer.is_modified or has_mobile is False:
             customers_updated += 1
-            output = (
-                f"{customers_updated}: Updating Customer #{index}")
-            # send_message(output)
+            output = f"{customers_updated}: Updating Customer #{index}"
+            send_message(output)
             print(output, end="\r")
             customer.update_phones()
+
+
+if __name__ == "__main__":
+    format_customer_phone()
