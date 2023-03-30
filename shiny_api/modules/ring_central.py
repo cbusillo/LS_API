@@ -1,18 +1,17 @@
 """Connect to RingCentral API"""
-import os
 from subprocess import Popen, PIPE
 from shiny_api.modules.load_config import Config
-
-print(f"Importing {os.path.basename(__file__)}...")
 
 
 def get_user_from_host(hostname: str) -> tuple[str, str]:
     """return user and hostname from current remote ip"""
-    host_to_user = {"chris-mbp": "cbusillo",
-                    "localhost": "cbusillo",
-                    "secureerase": "tech",
-                    "cornerwhinymac2": "home",
-                    "countershinymac": "home"}
+    host_to_user = {
+        "chris-mbp": "cbusillo",
+        "localhost": "cbusillo",
+        "secureerase": "tech",
+        "cornerwhinymac2": "home",
+        "countershinymac": "home",
+    }
 
     username = host_to_user[hostname.lower()]
     print(hostname)
@@ -22,14 +21,21 @@ def get_user_from_host(hostname: str) -> tuple[str, str]:
 def send_message_ssh(phone_number: str, message: str, ip_address: str):
     """Run Applescript to open RingCentral serach for phone number and load message"""
     with open(
-            f"{Config.SCRIPT_DIR}/applescript/rc_search_by_number.applescript", encoding="utf8") as file:
+        f"{Config.SCRIPT_DIR}/applescript/rc_search_by_number.applescript",
+        encoding="utf8",
+    ) as file:
         script_source: str = file.read()
 
     script_source = script_source.replace("{phone_number}", phone_number)
     script_source = script_source.replace("{message}", message)
     hostname, username = get_user_from_host(ip_address)
 
-    with Popen(['ssh', f'{username}@{hostname}', 'osascript', '-'], stdin=PIPE, stdout=PIPE, stderr=PIPE) as popen:
+    with Popen(
+        ["ssh", f"{username}@{hostname}", "osascript", "-"],
+        stdin=PIPE,
+        stdout=PIPE,
+        stderr=PIPE,
+    ) as popen:
         print(popen.communicate(bytes(script_source, encoding="utf8")))
 
 
