@@ -3,7 +3,9 @@ import json
 from pathlib import Path
 
 
-class Config():
+class Config:
+    CERTIFICATE_SERVER_HOSTNAME = "imagingserver.local"
+    CERTIFICATE_SERVER_FILE = "/etc/letsencrypt/live/shinyapi.logi.wiki/"
     SCRIPT_DIR = Path(__file__).resolve().parent.parent
     CONFIG_SECRET_DIR = Path.home()
     COG_DIR = SCRIPT_DIR / "discord_cogs"
@@ -45,7 +47,9 @@ class Config():
 
     GOOGLE_SHEETS_SERIAL_NAME = config_file.get("google_sheets_serial_name")
 
-    GOOGLE_SHEETS_SERIAL_PRINT = config_file.get("google_sheets_serial_print").lower() == "true"
+    GOOGLE_SHEETS_SERIAL_PRINT = (
+        config_file.get("google_sheets_serial_print").lower() == "true"
+    )
 
     PC_API_URL = {
         "device": " https://clientapiv2.phonecheck.com/cloud/cloudDB/GetDeviceInfo",
@@ -66,7 +70,9 @@ class Config():
     DJANGO_SECRET_KEY = secret_file.get("django_secret_key")
 
     HOMEASSISTANT_API = {
-        store_key: {config_key: config_value for config_key, config_value in store_value.items()}
+        store_key: {
+            config_key: config_value for config_key, config_value in store_value.items()
+        }
         for store_key, store_value in secret_file.get("homeassistant_api").items()
     }
 
@@ -92,28 +98,30 @@ class Config():
         "HDD",
     ]
 
-    DEFAULT_LABELS = {"Main Labels": {
-        "printer_ip": FRONT_PRINTER_IP,
-        "labels": [
-            "Fully Functional",
-            "Good",
-            "Bad",
-            "SSD Fan Control",
-            "RMA",
-            "MS RMA",
-            "IG RMA",
-            "PT RMA",
-            "Grade C",
-            "Grade D",
-            "Grade F",
-            "Part out",
-            "Bench Use",
-            "app.shinycomputers.com",
-            "TBT",
-            "Donated",
-            "Customer",
-            "eBay",
-        ]},
+    DEFAULT_LABELS = {
+        "Main Labels": {
+            "printer_ip": FRONT_PRINTER_IP,
+            "labels": [
+                "Fully Functional",
+                "Good",
+                "Bad",
+                "SSD Fan Control",
+                "RMA",
+                "MS RMA",
+                "IG RMA",
+                "PT RMA",
+                "Grade C",
+                "Grade D",
+                "Grade F",
+                "Part out",
+                "Bench Use",
+                "app.shinycomputers.com",
+                "TBT",
+                "Donated",
+                "Customer",
+                "eBay",
+            ],
+        },
         "Rob's Labels": {
             "printer_ip": BACK_PRINTER_IP,
             "labels": [
@@ -134,10 +142,10 @@ class Config():
                 "TBT",
                 "Donated",
                 "eBay",
-            ]}, "Chris's Labels": {
-                "printer_ip": FRONT_PRINTER_IP,
-                "labels": [
-                    "test1",
-                    "test2",
-                    "test3"
-                ]}}
+            ],
+        },
+        "Chris's Labels": {
+            "printer_ip": FRONT_PRINTER_IP,
+            "labels": ["test1", "test2", "test3"],
+        },
+    }

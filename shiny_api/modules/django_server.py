@@ -27,7 +27,7 @@ def main():
                 "--cert-file",
                 "/Users/cbusillo/.secret.cert.pem",
                 "--key-file",
-                "/Users/cbusillo/.secret.key.pem",
+                "/Users/cbusillo/.secret.privkey.pem",
             ]
         )
 

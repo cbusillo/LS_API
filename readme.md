@@ -7,5 +7,3 @@ git clone https://github.com/cbusillo/Shiny_API
 cd Shiny_API
 poetry install
 activate
-
-mkcert -cert-file ~/.secret.cert.pem -key-file ~/.secret.key.pem localhost server-name
