@@ -6,15 +6,14 @@ from discord.ext import commands
 from shiny_api.modules.load_config import Config
 
 
-def start_discord_bot():
+async def start_discord_bot():
     """Create bot and run"""
     shiny_bot = commands.Bot(intents=discord.Intents.all(), command_prefix="/")
     shiny_bot.intents
     for file in Config.COG_DIR.iterdir():
         if file.suffix == ".py" and file.name != "__init__.py":
-            # await self.load_extension(file)
-            test = shiny_bot.load_extension(file.stem)
-            logging.info(f"Loaded cog: {file.stem} {test}")
+            await shiny_bot.load_extension(file.stem)
+            logging.info(f"Loaded cog: {file.stem}")
 
     shiny_bot.run(Config.DISCORD_TOKEN)
 
