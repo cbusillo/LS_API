@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.urls import path, include
 from django.views.generic import RedirectView
+from pwa import urls as pwa_urls
 
 urlpatterns = [
+    path("", include(pwa_urls)),
     path("", RedirectView.as_view(url="label_printer/")),
     path("api/", include("shiny_api.django_server.api.urls")),
     path("ls_functions/", include("shiny_api.django_server.ls_functions.urls")),
