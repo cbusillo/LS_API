@@ -14,9 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include
+from django.views.generic import RedirectView
 
 urlpatterns = [
-    path('api/',  include('shiny_api.django_server.api.urls')),
-    path('ls_functions/', include('shiny_api.django_server.ls_functions.urls')),
-    path('label_printer/', include('shiny_api.django_server.label_printer.urls')),
+    path("", RedirectView.as_view(url="label_printer/")),
+    path("api/", include("shiny_api.django_server.api.urls")),
+    path("ls_functions/", include("shiny_api.django_server.ls_functions.urls")),
+    path("label_printer/", include("shiny_api.django_server.label_printer.urls")),
 ]
