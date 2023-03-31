@@ -8,9 +8,11 @@ def is_host_available(host: str) -> bool:
     command = ["ping", "-c", "1", host]
     try:
         response = subprocess.check_output(
-            command, stderr=subprocess.STDOUT, universal_newlines=True
+            command, stderr=subprocess.STDOUT, universal_newlines=True, timeout=2
         )
     except subprocess.CalledProcessError:
+        return False
+    except subprocess.TimeoutExpired:
         return False
     if "1 packets received" in response:
         return True
@@ -23,7 +25,7 @@ def scp_file_from_host(hostname: str, filename: str) -> bytes:
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
     try:
-        ssh.connect(hostname)
+        ssh.connect(hostname, port="2222")
         # Read remote file contents as binary data
         sftp = ssh.open_sftp()
 

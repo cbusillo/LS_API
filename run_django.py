@@ -1,13 +1,10 @@
 #!/usr/bin/env python
 """File to run django server"""
 import logging
-import os
 from pathlib import Path
 import shiny_api.modules.django_server as django_server
 from shiny_api.modules.load_config import Config
 from shiny_api.modules.shiny_networking import is_host_available, scp_file_from_host
-
-os.environ["DJANGO_SETTINGS_MODULE"] = "shiny_api.django_server.settings"
 
 
 def start_django_server():
@@ -15,6 +12,7 @@ def start_django_server():
 
     if not is_host_available(Config.CERTIFICATE_SERVER_HOSTNAME):
         django_server.main()
+        exit()
 
     for file_name in ["cert.pem", "privkey.pem"]:
         local_file_name = ".secret." + file_name
