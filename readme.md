@@ -5,5 +5,6 @@ python3.11 install poetry
 
 git clone https://github.com/cbusillo/Shiny_API
 cd Shiny_API
-poetry install
-activate
+poetry shell
+python shiny_api/modules/django_server.py migrate
+
