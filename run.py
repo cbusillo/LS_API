@@ -18,6 +18,7 @@ def main():
         return
     logging.info("Starting new processes")
     subprocess.Popen("poetry run discord", shell=True)
+    subprocess.Popen("stunnel shiny_api/config/stunnel.ini", shell=True)
     subprocess.Popen(
         "poetry run django",
         shell=True,

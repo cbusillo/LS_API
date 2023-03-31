@@ -2,7 +2,6 @@
 """File to run django server"""
 import logging
 import sys
-import subprocess
 from pathlib import Path
 import shiny_api.modules.django_server as django_server
 from shiny_api.modules.load_config import Config
@@ -26,8 +25,6 @@ def start_django_server():
             )
             if remote_file:
                 local_file.write(remote_file)
-
-    subprocess.Popen("stunnel shiny_api/config/stunnel.ini", shell=True)
 
     django_server.main()
 
