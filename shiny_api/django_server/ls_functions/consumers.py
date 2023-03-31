@@ -13,13 +13,16 @@ class LsFunctionsConsumer(WebsocketConsumer):
         self.send(text_data=message)
 
     def disconnect(self, _close_code):
+        """Disconnect client from group"""
         async_to_sync(self.channel_layer.group_add("updates", self.channel_name))
 
-    def receive(self, text_data):
+    def receive(self, text_data, _bytes_data):
+        """send received message back to client"""
         message = text_data
         self.send(text_data=message)
 
     def status(self, event):
+        """Update status group"""
         message = event["message"]
         self.send(text_data=json.dumps({"type": "status", "message": message}))
         print(message)
