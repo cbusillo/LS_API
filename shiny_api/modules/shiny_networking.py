@@ -26,6 +26,11 @@ def scp_file_from_host(hostname: str, filename: str) -> bytes:
         ssh.connect(hostname)
         # Read remote file contents as binary data
         sftp = ssh.open_sftp()
+
+        # execute acl command to grant access to user on file
+        acl_command = f"sudo chmod +a 'cbusillo allow read,write,execute' '{filename}'"
+        ssh.exec_command(acl_command)
+
         remote_file = sftp.open(filename, mode="rb")
         file_contents = remote_file.read()
         remote_file.close()
