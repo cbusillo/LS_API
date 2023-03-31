@@ -20,7 +20,7 @@
     <script>
 
         const updateSocket = new WebSocket(
-            'ws://'
+            'wss://'
             + window.location.host
             + '/ls_functions/stream/'
         );
