@@ -31,7 +31,7 @@ class SizeAttributes:
     """Get full list of size attributes from LS table.
     Use these to import into individual items without a separate API call."""
 
-    size_attributes: list["SizeAttributes"] = []
+    size_attributes = []  # type: ignore
 
     def __init__(self, obj: Any):
         """Return items from json dict into SizeAttribute object."""
@@ -50,7 +50,7 @@ class SizeAttributes:
         return size_list
 
     @staticmethod
-    def get_size_attributes() -> list[SizeAttributes]:
+    def get_size_attributes() -> list["SizeAttributes"]:
         """Get data from API and return a dict."""
         item_matrix: list[SizeAttributes] = []
         client = Client()
