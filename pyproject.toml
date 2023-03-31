@@ -29,8 +29,6 @@ werkzeug = "^2.2.3"
 paramiko = "^3.1.0"
 
 [tool.poetry.group.dev.dependencies]
-dotenv = {version = "^0.0.5", platform = "windows"}
-python-dotenv = {version = "^0.21.1", platform = "darwin"}
 pylint = "^2.17.1"
 autopep8 = "^2.0.2"
 black = "^23.3.0"
