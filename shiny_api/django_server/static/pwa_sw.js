@@ -28,3 +28,5 @@ workbox.routing.registerRoute(
         ],
     })
 );
+
+const versionNumber = `v1.0.0`;
