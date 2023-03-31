@@ -140,8 +140,6 @@ running_function: dict = {}
 
 STATICFILES_DIRS = [Path(BASE_DIR / "static")]
 
-RUNSERVERPLUS_SERVER_ADDRESS_PORT = "0.0.0.0:8000"
-
 PWA_SERVICE_WORKER_PATH = Path(STATICFILES_DIRS[0] / "pwa_sw.js")
 PWA_APP_NAME = "Shiny API"
 PWA_APP_DESCRIPTION = "Shiny Stuff"

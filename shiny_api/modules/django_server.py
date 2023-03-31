@@ -21,11 +21,8 @@ def main():
         execute_from_command_line(
             [
                 sys.argv[0],
-                "runserver_plus",
-                "--cert-file",
-                "/Users/cbusillo/.secret.cert.pem",
-                "--key-file",
-                "/Users/cbusillo/.secret.privkey.pem",
+                "runserver",
+                "0.0.0.0:8001",
             ]
         )
 

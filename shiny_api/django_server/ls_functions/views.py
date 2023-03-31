@@ -40,13 +40,7 @@ def run_function(function_to_exec, module_function_name):
     channel_layer = get_channel_layer()
     if not isinstance(channel_layer, RedisChannelLayer):
         return
-    async_to_sync(channel_layer.group_send)(
-        "updates",
-        {
-            "type": "status",
-            "message": f"starting {module_function_name}.{function_to_exec}",
-        },
-    )
+    send_message(f"starting {module_function_name}.{function_to_exec}")
     function_to_exec()
     running_function[module_function_name] = False
     #     sse.publish({"message": f"{status}Finished!"}, type='status')
@@ -60,6 +54,7 @@ def send_message(message: str) -> None:
     async_to_sync(channel_layer.group_send)(
         "updates", {"type": "status", "message": message}
     )
+    print("updates", {"type": "status", "message": message})
 
     # if app is None:
     #     return

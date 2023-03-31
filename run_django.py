@@ -2,6 +2,7 @@
 """File to run django server"""
 import logging
 import sys
+import subprocess
 from pathlib import Path
 import shiny_api.modules.django_server as django_server
 from shiny_api.modules.load_config import Config
@@ -16,7 +17,7 @@ def start_django_server():
         django_server.main()
         sys.exit()
 
-    for file_name in ["cert.pem", "privkey.pem"]:
+    for file_name in ["cert.pem", "privkey.pem", "fullchain.pem"]:
         local_file_name = ".secret." + file_name
         with open(Path.home() / local_file_name, "wb") as local_file:
             remote_file = scp_file_from_host(
@@ -25,6 +26,9 @@ def start_django_server():
             )
             if remote_file:
                 local_file.write(remote_file)
+
+    print(subprocess.run(["pkill", "-f", "stunnel"], check=False))
+    subprocess.Popen("stunnel shiny_api/config/stunnel.ini", shell=True)
 
     django_server.main()
 

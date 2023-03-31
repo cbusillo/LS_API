@@ -11,6 +11,7 @@ def main():
     logging.info("Killing old processes")
     print(subprocess.run(["pkill", "-f", "discord"], check=False))
     print(subprocess.run(["pkill", "-f", "django"], check=False))
+
     time.sleep(2)
     if "stop" in sys.argv:
         return

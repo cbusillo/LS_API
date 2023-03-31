@@ -90,25 +90,24 @@ class Client(requests.Session):
         while next_url != "":
             send_message(f"Getting page {page} of {key_name}")
             self._response = self.get(next_url, params=params)
-            if not isinstance(self._response, dict):
+            if not isinstance(self._response, requests.models.Response):
                 return
             entries = self._response.json().get(key_name)
-            if isinstance(entries, dict):
-                yield entries
-                return
+            if not isinstance(entries, list):
+                for line in entries:
+                    yield line
+                    return
 
-            if entries is None:
-                return
+            for entry in entries:
+                yield entry
 
-            for line in entries:
-                yield line
             next_url = self._response.json()["@attributes"]["next"]
             page += 1
 
     def _entry(self, url: str, key_name: str, params: dict | None = None):
         """Get single item from API"""
         self._response = self.get(url, params=params)
-        if not isinstance(self._response, dict):
+        if not isinstance(self._response, requests.models.Response):
             return
         return self._response.json().get(key_name)
 
