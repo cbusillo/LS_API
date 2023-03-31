@@ -49,4 +49,4 @@ def scp_file_from_host(hostname: str, filename: str) -> bytes:
 
 
 if __name__ == "__main__":
-    print("Done.")
+    print(scp_file_from_host("store1.logi.wiki", ""))
