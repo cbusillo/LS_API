@@ -163,4 +163,4 @@ PWA_APP_DIR = "ltr"
 PWA_APP_LANG = "en-US"
 PWA_APP_DEBUG_MODE = True
 
-CSRF_TRUSTED_ORIGINS = ["web.shinyapi.logi.wiki:8000", "test.shinyapi.logi.wiki:8000"]
+CSRF_TRUSTED_ORIGINS = ["https://web.shinyapi.logi.wiki:8000", "https://test.shinyapi.logi.wiki:8000"]

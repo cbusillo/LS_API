@@ -27,7 +27,6 @@ def start_django_server():
             if remote_file:
                 local_file.write(remote_file)
 
-    print(subprocess.run(["pkill", "-f", "stunnel"], check=False))
     subprocess.Popen("stunnel shiny_api/config/stunnel.ini", shell=True)
 
     django_server.main()
