@@ -11,14 +11,12 @@ def main():
     logging.info("Killing old processes")
     print(subprocess.run(["pkill", "-f", "discord"], check=False))
     print(subprocess.run(["pkill", "-f", "django"], check=False))
-    print(subprocess.run(["pkill", "-f", "stunnel"], check=False))
 
     time.sleep(2)
     if "stop" in sys.argv:
         return
     logging.info("Starting new processes")
     subprocess.Popen("poetry run discord", shell=True)
-    subprocess.Popen("bash stunnel shiny_api/config/stunnel.ini", shell=True)
     subprocess.Popen(
         "poetry run django",
         shell=True,
