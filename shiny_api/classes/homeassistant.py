@@ -35,9 +35,9 @@ class HomeAssistant:
 class Vacuum(HomeAssistant):
     """Class for Roomba vacuum cleaner"""
 
-    def __init__(self, *args, entity_id: str = "roomba_pt", **kwargs):
+    def __init__(self, entity_id: str = "roomba_pt", **kwargs):
         self.domain = "vacuum"
-        super().__init__(entity_id=entity_id, *args, **kwargs)  # type: ignore
+        super().__init__(entity_id=entity_id, **kwargs)
 
     def suck(self) -> str:
         """Start vacuum cleaner"""
@@ -100,9 +100,9 @@ class InputBoolean(HomeAssistant):
 class Alarm(HomeAssistant):
     """Class for Alarm panel"""
 
-    def __init__(self, *args, entity_id: str = "system", **kwargs):
+    def __init__(self, entity_id: str = "system", **kwargs):
         self.domain = "alarm_control_panel"
-        super().__init__(entity_id=entity_id, *args, **kwargs)  # type: ignore
+        super().__init__(entity_id=entity_id, **kwargs)
 
     def arm(self) -> str:
         """Arm alarm panel"""
@@ -188,4 +188,4 @@ class TaylorSwiftly:
 
 if __name__ == "__main__":
     taylor = TaylorSwiftly()
-    taylor.lock.lock()
+    taylor.lock.unlock()
