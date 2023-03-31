@@ -17,11 +17,11 @@ def ls_functions(request: WSGIRequest, module_function_name: str = ""):
         "shiny_api.modules.light_speed|format_customer_phone": "Format Customer Phone Numbers",
         "shiny_api.modules.light_speed|update_item_price": "Update iPhone/iPad Prices",
     }
-    context = {}
+    context: dict[str, object] = {}
     context["title"] = "Light Speed Functions"
 
     if module_function_name == "" or running_function.get(module_function_name, False):
-        context["buttons"] = buttons  # type: ignore
+        context["buttons"] = buttons
         return render(request, "ls_functions.django-html", context)
 
     module_name, function_name = module_function_name.split("|")

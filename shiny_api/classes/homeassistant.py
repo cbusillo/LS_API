@@ -1,5 +1,6 @@
-"""Home Assistant module for Shiny API."""  # pyright: reportOptionalMemberAccess=false, reportOptionalCall=false
+"""Home Assistant module for Shiny API."""
 import inspect
+from typing import Callable
 from homeassistant_api import Client, Domain
 from shiny_api.modules.load_config import Config
 
@@ -14,10 +15,10 @@ class HomeAssistant:
             Config.HOMEASSISTANT_API[location]["url"],
             Config.HOMEASSISTANT_API[location]["key"],
         )
-        self.entity_id = f"{self.domain}.{entity_id}"
+        self.entity_id: str = f"{self.domain}.{entity_id}"
 
     @classmethod
-    def get_functions(cls):
+    def get_functions(cls) -> list[str]:
         """Return functions"""
         methods = [
             method
@@ -71,17 +72,29 @@ class InputBoolean(HomeAssistant):
         self.domain = "input_boolean"
         super().__init__(*args, **kwargs)
 
-    def turn_on(self):
+    def turn_on(self) -> str:
         """Turn on input boolean"""
-        self.client.get_domain(self.domain).turn_on(entity_id=self.entity_id)
+        domain = self.client.get_domain(self.domain)
+        if not isinstance(domain, Domain):
+            return "domain not found"
+        domain.turn_on(entity_id=self.entity_id)
+        return "Turning on"
 
-    def turn_off(self):
+    def turn_off(self) -> str:
         """Turn off input boolean"""
-        self.client.get_domain(self.domain).turn_off(entity_id=self.entity_id)
+        domain = self.client.get_domain(self.domain)
+        if not isinstance(domain, Domain):
+            return "domain not found"
+        domain.turn_off(entity_id=self.entity_id)
+        return "Turning off"
 
-    def toggle(self):
+    def toggle(self) -> str:
         """Toggle input boolean"""
-        self.client.get_domain(self.domain).toggle(entity_id=self.entity_id)
+        domain = self.client.get_domain(self.domain)
+        if not isinstance(domain, Domain):
+            return "domain not found"
+        domain.toggle(entity_id=self.entity_id)
+        return "Toggling"
 
 
 class Alarm(HomeAssistant):
@@ -164,7 +177,7 @@ class TaylorSwiftly:
         self.lock = Lock("taylor_swiftly_doors", location="home")
         self.start = Button("taylor_swiftly_remote_start", location="home")
 
-    def get_functions(self):
+    def get_functions(self) -> dict[str, Callable]:
         """Return functions"""
         methods = {}
         for class_name, class_method in vars(self).items():
