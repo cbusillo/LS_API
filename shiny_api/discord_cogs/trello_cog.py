@@ -2,7 +2,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from trello import TrelloClient
+from trello import TrelloClient  # type: ignore
 from shiny_api.modules.load_config import Config
 
 
@@ -25,7 +25,7 @@ class TrelloCog(commands.Cog):
             if current.lower() in trello_list.name.lower()
         ]
 
-    @app_commands.command(name="trello_add")
+    @app_commands.command(name="trello_add")  # type: ignore
     @app_commands.autocomplete(trello_list=trello_lists_list)
     @app_commands.checks.has_role("Shiny")
     async def trello_add(
@@ -43,7 +43,7 @@ class TrelloCog(commands.Cog):
         )
         await context.followup.send(f"Added '{card_name}' to list {inventory_list.name}")
 
-    @app_commands.command(name="trello_list")
+    @app_commands.command(name="trello_list")  # type: ignore
     @app_commands.autocomplete(trello_list=trello_lists_list)
     @app_commands.checks.has_role("Shiny")
     async def trello_list(

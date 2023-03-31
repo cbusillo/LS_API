@@ -1,12 +1,11 @@
 """View for LS Functions"""
-import json
 from importlib import import_module
 from threading import Thread
 from asgiref.sync import async_to_sync
-from channels_redis.core import RedisChannelLayer
-from channels.layers import get_channel_layer
-from django.core.handlers.wsgi import WSGIRequest
-from django.shortcuts import render, redirect
+from channels_redis.core import RedisChannelLayer  # type: ignore
+from channels.layers import get_channel_layer  # type: ignore
+from django.core.handlers.wsgi import WSGIRequest  # type: ignore
+from django.shortcuts import render, redirect  # type: ignore
 
 # from django_eventstream import send_event
 from shiny_api.django_server.settings import running_function
@@ -22,7 +21,7 @@ def ls_functions(request: WSGIRequest, module_function_name: str = ""):
     context["title"] = "Light Speed Functions"
 
     if module_function_name == "" or running_function.get(module_function_name, False):
-        context["buttons"] = buttons
+        context["buttons"] = buttons  # type: ignore
         return render(request, "ls_functions.django-html", context)
 
     module_name, function_name = module_function_name.split("|")
@@ -36,7 +35,7 @@ def ls_functions(request: WSGIRequest, module_function_name: str = ""):
     return redirect(ls_functions)
 
 
-def run_function(function_to_exec, module_function_name, status: str = ""):
+def run_function(function_to_exec, module_function_name):
     """End function"""
     channel_layer = get_channel_layer()
     if not isinstance(channel_layer, RedisChannelLayer):

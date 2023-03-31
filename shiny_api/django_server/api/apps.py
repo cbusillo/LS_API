@@ -1,5 +1,5 @@
 """Configure Api App"""
-from django.apps import AppConfig
+from django.apps import AppConfig  # type: ignore
 
 
 class ApiConfig(AppConfig):

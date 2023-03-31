@@ -10,9 +10,7 @@ def main():
         key="DJANGO_SETTINGS_MODULE", value="shiny_api.django_server.settings"
     )
     try:
-        from django.core.management import (
-            execute_from_command_line,
-        )  # pylint: disable=import-outside-toplevel
+        from django.core.management import (execute_from_command_line)  # type: ignore # pylint: disable=import-outside-toplevel
     except ImportError as exc:
         raise ImportError(
             "Couldn't import Django. Are you sure it's installed and "

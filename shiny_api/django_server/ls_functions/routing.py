@@ -1,5 +1,4 @@
-# chat/routing.py
-from django.urls import re_path
+from django.urls import re_path  # type: ignore
 
 from . import consumers
 

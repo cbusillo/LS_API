@@ -1,8 +1,8 @@
 """Connect to sickw and return a SickwResults object with data from serial_number and service """
 from dataclasses import dataclass
 from typing import List
-from bs4 import BeautifulSoup
-import requests
+from bs4 import BeautifulSoup  # type: ignore
+import requests  # type: ignore
 from shiny_api.modules.load_config import Config
 
 
@@ -78,7 +78,7 @@ class SickwResult:
 class SickwResults:
     """Class to hold a list of SickwResult objects"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.sickw_results_list: "List[SickwResult]" = []
 
     def search_list_for_serial(self, serial: str) -> tuple[str, str] | None:
@@ -86,6 +86,8 @@ class SickwResults:
         for result in self.sickw_results_list:
             if result.serial_number == serial:
                 return result.name, result.status
+
+        return None
 
     def success_count(self) -> int:
         """Return count of total sucessful Sickw results"""

@@ -11,7 +11,7 @@ class LabelCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="label")
+    @app_commands.command(name="label")  # type: ignore
     @app_commands.checks.has_role("Shiny")
     async def label_command(
         self,

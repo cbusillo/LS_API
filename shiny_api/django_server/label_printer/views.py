@@ -1,12 +1,7 @@
 """View for LS Functions"""
-from importlib import import_module
-from threading import Thread
-from django.core.handlers.wsgi import WSGIRequest
-from django.shortcuts import render, redirect
-# from django_eventstream import send_event
-from shiny_api.django_server.settings import running_function
+from django.core.handlers.wsgi import WSGIRequest  # type: ignore
+from django.shortcuts import render  # type: ignore
 from pydantic import BaseModel
-
 from shiny_api.modules.load_config import Config
 from shiny_api.modules.label_print import print_text
 
@@ -40,24 +35,23 @@ def label_printer(request: WSGIRequest, active_label_group: str = "Main Labels")
     lines = label_text.split("\n")
     while "" in lines:
         lines.remove("")
-    label_text = lines
-    if len(label_text) == 0 or quantity < 1:
+    if len(lines) == 0 or quantity < 1:
         context["error"] = "No label text"
     else:
-        print(f"Printing {label_text} to {label_group_list[active_label_group].printer_ip}...")
+        print(f"Printing {lines} to {label_group_list[active_label_group].printer_ip}...")
         try:
             print_text(quantity=quantity,
                        barcode=request.POST.get("barcode", ""),
                        print_date=bool(request.POST.get("date", False)),
-                       text=label_text,
+                       text=lines,
                        printer_ip=label_group_list[active_label_group].printer_ip)
         except TimeoutError as error:
-            context["error"] = error
+            context["error"] = error.strerror
 
     context = {
         "title": "Label Printer",
-        "label_group_name_list": label_group_name_list,
-        "active_labels": label_group_list[active_label_group].labels,
+        "label_group_name_list": label_group_name_list,  # type: ignore
+        "active_labels": label_group_list[active_label_group].labels,  # type: ignore
         "active_label_group": active_label_group,
     }
 

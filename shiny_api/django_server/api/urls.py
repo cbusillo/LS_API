@@ -1,5 +1,5 @@
 """URLs for the API app."""""
-from django.urls import path
+from django.urls import path  # type: ignore
 
 from . import views
 

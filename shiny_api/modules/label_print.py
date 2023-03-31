@@ -2,7 +2,7 @@
 import datetime
 import textwrap
 from typing import List
-from simple_zpl2 import ZPLDocument, Code128_Barcode, NetworkPrinter
+from simple_zpl2 import ZPLDocument, Code128_Barcode, NetworkPrinter  # type: ignore
 from shiny_api.modules.load_config import Config
 
 LABEL_SIZE = {"width": 2, "height": 1.3}
@@ -72,7 +72,7 @@ def print_text(
             y_pos=current_origin,
             justification=2)
         label.add_barcode(barcode_zpl)
-        current_origin = current_origin + (BARCODE_HEIGHT / 9) + 2
+        current_origin = current_origin + int(BARCODE_HEIGHT / 9) + 2
 
     printer = NetworkPrinter(printer_ip)
     for _ in range(quantity):

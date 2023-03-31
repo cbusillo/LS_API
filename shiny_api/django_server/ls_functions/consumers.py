@@ -1,6 +1,5 @@
 import json
-from channels_redis.core import RedisChannelLayer
-from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import WebsocketConsumer  # type: ignore
 from asgiref.sync import async_to_sync
 
 

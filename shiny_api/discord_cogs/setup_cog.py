@@ -42,13 +42,13 @@ class SetupCog(commands.Cog):
         try:
             await context.message.delete()
             await self.check_server()
-            self.enable_commands: bool = True
+            self.enable_commands = True
         except discord.errors.NotFound:
             print("Not able to delete message")
-            self.enable_commands: bool = False
+            self.enable_commands = False
             return
 
-    @app_commands.command(name="clear")
+    @app_commands.command(name="clear")  # type: ignore
     @app_commands.choices(
         scope=[
             app_commands.Choice(name="Bot", value="bot"),
@@ -59,6 +59,8 @@ class SetupCog(commands.Cog):
         """Clear all or bot messages in bot-config"""
 
         if not isinstance(context.channel, discord.TextChannel):
+            return
+        if not isinstance(context, commands.Bot):
             return
         if context.channel.id != BOT_CHANNEL:
             await context.channel.send("Cannot use in this channel")

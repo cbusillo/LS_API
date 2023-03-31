@@ -20,7 +20,7 @@ class HomeAssistantCog(commands.Cog):
             for function_choice in function_name.get_functions()
         ]
 
-    @app_commands.command(name="vacuum")
+    @app_commands.command(name="vacuum")  # type: ignore
     @app_commands.choices(choices=get_functions(ha.Vacuum))
     @app_commands.checks.has_role("Shiny")
     async def vacuum(self, context: discord.Interaction, choices: str):
@@ -29,7 +29,7 @@ class HomeAssistantCog(commands.Cog):
         status = getattr(roomba, choices)()
         await context.response.send_message(f"Vacuum is {status or choices}")
 
-    @app_commands.command(name="alarm")
+    @app_commands.command(name="alarm")  # type: ignore
     @app_commands.choices(choices=get_functions(ha.Alarm))
     @app_commands.checks.has_role("Shiny")
     async def alarm(self, context: discord.Interaction, choices: str):
@@ -38,7 +38,7 @@ class HomeAssistantCog(commands.Cog):
         status = getattr(alarm, choices)()
         await context.response.send_message(f"Alarm is {status or choices}")
 
-    @app_commands.command(name="taylor_swiftly")
+    @app_commands.command(name="taylor_swiftly")  # type: ignore
     @app_commands.choices(choices=get_functions(ha.TaylorSwiftly()))
     @app_commands.checks.has_role("Shiny")
     async def tesla(self, context: discord.Interaction, choices: str):

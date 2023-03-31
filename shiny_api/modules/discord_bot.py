@@ -1,7 +1,9 @@
 """Class to import cogs from cog dir"""
 import textwrap
+
 import discord
 from discord.ext import commands
+
 from shiny_api.modules.load_config import Config
 
 

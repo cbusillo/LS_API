@@ -3,7 +3,7 @@ from datetime import datetime
 import logging
 import time
 from urllib.parse import urljoin
-import requests
+import requests  # type: ignore
 from rich import print as pprint
 from shiny_api.django_server.ls_functions.views import send_message
 
@@ -90,6 +90,8 @@ class Client(requests.Session):
         while next_url != "":
             send_message(f"Getting page {page} of {key_name}")
             self._response = self.get(next_url, params=params)
+            if not isinstance(self._response, dict):
+                return
             entries = self._response.json().get(key_name)
             if isinstance(entries, dict):
                 yield entries
@@ -106,6 +108,8 @@ class Client(requests.Session):
     def _entry(self, url: str, key_name: str, params: dict | None = None):
         """Get single item from API"""
         self._response = self.get(url, params=params)
+        if not isinstance(self._response, dict):
+            return
         return self._response.json().get(key_name)
 
     def get_items_json(

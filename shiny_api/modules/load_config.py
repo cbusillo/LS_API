@@ -4,6 +4,7 @@ from pathlib import Path
 
 
 class Config:
+    """class to hold config values"""
     CERTIFICATE_SERVER_HOSTNAME = "imagingserver.local"
     CERTIFICATE_SERVER_FILE = "/etc/letsencrypt/live/shinyapi.logi.wiki/"
     SCRIPT_DIR = Path(__file__).resolve().parent.parent

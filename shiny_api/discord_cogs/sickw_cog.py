@@ -11,7 +11,7 @@ class SickwCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="sick")
+    @app_commands.command(name="sick")  # type: ignore
     @app_commands.checks.has_role("Shiny")
     async def sickw_lookup_command(self, context: discord.Interaction, serial_number: str):
         """Look up serial number in Sickw"""

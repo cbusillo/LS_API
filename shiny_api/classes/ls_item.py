@@ -31,7 +31,7 @@ class SizeAttributes:
     """Get full list of size attributes from LS table.
     Use these to import into individual items without a separate API call."""
 
-    size_attributes = []
+    size_attributes: list["SizeAttributes"] = []
 
     def __init__(self, obj: Any):
         """Return items from json dict into SizeAttribute object."""
@@ -50,7 +50,7 @@ class SizeAttributes:
         return size_list
 
     @staticmethod
-    def get_size_attributes():
+    def get_size_attributes() -> list[SizeAttributes]:
         """Get data from API and return a dict."""
         item_matrix: list[SizeAttributes] = []
         client = Client()
@@ -118,7 +118,7 @@ class Item:
                 raise ValueError("Must provide item_id or ls_item")
             self.item_id = item_id
             ls_item = self.client.get_item_json(self.item_id)
-        self.item_id: int = int(ls_item.get("itemID"))
+        self.item_id = int(ls_item.get("itemID"))
 
         self.system_sku = int(ls_item.get("systemSku"))
         self.default_cost = Decimal(ls_item.get("defaultCost"))

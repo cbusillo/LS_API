@@ -12,7 +12,7 @@ class LightSpeedCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @app_commands.command(name="ls_price")
+    @app_commands.command(name="ls_price")  # type: ignore
     @app_commands.checks.has_role("Shiny")
     async def ls_price_lookup_command(self, context: discord.Interaction, search: str):
         """Look up price in Lightspeed"""

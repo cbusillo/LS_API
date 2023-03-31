@@ -18,8 +18,7 @@ def get_website_prices(browser: webdriver.Safari, url: str):
     price = browser.find_element("id", "metrics")
     json_price = price.text.replace("//", "")
     browser.minimize_window()
-    json_price = json_price.split("[[")
-    json_price = json_price[0] + "}}"
+    json_price = json_price.split("[[")[0] + "}}"
     json_price = json_price.replace(',"sectionEngagement":', "")
     json_price = json_price.replace('"}]}}}}', '"}]}}')
     json_price = json_price.replace('"shop"}}}}', '"shop"}}')
@@ -128,8 +127,8 @@ def format_customer_phone():
     """Load and iterate through customers, updating formatting on phone numbers."""
     customers = Customer.get_all_customers()
     customers_updated = 0
-    print(f"Updating customers")
-    send_message(f"Updating customers")
+    print("Updating customers")
+    send_message("Updating customers")
     for index, customer in enumerate(customers):
         if len(customer.contact.phones.contact_phone) == 0:
             continue

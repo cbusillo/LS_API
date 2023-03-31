@@ -1,6 +1,6 @@
 """Home Assistant module for Shiny API."""  # pyright: reportOptionalMemberAccess=false, reportOptionalCall=false
 import inspect
-from homeassistant_api import Client
+from homeassistant_api import Client, Domain
 from shiny_api.modules.load_config import Config
 
 
@@ -9,7 +9,7 @@ class HomeAssistant:
 
     def __init__(self, entity_id: str, location: str = "store1"):
         """Get Home Assistant client"""
-        self.domain = self.domain or ""
+        self.domain: str = self.domain or ""
         self.client = Client(
             Config.HOMEASSISTANT_API[location]["url"],
             Config.HOMEASSISTANT_API[location]["key"],
@@ -36,22 +36,31 @@ class Vacuum(HomeAssistant):
 
     def __init__(self, *args, entity_id: str = "roomba_pt", **kwargs):
         self.domain = "vacuum"
-        super().__init__(entity_id=entity_id, *args, **kwargs)
+        super().__init__(entity_id=entity_id, *args, **kwargs)  # type: ignore
 
     def suck(self) -> str:
         """Start vacuum cleaner"""
-        self.client.get_domain(self.domain).start(entity_id=self.entity_id)
+        domain = self.client.get_domain(self.domain)
+        if not isinstance(domain, Domain):
+            return "domain not found"
+        domain.start(entity_id=self.entity_id)
         return "starting"
 
     def stop(self) -> str:
         """Return vacuum cleaner to base"""
         print(f"{self.entity_id}|{self.domain}")
-        self.client.get_domain(self.domain).stop(entity_id=self.entity_id)
+        domain = self.client.get_domain(self.domain)
+        if not isinstance(domain, Domain):
+            return "domain not found"
+        domain.stop(entity_id=self.entity_id)
         return "stopping"
 
     def go_home(self) -> str:
         """Return vacuum cleaner to base"""
-        self.client.get_domain(self.domain).return_to_base(entity_id=self.entity_id)
+        domain = self.client.get_domain(self.domain)
+        if not isinstance(domain, Domain):
+            return "domain not found"
+        domain.return_to_base(entity_id=self.entity_id)
         return "going home"
 
 
@@ -80,16 +89,22 @@ class Alarm(HomeAssistant):
 
     def __init__(self, *args, entity_id: str = "system", **kwargs):
         self.domain = "alarm_control_panel"
-        super().__init__(entity_id=entity_id, *args, **kwargs)
+        super().__init__(entity_id=entity_id, *args, **kwargs)  # type: ignore
 
     def arm(self) -> str:
         """Arm alarm panel"""
-        self.client.get_domain(self.domain).alarm_arm_away(entity_id=self.entity_id)
+        domain = self.client.get_domain(self.domain)
+        if not isinstance(domain, Domain):
+            return "domain not found"
+        domain.alarm_arm_away(entity_id=self.entity_id)
         return "arming"
 
     def disarm(self) -> str:
         """Arm alarm panel"""
-        self.client.get_domain(self.domain).alarm_disarm(entity_id=self.entity_id)
+        domain = self.client.get_domain(self.domain)
+        if not isinstance(domain, Domain):
+            return "domain not found"
+        domain.alarm_disarm(entity_id=self.entity_id)
         return "disarming"
 
 
@@ -102,12 +117,18 @@ class Lock(HomeAssistant):
 
     def lock(self) -> str:
         """Lock door"""
-        self.client.get_domain(self.domain).lock(entity_id=self.entity_id)
+        domain = self.client.get_domain(self.domain)
+        if not isinstance(domain, Domain):
+            return "domain not found"
+        domain.lock(entity_id=self.entity_id)
         return "locking"
 
     def unlock(self) -> str:
         """Unlock door"""
-        self.client.get_domain(self.domain).unlock(entity_id=self.entity_id)
+        domain = self.client.get_domain(self.domain)
+        if not isinstance(domain, Domain):
+            return "domain not found"
+        domain.unlock(entity_id=self.entity_id)
         return "unlocking"
 
 
@@ -128,7 +149,10 @@ class Button(HomeAssistant):
 
     def press(self) -> str:
         """Start button"""
-        self.client.get_domain(self.domain).press(entity_id=self.entity_id)
+        domain = self.client.get_domain(self.domain)
+        if not isinstance(domain, Domain):
+            return "domain not found"
+        domain.press(entity_id=self.entity_id)
         return "starting"
 
 

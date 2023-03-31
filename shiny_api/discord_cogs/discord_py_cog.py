@@ -59,9 +59,7 @@ class DiscordPyCog(commands.Cog):
 
         popen = Popen(['gtimeout', '15', sys.executable, '-'], stderr=PIPE, stdout=PIPE, stdin=PIPE, cwd=os.getcwd())
         code_result, code_error = popen.communicate(bytes(message_code, encoding="utf-8"))
-        code_result = code_result.decode("utf8")
-        code_error = code_error.decode("utf8")
-        return code_result, code_error
+        return code_result.decode("utf8"), code_error.decode("utf8")
 
 
 async def setup(bot: commands.Bot):

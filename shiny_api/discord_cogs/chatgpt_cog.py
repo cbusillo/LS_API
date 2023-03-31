@@ -12,7 +12,7 @@ class ChatGPTCog(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.user_threads = {}
+        self.user_threads: dict[int, list[str]] = {}
         self.prompt_dict = {
             "run": "I want you to generate python code to {prompt}.  Return python code only.  "
             "Do not return any explanatory text.  Do not respond with anything except the code.",
