@@ -1,5 +1,4 @@
-# mysite/asgi.py
-
+"""Websockets server"""
 import os
 
 from channels.auth import AuthMiddlewareStack  # type: ignore

@@ -1,3 +1,4 @@
+"""Urls for ls_function app"""
 from django.urls import re_path  # type: ignore
 
 from . import consumers

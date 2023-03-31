@@ -13,7 +13,8 @@ class Workorder:
         """Workorder object from dict"""
         self.workorder_id = workorder_id
         ls_workorder = self.client.get_workorder_json(workorder_id)
-
+        if not ls_workorder:
+            return
         self.system_sku = int(ls_workorder.get("systemSku"))
         self.time_in = str(ls_workorder.get("timeIn"))
         self.eta_out = str(ls_workorder.get("etaOut"))
