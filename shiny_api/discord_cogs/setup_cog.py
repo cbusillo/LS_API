@@ -60,7 +60,7 @@ class SetupCog(commands.Cog):
 
         if not isinstance(context.channel, discord.TextChannel):
             return
-        if not isinstance(context, commands.Bot):
+        if not isinstance(context.client, commands.Bot):
             return
         if context.channel.id != BOT_CHANNEL:
             await context.channel.send("Cannot use in this channel")
