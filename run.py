@@ -7,7 +7,7 @@ import time
 
 
 def main():
-    """Run front and backends until killed"""
+    """Run front and backends until killed with stop argument"""
     logging.info("Killing old processes")
     print(subprocess.run(["pkill", "-f", "discord"], check=False))
     print(subprocess.run(["pkill", "-f", "django"], check=False))
