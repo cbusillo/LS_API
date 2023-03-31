@@ -1,10 +1,13 @@
 #!/usr/bin/env python
 """File to run django server"""
 import logging
+import os
 from pathlib import Path
 import shiny_api.modules.django_server as django_server
 from shiny_api.modules.load_config import Config
 from shiny_api.modules.shiny_networking import is_host_available, scp_file_from_host
+
+os.environ["DJANGO_SETTINGS_MODULE"] = "shiny_api.django_server.settings"
 
 
 def start_django_server():
