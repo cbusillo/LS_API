@@ -1,8 +1,7 @@
 """Sync cogs to discord to enable /commands"""
 import asyncio
-import os
+import subprocess
 import platform
-import time
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -23,19 +22,19 @@ class SetupCog(commands.Cog):
     async def enable_function(self, _: discord.Message):
         """If not enabled, delay one second so dev can answer"""
         if self.enable_commands is False:
-            time.sleep(2)
+            await asyncio.sleep(2)
 
     @commands.command(name="sync")
     async def sync_command(self, context: commands.Context) -> None:
         """Add slash commands to Discord guid"""
         if "imagingserver" in platform.node().lower():
             await context.defer()
-            os.system("git fetch")
-            return_code = os.system("git diff origin/main --quiet")
-            if return_code:
+            subprocess.run(["git", "fetch"], check=False)
+            result = subprocess.run(["git", "diff", "origin/main", "--quiet"], check=False)
+            if result.returncode:
                 print("Restarting server!!!")
                 await context.channel.send("Updating and restarting server!!!")
-                os.system("ssh 127.0.0.1 ~/launch_api.sh")
+                subprocess.run(["ssh", "127.0.0.1", "~/launch_api.sh"], check=False)
 
             await asyncio.sleep(2)
 
@@ -67,7 +66,7 @@ class SetupCog(commands.Cog):
         await context.response.defer()
         if scope == "bot":
             async for message in context.channel.history():
-                if message.author == context.client.user and message != temp_message:
+                if message.author == self.bot.user and message != temp_message:
                     await message.delete()
         elif scope == "all":
             async for message in context.channel.history():
@@ -78,13 +77,13 @@ class SetupCog(commands.Cog):
     @commands.Cog.listener("on_ready")
     async def shiny_bot_connect(self):
         """Print console message that bot is connected"""
-        if not isinstance(self.bot.user, discord.ClientUser):
+        if not isinstance(self.bot.user, discord.User):
             print("Bot is not connected to Discord")
             return
         print(f"{self.bot.user.display_name} has connected to Discord!")
 
     @commands.Cog.listener("on_ready")
-    async def set_dev_rol(self):
+    async def set_dev_role(self):
         """Add dev role to activate bot if run from dev machine"""
         await self.check_server()
 
