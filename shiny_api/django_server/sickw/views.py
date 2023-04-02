@@ -9,4 +9,5 @@ class SickwGroup(BaseModel):
 
 
 def bulk_lookup(request: WSGIRequest):
-    pass
+    """Bulk lookup view"""
+    return render(request,template_name="sickw/bulk_lookup.html")
