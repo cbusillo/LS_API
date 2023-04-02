@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 """File to run django server"""
 import logging
-import sys
 import subprocess
 from pathlib import Path
 import shiny_api.modules.django_server as django_server

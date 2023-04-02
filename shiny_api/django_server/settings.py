@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "shiny_api.django_server.api.apps.ApiConfig",
     "shiny_api.django_server.ls_functions.apps.LsFunctionsConfig",
     "shiny_api.django_server.label_printer.apps.LabelPrinterConfig",
+    "shiny_api.django_server.sickw.apps.SickwConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

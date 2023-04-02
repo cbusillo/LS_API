@@ -2,7 +2,7 @@
 import json
 from datetime import datetime
 from dataclasses import dataclass
-import requests  # type: ignore
+import requests
 from shiny_api.modules.load_config import Config
 
 

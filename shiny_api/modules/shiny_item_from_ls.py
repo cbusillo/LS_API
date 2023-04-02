@@ -8,7 +8,7 @@
 # from shiny_api.classes.shiny_item import Item as ShinyItem
 # from shiny_api.classes.shiny_client import create_db_and_tables, drop_db_and_tables, engine
 
-
+# TODO: pass import_item a session.  Do not commit session until all items are updates.
 # def import_item(ls_item: LsItem):
 #     """Relate LS item to Shiny item"""
 #     with Session(engine) as session:

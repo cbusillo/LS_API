@@ -1,0 +1,50 @@
+{% extends "layout.django-html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="content-section">
+    <form method="POST">
+        {% csrf_token %}
+
+        <fieldset class="form-group">
+            {{ form|crispy }}
+        </fieldset>
+        <div class="form-group">
+            <button class="btn btn-outline-info" type="submit">Sign Up</button>
+        </div>
+    </form>
+
+</div>
+<hr />
+
+<div>
+    <textarea class="form-control" id="status" cols="100" rows="5"></textarea>
+</div>
+    <script>
+
+        const updateSocket = new WebSocket(
+            'wss://'
+            + window.location.host
+            + '/stream/'
+        );
+        document.querySelector('#status').value = "no message received yet...\n"
+        updateSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            document.querySelector('#status').value = data.message + 
+            '\n' + 
+            document.querySelector('#status').value;
+        };
+
+        updateSocket.onclose = function(e) {
+            console.error('Update socket closed unexpectedly');
+        };
+
+         document.querySelector('#status').onclick = function(e) {
+            console.error("Clicked");
+            updateSocket.send(JSON.stringify({
+                'message': "sending message from JS"
+            }));
+        };
+
+    </script>
+{% endblock content %}

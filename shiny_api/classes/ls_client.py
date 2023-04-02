@@ -3,7 +3,7 @@ from datetime import datetime
 import logging
 import time
 from urllib.parse import urljoin
-import requests  # type: ignore
+import requests
 from rich import print as pprint
 from shiny_api.django_server.ls_functions.views import send_message
 
