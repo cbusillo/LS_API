@@ -1,8 +1,9 @@
 """Configure Sickw App"""
-from django.apps import AppConfig  # type: ignore
+from django.apps import AppConfig
 
 
-class SickwPrinterConfig(AppConfig):
+class SickwConfig(AppConfig):
     """Class to name Label Printer App"""
-    name = 'shiny_api.django_server.sickw'
-    label = 'sickw'
+
+    name = "shiny_api.django_server.sickw"
+    label = "sickw"
