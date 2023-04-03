@@ -28,9 +28,7 @@ class Client(requests.Session):
 
         def rate_hook(response_hook, *_args, **_kwargs):
             if "x-ls-api-bucket-level" in response_hook.headers:
-                rate_level, rate_limit = response_hook.headers[
-                    "x-ls-api-bucket-level"
-                ].split("/")
+                rate_level, rate_limit = response_hook.headers["x-ls-api-bucket-level"].split("/")
                 rate_level = int(float(rate_level))
                 rate_limit = int(float(rate_limit))
 
@@ -55,12 +53,10 @@ class Client(requests.Session):
 
         self.token = Config.ACCESS_TOKEN
         self.auth_url = Config.LS_URLS["access"]
-        self.base_url = (
-            f"https://api.lightspeedapp.com/API/V3/Account/{Config.LS_ACCOUNT_ID}/"
-        )
+        self.base_url = f"https://api.lightspeedapp.com/API/V3/Account/{Config.LS_ACCOUNT_ID}/"
         self.auth_header = self.get_auth_header()
         self.headers.update(self.auth_header)
-        self._response = None
+        self._response: requests.Response
         self.hooks["response"].append(rate_hook)
 
     def get_auth_header(self) -> dict[str, str]:
@@ -68,7 +64,7 @@ class Client(requests.Session):
         auth_response = requests.post(self.auth_url, data=self.token, timeout=60)
         return {"Authorization": f"Bearer {auth_response.json()['access_token']}"}
 
-    def request(self, method: str, url: str, *args, **kwargs) -> requests.Response:
+    def request(self, method: str, url: str, *args, **kwargs) -> requests.Response | None:
         """extened request method to add base url and timeouts"""
         if "://" not in url:
             url = urljoin(self.base_url, url)
@@ -80,7 +76,9 @@ class Client(requests.Session):
             retries -= 1
             if retries == 0:
                 raise TimeoutError
-        return request_response  # pyright: reportUnboundVariable=false
+            if response_code == 404:
+                return None
+        return request_response
 
     def _entries(self, url: str, key_name: str, params: dict | None = None):
         """Iterate over all items in the API"""
@@ -93,23 +91,17 @@ class Client(requests.Session):
             if not isinstance(self._response, requests.models.Response):
                 return
             entries = self._response.json().get(key_name)
+            if not entries:
+                return
             if not isinstance(entries, list):
-                for line in entries:
-                    yield line
-                    return
+                yield entries
+                return
 
             for entry in entries:
                 yield entry
 
             next_url = self._response.json()["@attributes"]["next"]
             page += 1
-
-    def _entry(self, url: str, key_name: str, params: dict | None = None):
-        """Get single item from API"""
-        self._response = self.get(url, params=params)
-        if not isinstance(self._response, requests.models.Response):
-            return
-        return self._response.json().get(key_name)
 
     def get_items_json(
         self,
@@ -141,25 +133,23 @@ class Client(requests.Session):
         """Get customer"""
         url = Config.LS_URLS["customer"].format(customerID=customer_id)
         params = {"load_relations": '["Contact"]'}
-        return self._entry(url, key_name="Customer", params=params)
+        return self._entries(url, key_name="Customer", params=params)
 
     def get_workorder_json(self, workorder_id: int):
         """Get workorder"""
         url = Config.LS_URLS["workorder"].format(workorderID=workorder_id)
-        return self._entry(url, key_name="Workorder")
+        return self._entries(url, key_name="Workorder")
 
     def get_item_json(self, item_id: int):
         """Get item"""
         url = Config.LS_URLS["item"].format(itemID=item_id)
         params = {"load_relations": '["ItemAttributes"]'}
-        return self._entry(url, key_name="Item", params=params)
+        return self._entries(url, key_name="Item", params=params)
 
     def get_size_attributes_json(self):
         """Get all size attributes"""
         url = Config.LS_URLS["itemMatrix"]
-        return self._entries(
-            url, "ItemMatrix", params={"load_relations": '["ItemAttributeSet"]'}
-        )
+        return self._entries(url, "ItemMatrix", params={"load_relations": '["ItemAttributeSet"]'})
 
 
 if __name__ == "__main__":
