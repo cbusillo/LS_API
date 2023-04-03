@@ -1,13 +1,19 @@
 """call and iterate Item class do update pricing"""
+# pylint: disable=ungrouped-imports
 import re
 import json
-import datetime
+from datetime import datetime
 from functools import lru_cache
+import pytz
 from selenium import webdriver
+from shiny_api.modules.shiny_django import get_updatable_fields
+from django.db import transaction, models  # pylint: disable=wrong-import-order
+from django.utils import timezone  # pylint: disable=wrong-import-order
 from shiny_api.classes.ls_customer import Customer
-from shiny_api.classes import ls_item
+from shiny_api.classes.ls_item import Item as LSItem
 from shiny_api.modules.load_config import Config
 
+from shiny_api.django_server.inventory.models import Item as ShinyItem
 from shiny_api.django_server.ls_functions.views import send_message
 
 
@@ -38,17 +44,13 @@ def update_item_price():
 
     # Apple URL to load pricing from
     scrape_url = "https://www.apple.com/shop/buy-{deviceURL}"
-    browser = webdriver.Safari(
-        port=0, executable_path="/usr/bin/safaridriver", quiet=False
-    )
+    browser = webdriver.Safari(port=0, executable_path="/usr/bin/safaridriver", quiet=False)
 
     # call LS API to load all items and return a list of Item objects
     output = "Loading items"
     send_message(output)
     print(output)
-    items = ls_item.Item.get_items_by_category(
-        categories=Config.DEVICE_CATEGORIES_FOR_PRICE
-    )
+    items = LSItem.get_items_by_category(categories=Config.DEVICE_CATEGORIES_FOR_PRICE)
     for item in items:
         # interate through items to generate pricing and save to LS
         # Generate pricing from devices.json and apple website by item from LS
@@ -81,9 +83,7 @@ def update_item_price():
                 # if device is currently sold (documented in ages.json),
                 # load json from Apple web store and find price. Use URL key from devices.json
                 if device_current:
-                    json_price = get_website_prices(
-                        browser, scrape_url.format(deviceURL=device_url)
-                    )
+                    json_price = get_website_prices(browser, scrape_url.format(deviceURL=device_url))
 
                     # Iterage through web prices and try to find match on current item.
                     # Use deviceBasePrice to subtract from new price.  Detect if cellular
@@ -106,7 +106,9 @@ def update_item_price():
                 # generate price from base price, side and age multipliers
                 else:
                     device_price = device_base_price + (size_mult * age_mult)
-                output = f"{item.description} Size:{size_mult} Age:{device_age} Base:{device_base_price} Item Price: {device_price}"
+                output = (
+                    f"{item.description} Size:{size_mult} Age:{device_age}" f" Base:{device_base_price} Item Price: {device_price}"
+                )
                 print(output)
                 send_message(output)
                 # load new price into all three LS item prices in Item object
@@ -155,5 +157,60 @@ def format_customer_phone():
             customer.update_phones()
 
 
+def shiny_updated_from_ls_time(model: models.Model):
+    """Convert LS date string to datetime"""
+    local_tz = pytz.timezone("America/New_York")
+    try:
+        latest_ls_update_time = model.objects.filter(updated_from_ls_time__isnull=False).latest("updated_from_ls_time")
+    except model.DoesNotExist:
+        return datetime(2000, 1, 1, 0, 0, 0, 0, tzinfo=local_tz)
+    return latest_ls_update_time.updated_from_ls_time
+
+
+def shiny_items_from_ls(date_filter: datetime | None = None):
+    """Get LS items since date_filter and iterate through them"""
+    if date_filter is None:
+        date_filter = shiny_updated_from_ls_time(ShinyItem)
+    ls_items = LSItem.get_all_items(date_filter=date_filter)
+
+    shiny_items_to_update = []
+    shiny_items_to_create = []
+    start_time = timezone.now()
+    for ls_item in ls_items:
+        try:
+            shiny_item = ShinyItem.objects.get(ls_item_id=ls_item.item_id)
+        except ShinyItem.DoesNotExist:
+            shiny_item = ShinyItem(ls_item_id=ls_item.item_id)
+            shiny_items_to_create.append(shiny_item)
+
+        shiny_item.default_cost = ls_item.default_cost or None
+        shiny_item.average_cost = ls_item.avg_cost or None
+        shiny_item.tax = ls_item.tax
+        shiny_item.archived = ls_item.archived
+        shiny_item.item_type = ls_item.item_type
+        shiny_item.serialized = ls_item.serialized
+        shiny_item.description = ls_item.description.strip().replace("  ", " ")
+        shiny_item.upc = ls_item.upc
+        shiny_item.custom_sku = ls_item.custom_sku
+        shiny_item.manufacturer_sku = ls_item.manufacturer_sku
+        shiny_item.item_matrix_id = ls_item.item_matrix_id
+        shiny_item.item_attributes = None
+        shiny_item.update_time = start_time
+        shiny_item.updated_from_ls_time = start_time
+
+        if shiny_item.pk:
+            shiny_items_to_update.append(shiny_item)
+
+    with transaction.atomic():
+        ShinyItem.objects.bulk_create(shiny_items_to_create)
+        ShinyItem.objects.bulk_update(
+            shiny_items_to_update,
+            get_updatable_fields(ShinyItem),
+        )
+
+
 if __name__ == "__main__":
-    format_customer_phone()
+    DELETE_ALL = False
+    if DELETE_ALL:
+        ShinyItem.objects.all().delete()
+    shiny_items_from_ls()

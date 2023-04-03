@@ -1,4 +1,5 @@
 """Load config values from config/config.json"""
+#pylint: disable=line-too-long
 import json
 from pathlib import Path
 

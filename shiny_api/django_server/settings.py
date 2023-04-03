@@ -29,13 +29,16 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "shiny_api.django_server.api",
+    "shiny_api.django_server.inventory",
+    "shiny_api.django_server.ls_functions",
+    "shiny_api.django_server.label_printer",
+    "shiny_api.django_server.sickw",
     "daphne",
     "pwa",
+    "crispy_forms",
+    "crispy_bootstrap5",
     "django_extensions",
-    "shiny_api.django_server.api.apps.ApiConfig",
-    "shiny_api.django_server.ls_functions.apps.LsFunctionsConfig",
-    "shiny_api.django_server.label_printer.apps.LabelPrinterConfig",
-    "shiny_api.django_server.sickw.apps.SickwConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -59,9 +62,7 @@ ROOT_URLCONF = "shiny_api.django_server.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            BASE_DIR / "templates",
-        ],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -73,7 +74,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = "shiny_api.django_server.wsgi.application"
 ASGI_APPLICATION = "shiny_api.django_server.asgi.application"
 
@@ -157,11 +157,18 @@ PWA_APP_ICONS = [{"src": "/static/logo_160.png", "sizes": "160x160"}]
 PWA_APP_SPLASH_SCREEN = [
     {
         "src": "/static/logo.jpg",
-        "media": "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)",
+        "media": 
+            "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)",
     }
 ]
 PWA_APP_DIR = "ltr"
 PWA_APP_LANG = "en-US"
 PWA_APP_DEBUG_MODE = True
 
-CSRF_TRUSTED_ORIGINS = ["https://web.shinyapi.logi.wiki:8000", "https://test.shinyapi.logi.wiki:8000"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://web.shinyapi.logi.wiki:8000",
+    "https://test.shinyapi.logi.wiki:8000",
+]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"

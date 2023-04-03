@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+  <h1>Inventory</h1>
+  <ul>
+    {% for item in items %}
+      <li>{{ item.name }} - {{ item.price }}</li>
+    {% empty %}
+      <li>No items in inventory</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+

@@ -109,6 +109,7 @@ class Prices:
 @dataclass
 class Item:
     """Item class from LS"""
+
     client = Client()
 
     def __init__(self, item_id: int = 0, ls_item: Any = None):
@@ -116,8 +117,11 @@ class Item:
         if ls_item is None:
             if item_id == 0:
                 raise ValueError("Must provide item_id or ls_item")
-            self.item_id = item_id
-            ls_item = self.client.get_item_json(self.item_id)
+            ls_item = self.client.get_item_json(item_id)
+        if ls_item is None:
+            self.item_id = 0
+            return
+
         self.item_id = int(ls_item.get("itemID"))
 
         self.system_sku = int(ls_item.get("systemSku"))
@@ -128,7 +132,7 @@ class Item:
         self.item_type = str(ls_item.get("itemType"))
         self.serialized = bool(ls_item.get("serialized"))
         self.description = str(ls_item.get("description"))
-        self.upc = int(ls_item.get("upc") or 0)
+        self.upc = ls_item.get("upc")
         self.custom_sku = str(ls_item.get("customSku"))
         self.manufacturer_sku = str(ls_item.get("manufacturerSku"))
         self.create_time = string_to_datetime(ls_item.get("createTime"))
@@ -176,12 +180,16 @@ class Item:
             yield Item(ls_item=item)
 
     @classmethod
-    def get_items_by_category(cls, categories: list[str], date_filter: datetime | None = None):
+    def get_items_by_category(
+        cls, categories: list[str], date_filter: datetime | None = None
+    ):
         """Run API auth."""
         if not isinstance(categories, list):
             categories = [categories]
         for category in categories:
-            for item in cls.client.get_items_json(category_id=category, date_filter=date_filter):
+            for item in cls.client.get_items_json(
+                category_id=category, date_filter=date_filter
+            ):
                 yield Item(ls_item=item)
 
     @classmethod
@@ -197,8 +205,11 @@ class Item:
             for item in cls.client.get_items_json(description=description):
                 item_list.append(Item(ls_item=item))
 
-        filtered_list = [item for item in item_list if all(
-            word.lower() in item.description.lower() for word in descriptions)]
+        filtered_list = [
+            item
+            for item in item_list
+            if all(word.lower() in item.description.lower() for word in descriptions)
+        ]
         return filtered_list
 
 

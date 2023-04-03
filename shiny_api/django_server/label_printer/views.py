@@ -16,8 +16,14 @@ class LabelGroup(BaseModel):
     @staticmethod
     def load_from_defaults():
         """Load label groups from config.DEFAULT_LABELS"""
-        return {name: LabelGroup(name=name, labels=label_group["labels"], printer_ip=label_group["printer_ip"])
-                for name, label_group in Config.DEFAULT_LABELS.items()}
+        return {
+            name: LabelGroup(
+                name=name,
+                labels=label_group["labels"],
+                printer_ip=label_group["printer_ip"],
+            )
+            for name, label_group in Config.DEFAULT_LABELS.items()
+        }
 
 
 def label_printer(request: WSGIRequest, active_label_group: str = "Main Labels"):
@@ -38,13 +44,17 @@ def label_printer(request: WSGIRequest, active_label_group: str = "Main Labels")
     if len(lines) == 0 or quantity < 1:
         context["error"] = "No label text"
     else:
-        print(f"Printing {lines} to {label_group_list[active_label_group].printer_ip}...")
+        print(
+            f"Printing {lines} to {label_group_list[active_label_group].printer_ip}..."
+        )
         try:
-            print_text(quantity=quantity,
-                       barcode=request.POST.get("barcode", ""),
-                       print_date=bool(request.POST.get("date", False)),
-                       text=lines,
-                       printer_ip=label_group_list[active_label_group].printer_ip)
+            print_text(
+                quantity=quantity,
+                barcode=request.POST.get("barcode", ""),
+                print_date=bool(request.POST.get("date", False)),
+                text=lines,
+                printer_ip=label_group_list[active_label_group].printer_ip,
+            )
         except TimeoutError as error:
             context["error"] = error.strerror
 
@@ -55,4 +65,4 @@ def label_printer(request: WSGIRequest, active_label_group: str = "Main Labels")
         "active_label_group": active_label_group,
     }
 
-    return render(request, 'labels.django-html', context)
+    return render(request, "label_printer/labels.html", context)

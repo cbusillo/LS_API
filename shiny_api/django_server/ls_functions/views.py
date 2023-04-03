@@ -22,7 +22,7 @@ def ls_functions(request: WSGIRequest, module_function_name: str = ""):
 
     if module_function_name == "" or running_function.get(module_function_name, False):
         context["buttons"] = buttons
-        return render(request, "ls_functions.django-html", context)
+        return render(request, "ls_functions/ls_functions.html", context)
 
     module_name, function_name = module_function_name.split("|")
 

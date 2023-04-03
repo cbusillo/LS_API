@@ -17,21 +17,21 @@ def workorder_label(request: WSGIRequest):
     workorder_id = int(request.GET.get("workorderID", 0))
     if workorder_id == 0:
         context["title"] = "No workorder ID"
-        return render(request, 'error.django-html', context)
+        return render(request, "error.django-html", context)
     workorder = Workorder(workorder_id)
     for line in workorder.note.split("\n"):
         if line[0:2].lower() == "pw" or line[0:2].lower() == "pc":
             password = line
     print_text(
         f"{workorder.customer.first_name} {workorder.customer.last_name}",
-        barcode=f'2500000{workorder.workorder_id}',
+        barcode=f"2500000{workorder.workorder_id}",
         quantity=quantity,
         text_bottom=password,
         print_date=True,
     )
     if str(request.GET.get("manual")).lower() != "true":
         context["auto_close"] = "True"
-    return render(request, 'close_window.django-html', context)
+    return render(request, "close_window.django-html", context)
 
 
 def ring_central_send_message(request: WSGIRequest):
@@ -46,7 +46,7 @@ def ring_central_send_message(request: WSGIRequest):
             mobile_number = phone.number
     if mobile_number is None:
         context["title"] = "No mobile number"
-        return render(request, 'error.django-html', context)
+        return render(request, "error.django-html", context)
     message_number = int(request.GET.get("message", 0))
     if (
         workorder.total == 0 and request.GET.get("message") == "2"
@@ -57,8 +57,7 @@ def ring_central_send_message(request: WSGIRequest):
         if word.lower() in item_description.lower() and word not in item_description:
             index = item_description.lower().find(word.lower())
             item_description = (
-                item_description[:index] + word +
-                item_description[index + len(word):]
+                item_description[:index] + word + item_description[index + len(word) :]
             )
 
     message = Config.RESPONSE_MESSAGES[message_number]
@@ -67,10 +66,10 @@ def ring_central_send_message(request: WSGIRequest):
         product=item_description,
         total=locale.currency(workorder.total),
     )
-    ip_address = request.META.get('REMOTE_ADDR')
+    ip_address = request.META.get("REMOTE_ADDR")
     if ip_address is None:
         context["title"] = "No IP address"
-        return render(request, 'error.django-html', context)
+        return render(request, "api/error.html", context)
 
     hostname = socket.gethostbyaddr(ip_address)[0]
 
@@ -78,4 +77,4 @@ def ring_central_send_message(request: WSGIRequest):
     if str(request.GET.get("manual")).lower() != "true":
         context["auto_close"] = "True"
 
-    return render(request, 'close_window.django-html', context)
+    return render(request, "api/close_window.html", context)

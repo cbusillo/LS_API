@@ -1,19 +1,16 @@
-{% extends "layout.django-html" %}
-{% load crispy_forms_tags %}
+{% extends "layout.html" %}
 {% block content %}
 
-<div class="content-section">
-    <form method="POST">
-        {% csrf_token %}
-
-        <fieldset class="form-group">
-            {{ form|crispy }}
-        </fieldset>
-        <div class="form-group">
-            <button class="btn btn-outline-info" type="submit">Sign Up</button>
+<div class="container">
+    <div class="row">
+        {% for module_function, button_description in buttons.items %}
+        <div class="col">
+            <a class="text-decoration-none btn btn-lg btn-secondary my-2 py-3"
+                href="{% url 'ls_functions' module_function_name=module_function %}">
+                {{ button_description }}</a>
         </div>
-    </form>
-
+        {% endfor %}
+    </div>
 </div>
 <hr />
 

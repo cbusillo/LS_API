@@ -24,4 +24,5 @@ urlpatterns = [
     path("ls_functions/", include("shiny_api.django_server.ls_functions.urls")),
     path("label_printer/", include("shiny_api.django_server.label_printer.urls")),
     path("sickw/", include("shiny_api.django_server.sickw.urls")),
+    path("inventory/", include("shiny_api.django_server.inventory.urls")),
 ]
