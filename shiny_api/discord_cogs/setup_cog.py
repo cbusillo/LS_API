@@ -24,10 +24,14 @@ class SetupCog(commands.Cog):
         if self.enable_commands is False:
             await asyncio.sleep(2)
 
+    @commands.has_role("Shiny")
     @commands.command(name="sync")
     async def sync_command(self, context: commands.Context) -> None:
         """Add slash commands to Discord guid"""
         if "imagingserver" in platform.node().lower():
+            if "restart" in context.message.clean_content.lower():
+                await context.channel.send("Restarting server!!!")
+                subprocess.run(["ssh", "127.0.0.1", "~/launch_api.sh"], check=False)
             await context.defer()
             subprocess.run(["git", "fetch"], check=False)
             result = subprocess.run(["git", "diff", "origin/main", "--quiet"], check=False)
@@ -47,6 +51,7 @@ class SetupCog(commands.Cog):
             self.enable_commands = False
             return
 
+    @commands.has_role("Shiny")
     @app_commands.command(name="clear")  # type: ignore
     @app_commands.choices(
         scope=[
