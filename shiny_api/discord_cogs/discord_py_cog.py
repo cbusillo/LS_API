@@ -25,7 +25,7 @@ class DiscordPyCog(commands.Cog):
 
     async def post_python(self, message: discord.Message):
         """Check for python code and run"""
-        if '```py\nrun' not in message.content:
+        if "```py\nrun" not in message.content:
             return
 
         code_result, code_error = await self.run_python(message)
@@ -39,9 +39,21 @@ class DiscordPyCog(commands.Cog):
         if message.attachments:
             message_code = str(await message.attachments[0].read())
         else:
-            message_code = message.content.split('```py\nrun')[1].split('```')[0]
+            message_code = message.content.split("```py\nrun")[1].split("```")[0]
 
-        keywords = ['.secret_client.json', '.secret.json', 'exec(', 'eval(', 'open(', 'os.', 'sys.', '.load_config', 'subprocess.']
+        keywords = [
+            ".secret_client.json",
+            ".secret.json",
+            "exec(",
+            "eval(",
+            "open(",
+            "os.",
+            "sys.",
+            ".load_config",
+            "subprocess.",
+            "key",
+            "token",
+        ]
 
         is_shiny = False
 
@@ -50,14 +62,15 @@ class DiscordPyCog(commands.Cog):
 
         if "Shiny" in [role.name for role in message.author.roles]:
             is_shiny = True
-        if any("Shiny" in [role.name for role in mention.roles]
-               for mention in message.mentions if isinstance(mention, discord.Member)):
+        if any(
+            "Shiny" in [role.name for role in mention.roles] for mention in message.mentions if isinstance(mention, discord.Member)
+        ):
             is_shiny = True
 
-        if any(keyword in message_code for keyword in keywords) and is_shiny is False:
+        if any(keyword in message_code.lower() for keyword in keywords) and is_shiny is False:
             return "Contains protected keywords", ""
 
-        popen = Popen(['gtimeout', '15', sys.executable, '-'], stderr=PIPE, stdout=PIPE, stdin=PIPE, cwd=os.getcwd())
+        popen = Popen(["gtimeout", "15", sys.executable, "-"], stderr=PIPE, stdout=PIPE, stdin=PIPE, cwd=os.getcwd())
         code_result, code_error = popen.communicate(bytes(message_code, encoding="utf-8"))
         return code_result.decode("utf8"), code_error.decode("utf8")
 
