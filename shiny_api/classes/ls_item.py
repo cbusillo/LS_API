@@ -127,10 +127,10 @@ class Item:
         self.system_sku = int(ls_item.get("systemSku"))
         self.default_cost = Decimal(ls_item.get("defaultCost"))
         self.avg_cost = Decimal(ls_item.get("avgCost"))
-        self.tax = bool(ls_item.get("tax"))
-        self.archived = bool(ls_item.get("archived"))
+        self.tax = bool(ls_item.get("tax").lower() == "true")
+        self.archived = bool(ls_item.get("archived").lower() == "true")
         self.item_type = str(ls_item.get("itemType"))
-        self.serialized = bool(ls_item.get("serialized"))
+        self.serialized = bool(ls_item.get("serialized").lower() == "true")
         self.description = str(ls_item.get("description"))
         self.upc = ls_item.get("upc")
         self.custom_sku = str(ls_item.get("customSku"))
@@ -180,16 +180,12 @@ class Item:
             yield Item(ls_item=item)
 
     @classmethod
-    def get_items_by_category(
-        cls, categories: list[str], date_filter: datetime | None = None
-    ):
+    def get_items_by_category(cls, categories: list[str], date_filter: datetime | None = None):
         """Run API auth."""
         if not isinstance(categories, list):
             categories = [categories]
         for category in categories:
-            for item in cls.client.get_items_json(
-                category_id=category, date_filter=date_filter
-            ):
+            for item in cls.client.get_items_json(category_id=category, date_filter=date_filter):
                 yield Item(ls_item=item)
 
     @classmethod
@@ -205,11 +201,7 @@ class Item:
             for item in cls.client.get_items_json(description=description):
                 item_list.append(Item(ls_item=item))
 
-        filtered_list = [
-            item
-            for item in item_list
-            if all(word.lower() in item.description.lower() for word in descriptions)
-        ]
+        filtered_list = [item for item in item_list if all(word.lower() in item.description.lower() for word in descriptions)]
         return filtered_list
 
 

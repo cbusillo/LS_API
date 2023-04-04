@@ -78,7 +78,7 @@ class Client(requests.Session):
                 raise TimeoutError
             if response_code == 404:
                 return None
-        return request_response
+        return request_response  # pyright: reportUnboundVariable=false
 
     def _entries(self, url: str, key_name: str, params: dict | None = None):
         """Iterate over all items in the API"""
@@ -103,12 +103,7 @@ class Client(requests.Session):
             next_url = self._response.json()["@attributes"]["next"]
             page += 1
 
-    def get_items_json(
-        self,
-        category_id: str = "",
-        description: str = "",
-        date_filter: datetime | None = None,
-    ):
+    def get_items_json(self, category_id: str = "", description: str = "", date_filter: datetime | None = None):
         """Get all items"""
         params = {"load_relations": '["ItemAttributes"]', "limit": "100"}
         if date_filter:
@@ -121,24 +116,23 @@ class Client(requests.Session):
 
         return self._entries(Config.LS_URLS["items"], "Item", params=params)
 
-    def get_customers_json(self):
+    def get_customers_json(self, date_filter: datetime | None = None):
         """Get all items"""
-        return self._entries(
-            Config.LS_URLS["customers"],
-            "Customer",
-            params={"load_relations": '["Contact"]', "limit": "100"},
-        )
+        params = {"load_relations": '["Contact"]', "limit": "100"}
+        if date_filter:
+            params["timeStamp"] = f">,{date_filter}"
+        return self._entries(Config.LS_URLS["customers"], "Customer", params=params)
 
     def get_customer_json(self, customer_id: int):
         """Get customer"""
         url = Config.LS_URLS["customer"].format(customerID=customer_id)
         params = {"load_relations": '["Contact"]'}
-        return self._entries(url, key_name="Customer", params=params)
+        return next(self._entries(url, key_name="Customer", params=params))
 
     def get_workorder_json(self, workorder_id: int):
         """Get workorder"""
         url = Config.LS_URLS["workorder"].format(workorderID=workorder_id)
-        return self._entries(url, key_name="Workorder")
+        return next(self._entries(url, key_name="Workorder"))
 
     def get_item_json(self, item_id: int):
         """Get item"""

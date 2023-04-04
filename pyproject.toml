@@ -27,6 +27,7 @@ paramiko = "^3.1.0"
 pillow = "^9.5.0"
 crispy-bootstrap5 = "^0.7"
 pylint-django = "^2.5.3"
+django-phonenumber-field = {extras = ["phonenumbers"], version = "^7.0.2"}
 
 [tool.poetry.group.dev.dependencies]
 types-paramiko = "^3.0.0.6"

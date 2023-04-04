@@ -1,6 +1,7 @@
 """Class to import customer objects from LS API"""
 from typing import Any
 from dataclasses import dataclass
+from datetime import datetime
 from rich import print as pprint
 from shiny_api.classes.ls_client import Client
 from shiny_api.modules.load_config import Config
@@ -28,9 +29,8 @@ class ContactEmail:
 
     def __init__(self, obj: dict["str", "str"]):
         """Contact email from dict"""
-        if isinstance(obj, list):
-            self.address = str(obj.get("address"))
-            self.use_type = str(obj.get("useType"))
+        self.address = str(obj.get("address"))
+        self.use_type = str(obj.get("useType"))
 
 
 @dataclass
@@ -50,9 +50,13 @@ class Emails:
 
     def __init__(self, obj: Any):
         """Emails from dict"""
-        if obj:
-            self.contact_email: list[ContactEmail] = [
-                ContactEmail(y) for y in obj.get("ContactEmail")]
+        if obj == "":
+            self.contact_email = []
+            return
+        if isinstance(obj.get("ContactEmail"), list):
+            self.contact_email = [ContactEmail(y) for y in obj.get("ContactEmail")]
+        else:
+            self.contact_email = [ContactEmail(obj.get("ContactEmail"))]
 
 
 @dataclass
@@ -100,6 +104,7 @@ class Contact:
 @dataclass
 class Customer:
     """Customer object from LS"""
+
     client = Client()
 
     def __init__(self, customer_id: int = 0, ls_customer: Any = None):
@@ -117,7 +122,7 @@ class Customer:
         self.company = str(ls_customer.get("company"))
         self.create_time = str(ls_customer.get("createTime"))
         self.time_stamp = str(ls_customer.get("timeStamp"))
-        self.archived = str(ls_customer.get("archived"))
+        self.archived = bool(ls_customer.get("archived").lower() == "true")
         self.contact_id = str(ls_customer.get("contactID"))
         self.credit_account_id = str(ls_customer.get("creditAccountID"))
         self.customer_type_id = str(ls_customer.get("customerTypeID"))
@@ -139,8 +144,7 @@ class Customer:
             numbers[number.use_type] = number.number
 
         numbers["Mobile"] = (
-            numbers.get("Mobile") or numbers.get("Home") or numbers.get(
-                "Work") or numbers.get("Fax") or numbers.get("Pager")
+            numbers.get("Mobile") or numbers.get("Home") or numbers.get("Work") or numbers.get("Fax") or numbers.get("Pager")
         )
         values = {value: key for key, value in numbers.items()}
         numbers = {value: key for key, value in values.items()}
@@ -162,12 +166,16 @@ class Customer:
         self.client.put(url, json=put_customer)
 
     @classmethod
-    def get_all_customers(cls):
+    def get_customers(cls, customer_id: int = 0, date_filter: datetime | None = None):
         """Generator to return all customers from LS API"""
-        for customer in cls.client.get_customers_json():
+        if customer_id != 0:
+            yield Customer(customer_id=customer_id)
+            return
+        for customer in cls.client.get_customers_json(date_filter=date_filter):
             yield Customer(ls_customer=customer)
 
 
 if __name__ == "__main__":
-    test = Customer.get_all_customers()
-    pprint(test)
+    test = Customer.get_customers()
+    for x in test:
+        pprint(x)

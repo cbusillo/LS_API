@@ -25,4 +25,5 @@ urlpatterns = [
     path("label_printer/", include("shiny_api.django_server.label_printer.urls")),
     path("sickw/", include("shiny_api.django_server.sickw.urls")),
     path("inventory/", include("shiny_api.django_server.inventory.urls")),
+    path("customers/", include("shiny_api.django_server.customers.urls")),
 ]

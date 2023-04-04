@@ -7,6 +7,7 @@ from shiny_api.classes.ls_customer import Customer
 @dataclass
 class Workorder:
     """Workorder object from LS"""
+
     client = Client()
 
     def __init__(self, workorder_id: int):

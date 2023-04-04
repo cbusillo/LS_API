@@ -26,7 +26,7 @@ class ItemAttributes(models.Model):
 class Item(models.Model):
     """Item model."""
 
-    ls_item_id = models.IntegerField(primary_key=True)
+    ls_item_id = models.IntegerField(null=True)
     default_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     average_cost = models.DecimalField(max_digits=12, decimal_places=4, null=True)
     tax = models.BooleanField()
@@ -42,9 +42,7 @@ class Item(models.Model):
     update_time = models.DateTimeField(auto_now=True)
     updated_from_ls_time = models.DateTimeField(null=True)
     item_matrix_id = models.IntegerField()
-    item_attributes = models.ForeignKey(
-        ItemAttributes, on_delete=models.CASCADE, null=True
-    )
+    item_attributes = models.ForeignKey(ItemAttributes, on_delete=models.CASCADE, null=True)
 
     def __str__(self) -> str:
         return f"{self.ls_item_id} - {self.description}"

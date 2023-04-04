@@ -16,6 +16,9 @@ def ls_functions(request: WSGIRequest, module_function_name: str = ""):
     buttons = {
         "shiny_api.modules.light_speed|format_customer_phone": "Format Customer Phone Numbers",
         "shiny_api.modules.light_speed|update_item_price": "Update iPhone/iPad Prices",
+        "shiny_api.modules.light_speed|import_items": "Import Items",
+        "shiny_api.modules.light_speed|import_customers": "Import Customers",
+        "shiny_api.modules.light_speed|delete_all": "Delete All",
     }
     context: dict[str, object] = {}
     context["title"] = "Light Speed Functions"
@@ -51,9 +54,7 @@ def send_message(message: str) -> None:
     channel_layer = get_channel_layer()
     if not isinstance(channel_layer, RedisChannelLayer):
         return
-    async_to_sync(channel_layer.group_send)(
-        "updates", {"type": "status", "message": message}
-    )
+    async_to_sync(channel_layer.group_send)("updates", {"type": "status", "message": message})
     print("updates", {"type": "status", "message": message})
 
     # if app is None:
