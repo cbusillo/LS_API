@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "shiny_api.django_server.api",
+    "shiny_api.django_server.customers",
     "shiny_api.django_server.inventory",
     "shiny_api.django_server.ls_functions",
     "shiny_api.django_server.label_printer",
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     "pwa",
     "crispy_forms",
     "crispy_bootstrap5",
+    "phonenumber_field",
     "django_extensions",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -157,8 +159,7 @@ PWA_APP_ICONS = [{"src": "/static/logo_160.png", "sizes": "160x160"}]
 PWA_APP_SPLASH_SCREEN = [
     {
         "src": "/static/logo.jpg",
-        "media": 
-            "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)",
+        "media": "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)",
     }
 ]
 PWA_APP_DIR = "ltr"
@@ -166,8 +167,8 @@ PWA_APP_LANG = "en-US"
 PWA_APP_DEBUG_MODE = True
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://web.shinyapi.logi.wiki:8000",
-    "https://test.shinyapi.logi.wiki:8000",
+    "https://web.shinyapi.logi.wiki",
+    "https://test.shinyapi.logi.wiki",
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
