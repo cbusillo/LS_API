@@ -26,4 +26,5 @@ urlpatterns = [
     path("sickw/", include("shiny_api.django_server.sickw.urls")),
     path("inventory/", include("shiny_api.django_server.inventory.urls")),
     path("customers/", include("shiny_api.django_server.customers.urls")),
+    path("serial_camera/", include("shiny_api.django_server.serial_camera.urls")),
 ]

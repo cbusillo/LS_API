@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+    <img id="output" width="640" height="480" />
+<script>
+    let video = document.getElementById('video');
+    let canvas = document.getElementById('canvas');
+    let ctx = canvas.getContext('2d');
+    let output = document.getElementById('output');
+
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        .then(function(stream) {
+            video.srcObject = stream;
+            video.play();
+        })
+        .catch(function(err) {
+            console.error("An error occurred: " + err);
+        });
+
+    let socket = new WebSocket('wss://' + window.location.host + '/ws/serial_camera/');
+
+    socket.onopen = function(event) {
+        console.log('WebSocket connection opened:', event);
+    };
+
+    socket.onerror = function(error) {
+        console.error('WebSocket error:', error);
+    };
+
+    socket.onclose = function(event) {
+        console.log('WebSocket connection closed:', event);
+    };
+
+    socket.onmessage = function(e) {
+        let img_data = 'data:image/png;base64,' + e.data;
+        output.src = img_data;
+    };
+
+    function sendFrame() {
+        if (socket.readyState === WebSocket.OPEN) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            let dataURL = canvas.toDataURL('image/png');  // Use PNG format
+            let base64 = dataURL.split(',')[1];
+            socket.send(base64);
+        } else {
+            console.warn('WebSocket connection is not open. Skipping frame send.');
+        }
+    }
+
+
+    setInterval(sendFrame, 1000 / 1);  // Send frames at 10 FPS
+</script>
+{% endblock content %}

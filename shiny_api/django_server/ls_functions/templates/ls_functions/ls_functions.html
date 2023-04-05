@@ -22,7 +22,7 @@
         const updateSocket = new WebSocket(
             'wss://'
             + window.location.host
-            + '/stream/'
+            + '/ws/ls_functions/'
         );
         document.querySelector('#status').value = "no message received yet...\n"
         updateSocket.onmessage = function(e) {
