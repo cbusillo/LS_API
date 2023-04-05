@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.11
 """Kill then start front and back ends"""
 import logging
 import subprocess

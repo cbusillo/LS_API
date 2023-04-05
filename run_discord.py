@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python 3.11
 """File to run discord bot""" ""
 from shiny_api.modules import discord_bot
 from shiny_api.modules.load_config import Config
