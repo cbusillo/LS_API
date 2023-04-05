@@ -116,6 +116,7 @@ class SetupCog(commands.Cog):
             await bot_member.add_roles(role)
 
     async def kick_if_ask(self, message: discord.Message) -> None:
+        """kick user if Mayday"""
         if message.author == self.bot.user:
             return
         if not isinstance(message.author, discord.Member):
