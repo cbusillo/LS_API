@@ -25,7 +25,7 @@ def start_django_server():
     print(subprocess.run(["pkill", "-f", "stunnel"], check=False))
     print(subprocess.Popen("python shiny_api/modules/django_server.py migrate", shell=True))
 
-    print(subprocess.Popen("stunnel shiny_api/config/stunnel.ini", shell=True))
+    print(subprocess.Popen("stunnel shiny_api/config/stunnel.ini", shell=False))
     django_server.main()
 
 
