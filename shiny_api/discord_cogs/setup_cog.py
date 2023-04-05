@@ -129,6 +129,7 @@ class SetupCog(commands.Cog):
         kick_words = ["give me mod"]
         if any(word in message.content.lower() for word in kick_words):
             await message.guild.kick(message.author, reason="No more asking")
+            await message.channel.send(f"{message.author} kicked for trying to get mod privileges.")
 
 
 async def setup(client: commands.Bot):
