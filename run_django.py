@@ -1,13 +1,11 @@
-#!/usr/bin/env python3.11
+#!/usr/bin/env python
 """File to run django server"""
 import logging
-import os
 import subprocess
 from pathlib import Path
 import shiny_api.modules.django_server as django_server
 from shiny_api.modules.load_config import Config
 from shiny_api.modules.shiny_networking import is_host_available, scp_file_from_host
-from pystunnel import Stunnel
 
 
 def start_django_server():
@@ -24,20 +22,12 @@ def start_django_server():
                 )
                 if remote_file:
                     local_file.write(remote_file)
-    subprocess.run("pkill -f stunnel", shell=True, check=False)
-    stunnel = Stunnel("shiny_api/config/stunnel.ini")
-    run_stunnel = stunnel.start()
-    print("stunnel started with rc", run_stunnel)
-    if stunnel.check() == 0:
-        print("stunnel is running with pid", stunnel.getpid())
-    else:
-        print("stunnel is not running")
-
+    print(subprocess.run(["pkill", "-f", "stunnel"], check=False))
     print(subprocess.Popen("python shiny_api/modules/django_server.py migrate", shell=True))
 
+    print(subprocess.Popen("/usr/local/bin/stunnel shiny_api/config/stunnel.ini", shell=True))
+    print(subprocess.Popen("/opt/homebrew/bin/stunnel shiny_api/config/stunnel.ini", shell=True))
     django_server.main()
-    run_stunnel = stunnel.stop()
-    print("stunnel stopped with rc", run_stunnel)
 
 
 if __name__ == "__main__":
