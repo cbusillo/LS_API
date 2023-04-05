@@ -35,7 +35,7 @@ def start_django_server():
 
     print(subprocess.Popen("python shiny_api/modules/django_server.py migrate", shell=True))
 
-    # django_server.main()
+    django_server.main()
     run_stunnel = stunnel.stop()
     print("stunnel stopped with rc", run_stunnel)
 
