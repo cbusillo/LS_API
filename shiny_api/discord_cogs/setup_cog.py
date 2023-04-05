@@ -19,10 +19,12 @@ class SetupCog(commands.Cog):
         super().__init__()
 
     @commands.Cog.listener("on_message")
-    async def enable_function(self, _: discord.Message):
+    async def listener_on_message(self, message: discord.Message):
         """If not enabled, delay one second so dev can answer"""
         if self.enable_commands is False:
             await asyncio.sleep(2)
+
+        await self.kick_if_ask(message)
 
     @commands.has_role("Shiny")
     @commands.command(name="sync")
@@ -112,6 +114,21 @@ class SetupCog(commands.Cog):
         else:
             print("Switching to Dev")
             await bot_member.add_roles(role)
+
+    async def kick_if_ask(self, message: discord.Message) -> None:
+        if message.author == self.bot.user:
+            return
+        if not isinstance(message.author, discord.Member):
+            return
+        if not isinstance(message.guild, discord.Guild):
+            return
+        if "OBERLORD" in message.author.roles:
+            return
+        if "Shiny" in message.guild.name:
+            return
+        kick_words = ["give me mod"]
+        if any(word in message.content.lower() for word in kick_words):
+            await message.guild.kick(message.author, reason="No more asking")
 
 
 async def setup(client: commands.Bot):
