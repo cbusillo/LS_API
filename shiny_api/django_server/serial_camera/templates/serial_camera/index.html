@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-
+    <div id="extracted-text"></div>
     <video id="video" width="640" height="480" autoplay></video>
     <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
     <img id="output" width="640" height="480" />
@@ -9,6 +9,8 @@
     let canvas = document.getElementById('canvas');
     let ctx = canvas.getContext('2d');
     let output = document.getElementById('output');
+    const extractedTextElement = document.getElementById('extracted-text');
+
 
     navigator.mediaDevices.getUserMedia({ video: true, audio: false })
         .then(function(stream) {
@@ -34,8 +36,15 @@
     };
 
     socket.onmessage = function(e) {
+      const data = event.data;
+      if (data.startsWith('image_stream: ')) {
+        // Update the image source with the received base64 data
         let img_data = 'data:image/png;base64,' + e.data;
-        output.src = img_data;
+        output.src = img_data.replace('image_stream: ', '');
+      } else {
+        // Update the extracted text
+        extractedTextElement.innerText = 'Extracted text: ' + data.replace('text_stream: ', '');
+      }
     };
 
     function sendFrame() {
