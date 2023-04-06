@@ -25,13 +25,9 @@ class Sickw:
         passed serial number and service.  Set status to false if sickw
         says not success or no HTML result string"""
 
-        current_params = {"imei": imei,
-                          "service": service,
-                          "key": Config.SICKW_API_KEY,
-                          "format": "JSON"}
+        current_params = {"imei": imei, "service": service, "key": Config.SICKW_API_KEY, "format": "JSON"}
         headers = {"User-Agent": "My User Agent 1.0"}
-        response = requests.get("https://sickw.com/api.php",
-                                params=current_params, headers=headers, timeout=60)
+        response = requests.get("https://sickw.com/api.php", params=current_params, headers=headers, timeout=60)
         response_json = response.json()
 
         self.serial_number = imei
@@ -98,7 +94,7 @@ class Sickw:
         return return_dict
 
     @staticmethod
-    def success_count(results: 'list[Sickw]') -> int:
+    def success_count(results: "list[Sickw]") -> int:
         """Return count of total sucessful Sickw results"""
         return_count = 0
         for result in results:
@@ -108,7 +104,7 @@ class Sickw:
         return return_count
 
     @staticmethod
-    def search_list_for_serial(results: 'list[Sickw]', serial: str) -> tuple[str, str] | None:
+    def search_list_for_serial(results: "list[Sickw]", serial: str) -> tuple[str, str] | None:
         """Return the device description from provided serial number and list of results"""
         for result in results:
             if result.serial_number == serial:
