@@ -1,24 +1,113 @@
 {% extends "base.html" %}
 {% block content %}
-    <div id="extracted-text"></div>
-    <video id="video" width="640" height="480" autoplay></video>
-    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
-    <img id="output" width="640" height="480" />
-<script>
+    <!-- Add a container for the dropdown and the video streams -->
+    <div class="container">
+        <!-- Move the dropdown to the top -->
+        <select id="camera-select">
+        </select>
+        <select id="rotation-select">
+            <option value="0">
+                0 degrees
+            </option>
+            <option value="90">
+                90 degrees
+            </option>
+            <option value="180">
+                180 degrees
+            </option>
+            <option value="-90">
+                -90 degrees
+            </option>
+        </select>
+        <div id="extracted-text"></div>
+        <!-- Wrap the video streams and the images in a flexbox container -->
+        <div class="video-container">
+            <video id="video" width="640" height="360" autoplay>
+            </video>
+            <img id="output" width="640" alt="1 bit image" />
+        </div>
+    </div>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <!-- Add some basic styling -->
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .video-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+    </style>
+    <script>
     let video = document.getElementById('video');
     let canvas = document.getElementById('canvas');
     let ctx = canvas.getContext('2d');
     let output = document.getElementById('output');
     const extractedTextElement = document.getElementById('extracted-text');
+    const cameraSelect = document.getElementById('camera-select');
+    let currentStream = null;
 
+    
 
-    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-        .then(function(stream) {
-            video.srcObject = stream;
-            video.play();
-        })
-        .catch(function(err) {
-            console.error("An error occurred: " + err);
+    function stopStream(stream) {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+    }
+
+    function switchCamera(deviceId) {
+        if (currentStream) {
+            stopStream(currentStream);
+        }
+        
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                deviceId: deviceId,
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
+            }, audio: false })
+            .then(stream => {
+                currentStream = stream;
+                video.srcObject = stream;
+                video.play();
+            })
+            .catch(err => {
+                console.error("An error occurred: " + err);
+            });
+    }
+
+    navigator.mediaDevices.enumerateDevices()
+        .then(devices => {
+            const cameras = devices.filter(device => device.kind === 'videoinput');
+            cameras.forEach(camera => {
+                const option = document.createElement('option');
+                option.value = camera.deviceId;
+                option.innerText = camera.label || `Camera ${cameras.indexOf(camera) + 1}`;
+                cameraSelect.appendChild(option);
+            });
+
+            // Set up event listener for camera selection
+            cameraSelect.addEventListener('change', () => {
+                switchCamera(cameraSelect.value);
+                localStorage.setItem('selectedCamera', cameraSelect.value);
+            });
+
+            // Read the values from localStorage
+            const savedCamera = localStorage.getItem('selectedCamera');
+            const savedRotation = localStorage.getItem('selectedRotation');
+
+            // Start with the saved camera or the first camera
+            if (cameras.length > 0) {
+                switchCamera(savedCamera || cameras[0].deviceId);
+            }
+
+            // Set the saved rotation or the default rotation
+            rotationSelect.value = savedRotation || "0";
+            applyRotation(); // Apply the initial rotation
         });
 
     let socket = new WebSocket('wss://' + window.location.host + '/ws/serial_camera/');
@@ -47,11 +136,34 @@
       }
     };
 
+    const rotationSelect = document.getElementById('rotation-select');
+
+    function applyRotation() {
+        const rotation = rotationSelect.value;
+        // Apply the rotation to both video and output image elements
+        video.style.transform = `rotate(${rotation}deg)`;
+    }
+
+    rotationSelect.addEventListener('change', () => {
+        applyRotation();
+        localStorage.setItem('selectedRotation', rotationSelect.value);
+    });
+
     function sendFrame() {
         if (socket.readyState === WebSocket.OPEN) {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const rotation = parseFloat(rotationSelect.value);
+            const radians = (Math.PI / 180) * rotation;
+            const swapDimensions = rotation % 180 !== 0;
+
+            canvas.width = swapDimensions ? video.videoHeight : video.videoWidth;
+            canvas.height = swapDimensions ? video.videoWidth : video.videoHeight;
+
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate(radians);
+            ctx.drawImage(video, -video.videoWidth / 2, -video.videoHeight / 2, video.videoWidth, video.videoHeight);
+            ctx.restore();
+
             let dataURL = canvas.toDataURL('image/png');  // Use PNG format
             let base64 = dataURL.split(',')[1];
             socket.send(base64);
@@ -60,7 +172,6 @@
         }
     }
 
-
     setInterval(sendFrame, 1000 / 1);  // Send frames at 10 FPS
-</script>
+    </script>
 {% endblock content %}
