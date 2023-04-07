@@ -19,6 +19,7 @@
                 -90 degrees
             </option>
         </select>
+        <button class="btn btn-primary" id="send-ten-frames-btn">Send 10 Frames</button>
         <div id="extracted-text"></div>
         <!-- Wrap the video streams and the images in a flexbox container -->
         <div class="video-container">
@@ -50,6 +51,9 @@
     const extractedTextElement = document.getElementById('extracted-text');
     const cameraSelect = document.getElementById('camera-select');
     let currentStream = null;
+    let reconnectAttempts = 0;
+    let skippedFrames = 0;
+    let framesPerSecond = 1;
 
     
 
@@ -110,31 +114,64 @@
             applyRotation(); // Apply the initial rotation
         });
 
+function reconnectOnDisconnect(socket) {
+    if (reconnectAttempts < 60) {
+        reconnectAttempts++;
+        console.log('WebSocket connection closed. Attempting to reconnect...');
+        setTimeout(() => {
+            console.log(`${reconnectAttempts} attempts remaining`);
+            const newSocket = connectWebSocket(reconnectAttempts - 1);
+            if (newSocket !== null) {
+                socket = newSocket;
+            }
+        }, 5000);
+    } else {
+        console.log('Maximum number of WebSocket reconnection attempts reached.');
+    }
+}
+
+   function connectWebSocket(reconnectAttempts = 10) {
+    if (reconnectAttempts <= 0) {
+        console.error('Maximum number of WebSocket reconnection attempts reached.');
+    }
     let socket = new WebSocket('wss://' + window.location.host + '/ws/serial_camera/');
 
     socket.onopen = function(event) {
         console.log('WebSocket connection opened:', event);
+        reconnectAttempts=0;
+        skippedFrames=0;
     };
 
     socket.onerror = function(error) {
         console.error('WebSocket error:', error);
+        reconnectOnDisconnect(socket);
     };
 
     socket.onclose = function(event) {
         console.log('WebSocket connection closed:', event);
+        // Reconnect after a delay
+        reconnectOnDisconnect(socket);
     };
 
+
+
     socket.onmessage = function(e) {
-      const data = event.data;
-      if (data.startsWith('image_stream: ')) {
-        // Update the image source with the received base64 data
-        let img_data = 'data:image/png;base64,' + e.data;
-        output.src = img_data.replace('image_stream: ', '');
-      } else {
-        // Update the extracted text
-        extractedTextElement.innerText = 'Extracted text: ' + data.replace('text_stream: ', '');
-      }
+        const data = event.data;
+        if (data.startsWith('image_stream: ')) {
+            // Update the image source with the received base64 data
+            let img_data = 'data:image/png;base64,' + e.data;
+            output.src = img_data.replace('image_stream: ', '');
+        } else {
+            // Update the extracted text
+            extractedTextElement.innerText = 'Extracted text: ' + data.replace('text_stream: ', '');
+        }
     };
+
+    return socket;
+}
+
+let socket = connectWebSocket();
+
 
     const rotationSelect = document.getElementById('rotation-select');
 
@@ -142,15 +179,15 @@
         const rotation = rotationSelect.value;
         // Apply the rotation to both video and output image elements
         video.style.transform = `rotate(${rotation}deg)`;
-    }
+    };
 
     rotationSelect.addEventListener('change', () => {
         applyRotation();
         localStorage.setItem('selectedRotation', rotationSelect.value);
     });
 
-    function sendFrame() {
-        if (socket.readyState === WebSocket.OPEN) {
+    function sendFrame(processFrameBool = false) {
+        if (socket && socket.readyState === WebSocket.OPEN) {
             const rotation = parseFloat(rotationSelect.value);
             const radians = (Math.PI / 180) * rotation;
             const swapDimensions = rotation % 180 !== 0;
@@ -164,14 +201,42 @@
             ctx.drawImage(video, -video.videoWidth / 2, -video.videoHeight / 2, video.videoWidth, video.videoHeight);
             ctx.restore();
 
-            let dataURL = canvas.toDataURL('image/png');  // Use PNG format
-            let base64 = dataURL.split(',')[1];
-            socket.send(base64);
+            const base64Image = canvas.toDataURL('image/png').split(',')[1];
+            const frameData = {
+                timestamp: new Date().toISOString(),
+                image: base64Image,
+                process: processFrameBool
+            };
+            socket.send(JSON.stringify(frameData));
         } else {
             console.warn('WebSocket connection is not open. Skipping frame send.');
+            skippedFrames++;
+            if (skippedFrames > 10) {
+                console.warn('Too many skipped frames. Attempting to reconnect...');
+                socket = connectWebSocket(socket);
+                skippedFrames = 0;
+            }
+            //reconnectOnDisconnect(socket, reconnectAttempts);
         }
     }
 
-    setInterval(sendFrame, 1000 / 1);  // Send frames at 10 FPS
+    setInterval(sendFrame, 1000 / framesPerSecond);  // Send frames at 10 FPS
+
+    function sendTenFrames() {
+        let frameCount = 0;
+        const frameInterval = 1000 / 30; // 30 FPS
+        
+        const sendFrameInterval = setInterval(() => {
+            frameCount++;
+            sendFrame(true);
+            
+
+            if (frameCount >= 10) {
+                clearInterval(sendFrameInterval);
+            }
+        }, frameInterval);
+    }
+const sendTenFramesBtn = document.getElementById('send-ten-frames-btn');
+sendTenFramesBtn.addEventListener('click', sendTenFrames);
     </script>
 {% endblock content %}
