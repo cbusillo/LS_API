@@ -12,12 +12,26 @@
 {% endblock navbar %}
 {% block content %}
     <script>
-document.addEventListener('keydown', function(event) {
-  if (event.metaKey && event.keyCode === 80) { 
-    document.getElementById('custom_label_print').click(); 
-    event.preventDefault(); 
-  }
-});
+        document.addEventListener('keydown', function(event) {
+        if (event.metaKey && event.keyCode === 80) { 
+            document.getElementById('custom_label_print').click(); 
+            event.preventDefault(); 
+        }
+        });
+        const textArea = document.getElementById('custom-label-text');
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const textArea = document.getElementById('custom-label-text');
+
+        if (textArea) {
+            textArea.addEventListener('focus', function() {
+                const self = this;
+                setTimeout(function() {
+                    self.select();
+                }, 10);
+            });
+        }
+    });
     </script>
     <form method="post">
         {% csrf_token %}
@@ -25,9 +39,10 @@ document.addEventListener('keydown', function(event) {
             <div class="row mb-3">
                 <div class="col-md-4">
                     <textarea class="form-control"
+                              id="custom-label-text"
                               rows="5"
                               placeholder="Custom Label Text"
-                              name="custom_label_text"></textarea>
+                              name="custom_label_text">{{ custom_label_text }}</textarea>
                 </div>
                 <div class="col-md-3">
                     <input class="form-control"
