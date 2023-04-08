@@ -14,7 +14,7 @@ def start_django_server():
 
     if is_host_available(Config.CERTIFICATE_SERVER_HOSTNAME):
         for file_name in ["cert.pem", "privkey.pem", "fullchain.pem"]:
-            local_file_name = ".secret." + file_name
+            local_file_name = ".shiny/secret." + file_name
             with open(Path.home() / local_file_name, "wb") as local_file:
                 remote_file = scp_file_from_host(
                     Config.CERTIFICATE_SERVER_HOSTNAME,

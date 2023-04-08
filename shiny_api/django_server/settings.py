@@ -27,16 +27,14 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 # Application definition
+SHINY_INSTALLED_APPS = [
+    "shiny_api.django_server." + path.name
+    for path in Path(BASE_DIR).glob("./*")
+    if path.is_dir() and path.name not in ["__pycache__", "templates", "static"]
+]
 
 INSTALLED_APPS = [
-    "shiny_api.django_server.api",
-    "shiny_api.django_server.customers",
-    "shiny_api.django_server.inventory",
-    "shiny_api.django_server.ls_functions",
-    "shiny_api.django_server.label_printer",
-    "shiny_api.django_server.sickw",
-    "shiny_api.django_server.serial_camera",
-    "shiny_api.django_server.check_in",
+    *SHINY_INSTALLED_APPS,
     "daphne",
     "pwa",
     "crispy_forms",
@@ -94,7 +92,7 @@ CHANNEL_LAYERS = {
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": Path.home().resolve() / ".shiny" / "db.sqlite3",
     }
 }
 

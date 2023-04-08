@@ -8,7 +8,7 @@ $(document).ready(
             const textData = inputField.val();
 
         $.ajax({
-            url: '{% url "check_in-get_text_data" %}',
+            url: '{% url "check_in-partial_form_data" %}',
             type: 'POST',
             data: {
                 'text_data': textData,

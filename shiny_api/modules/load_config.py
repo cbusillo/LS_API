@@ -1,22 +1,23 @@
 """Load config values from config/config.json"""
-#pylint: disable=line-too-long
+# pylint: disable=line-too-long
 import json
 from pathlib import Path
 
 
 class Config:
     """class to hold config values"""
+
     CERTIFICATE_SERVER_HOSTNAME = "imagingserver.local"
     CERTIFICATE_SERVER_FILE = "/etc/letsencrypt/live/shinyapi.logi.wiki/"
     SCRIPT_DIR = Path(__file__).resolve().parent.parent
-    CONFIG_SECRET_DIR = Path.home()
+    CONFIG_SECRET_DIR = Path.home() / ".shiny"
     COG_DIR = SCRIPT_DIR / "discord_cogs"
 
     with open(f"{SCRIPT_DIR}/config/config.json", encoding="utf8") as file:
         config_file = json.load(file)
 
     # load secret keys from secret.json
-    with open(f"{CONFIG_SECRET_DIR}/.secret.json", encoding="utf8") as file:
+    with open(f"{CONFIG_SECRET_DIR}/secret.json", encoding="utf8") as file:
         secret_file = json.load(file)
 
     FRONT_PRINTER_IP = config_file.get("front_printer_ip")
@@ -49,9 +50,7 @@ class Config:
 
     GOOGLE_SHEETS_SERIAL_NAME = config_file.get("google_sheets_serial_name")
 
-    GOOGLE_SHEETS_SERIAL_PRINT = (
-        config_file.get("google_sheets_serial_print").lower() == "true"
-    )
+    GOOGLE_SHEETS_SERIAL_PRINT = config_file.get("google_sheets_serial_print").lower() == "true"
 
     PC_API_URL = {
         "device": " https://clientapiv2.phonecheck.com/cloud/cloudDB/GetDeviceInfo",
@@ -72,9 +71,7 @@ class Config:
     DJANGO_SECRET_KEY = secret_file.get("django_secret_key")
 
     HOMEASSISTANT_API = {
-        store_key: {
-            config_key: config_value for config_key, config_value in store_value.items()
-        }
+        store_key: {config_key: config_value for config_key, config_value in store_value.items()}
         for store_key, store_value in secret_file.get("homeassistant_api").items()
     }
 

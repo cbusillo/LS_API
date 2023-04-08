@@ -221,9 +221,11 @@ def shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None 
     """Get LS items since date_filter and iterate through them"""
     if date_filter is None:
         date_filter = shiny_updated_from_ls_time(model)
-    if type(model) == type(ShinyItem):
+
+    model_name = model.__name__
+    if model_name == "Item":
         ls_entities = LSItem.get_all_items(date_filter=date_filter)
-    if type(model) == type(ShinyCustomer):
+    elif model_name == "Customer":
         ls_entities = LSCustomer.get_customers(date_filter=date_filter)
 
     else:
@@ -250,6 +252,8 @@ def shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None 
         if shiny_entity.pk:
             shiny_entity_to_update.append(shiny_entity)
 
+        logging.debug("Shiny %s %s created/updated", model_name, shiny_entity)
+
     with transaction.atomic():
         model.objects.bulk_create(shiny_entity_to_create)
         model.objects.bulk_update(
@@ -275,6 +279,7 @@ def delete_all():
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     DELETE_ALL = False
     if DELETE_ALL:
         ShinyItem.objects.all().delete()

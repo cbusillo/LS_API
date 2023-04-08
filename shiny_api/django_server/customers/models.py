@@ -37,3 +37,6 @@ class Customer(models.Model):
     is_modified = models.BooleanField(default=False)
     emails = models.ManyToManyField(Email, blank=True)
     phones = models.ManyToManyField(Phone, blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.first_name} {self.last_name}"

@@ -42,8 +42,8 @@ class DiscordPyCog(commands.Cog):
             message_code = message.content.split("```py\nrun")[1].split("```")[0]
 
         keywords = [
-            ".secret_client.json",
-            ".secret.json",
+            "secret_client.json",
+            "secret.json",
             "exec(",
             "eval(",
             "open(",

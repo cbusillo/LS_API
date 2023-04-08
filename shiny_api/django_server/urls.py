@@ -28,4 +28,5 @@ urlpatterns = [
     path("customers/", include("shiny_api.django_server.customers.urls")),
     path("serial_camera/", include("shiny_api.django_server.serial_camera.urls")),
     path("check_in/", include("shiny_api.django_server.check_in.urls")),
+    path("config/", include("shiny_api.django_server.config.urls")),
 ]
