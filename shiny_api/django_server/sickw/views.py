@@ -1,6 +1,6 @@
 """View for sickw"""
-from django.core.handlers.wsgi import WSGIRequest  # type: ignore
-from django.shortcuts import render  # type: ignore
+from django.core.handlers.wsgi import WSGIRequest
+from django.shortcuts import render
 from pydantic import BaseModel
 
 

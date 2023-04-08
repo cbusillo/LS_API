@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "shiny_api.django_server.label_printer",
     "shiny_api.django_server.sickw",
     "shiny_api.django_server.serial_camera",
+    "shiny_api.django_server.check_in",
     "daphne",
     "pwa",
     "crispy_forms",

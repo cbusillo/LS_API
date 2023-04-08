@@ -1,7 +1,7 @@
 """URLs for the LS Functions app.""" ""
-from django.urls import path  # type: ignore
+from django.urls import path
 
-from . import views  # pylint: disable=no-name-in-module
+from . import views
 
 urlpatterns = [
     path("", views.label_printer, name="label_printer"),

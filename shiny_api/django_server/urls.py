@@ -13,9 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path, include  # type: ignore
-from django.views.generic import RedirectView  # type: ignore
-from pwa import urls as pwa_urls  # type: ignore
+from django.urls import path, include
+from django.views.generic import RedirectView
+from pwa import urls as pwa_urls
 
 urlpatterns = [
     path("", include(pwa_urls)),
@@ -27,4 +27,5 @@ urlpatterns = [
     path("inventory/", include("shiny_api.django_server.inventory.urls")),
     path("customers/", include("shiny_api.django_server.customers.urls")),
     path("serial_camera/", include("shiny_api.django_server.serial_camera.urls")),
+    path("check_in/", include("shiny_api.django_server.check_in.urls")),
 ]

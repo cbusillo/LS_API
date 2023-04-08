@@ -1,7 +1,7 @@
 """Urls for ls_function app"""
-from django.urls import path  # type: ignore
+from django.urls import path
 
-from . import consumers  # pylint: disable=no-name-in-module
+from . import consumers
 
 websocket_urlpatterns = [
     path("ws/serial_camera/", consumers.CameraConsumer.as_asgi()),

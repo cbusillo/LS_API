@@ -1,6 +1,6 @@
 """View for LS Functions"""
-from django.core.handlers.wsgi import WSGIRequest  # type: ignore
-from django.shortcuts import render  # type: ignore
+from django.core.handlers.wsgi import WSGIRequest
+from django.shortcuts import render
 from pydantic import BaseModel
 from shiny_api.modules.load_config import Config
 from shiny_api.modules.label_print import print_text
@@ -46,7 +46,6 @@ def label_printer(request: WSGIRequest, active_label_group: str = "Main Labels")
     else:
         print(f"Printing {lines} to {label_group_list[active_label_group].printer_ip}...")
         try:
-            pass
             print_text(
                 quantity=quantity,
                 barcode=request.POST.get("barcode", ""),
@@ -59,8 +58,8 @@ def label_printer(request: WSGIRequest, active_label_group: str = "Main Labels")
 
     context = {
         "title": "Label Printer",
-        "label_group_name_list": label_group_name_list,  # type: ignore
-        "active_labels": label_group_list[active_label_group].labels,  # type: ignore
+        "label_group_name_list": label_group_name_list,
+        "active_labels": label_group_list[active_label_group].labels,
         "active_label_group": active_label_group,
         "custom_label_text": label_text,
     }

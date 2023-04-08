@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    {% include "check_in/home.js.html" %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Adjust column size as needed -->
+                <form>
+                    {{ form|crispy }}
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,5 +1,5 @@
 """Urls for ls_function app"""
-from django.urls import path  # type: ignore
+from django.urls import path
 
 from . import consumers
 

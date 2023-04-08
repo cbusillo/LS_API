@@ -1,5 +1,5 @@
 """URLs for the LS Functions app.""" ""
-from django.urls import path  # type: ignore
+from django.urls import path
 
 from . import views
 

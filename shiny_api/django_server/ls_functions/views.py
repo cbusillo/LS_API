@@ -2,10 +2,10 @@
 from importlib import import_module
 from threading import Thread
 from asgiref.sync import async_to_sync
-from channels_redis.core import RedisChannelLayer  # type: ignore
-from channels.layers import get_channel_layer  # type: ignore
-from django.core.handlers.wsgi import WSGIRequest  # type: ignore
-from django.shortcuts import render, redirect  # type: ignore
+from channels_redis.core import RedisChannelLayer
+from channels.layers import get_channel_layer
+from django.core.handlers.wsgi import WSGIRequest
+from django.shortcuts import render, redirect
 
 # from django_eventstream import send_event
 from shiny_api.django_server.settings import running_function

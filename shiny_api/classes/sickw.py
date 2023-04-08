@@ -1,8 +1,7 @@
 """Connect to sickw and return a SickwResults object with data from serial_number and service """
 from dataclasses import dataclass
-from typing import Self
 from pathlib import Path
-from bs4 import BeautifulSoup  # type: ignore
+from bs4 import BeautifulSoup
 import requests
 from shiny_api.modules.load_config import Config
 
@@ -71,6 +70,7 @@ class Sickw:
     @property
     def findmy_formatted(self) -> str:
         """load file of serials and write results to file"""
+        formatted_result = None
 
         if self.status == "failed" or self.findmy is None:
             formatted_result = "FAILED"
@@ -115,9 +115,9 @@ class Sickw:
     @staticmethod
     def findmy_from_file(serial_filename: Path, output_filename: Path):
         """load file of serials and write results to file"""
-        with open(serial_filename, "r") as serial_file:
+        with open(serial_filename, "r", encoding="utf-8") as serial_file:
             serials = serial_file.readlines()
-        with open(output_filename, "w") as output_file:
+        with open(output_filename, "w", encoding="utf-8") as output_file:
             for serial in serials:
                 sickw_item = Sickw(imei=serial.strip(), service=SickConstants.APPLE_FINDMY)
                 output_text = f"Serial Number: {sickw_item.serial_number} Findmy: {sickw_item.findmy_formatted}"

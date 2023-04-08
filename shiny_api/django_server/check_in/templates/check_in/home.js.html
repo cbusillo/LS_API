@@ -1,0 +1,29 @@
+<script>
+$(document).ready(
+    function () {
+        const inputField = $('#id_text_input');
+        const outputField = $('#id_text_output');
+
+        inputField.on('input', function () {
+            const textData = inputField.val();
+
+        $.ajax({
+            url: '{% url "check_in-get_text_data" %}',
+            type: 'POST',
+            data: {
+                'text_data': textData,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            dataType: 'json',
+
+            success: function (response) {
+                outputField.val(response.message);
+            },
+            error: function (response) {
+                console.error(response.message);
+            }
+        });
+    });
+});
+
+</script>

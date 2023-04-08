@@ -1,6 +1,6 @@
 """Class file for websocket consumer"""
 import json
-from channels.generic.websocket import WebsocketConsumer  # type: ignore
+from channels.generic.websocket import WebsocketConsumer
 from channels_redis.core import RedisChannelLayer
 from asgiref.sync import async_to_sync
 
@@ -18,6 +18,8 @@ class LsFunctionsConsumer(WebsocketConsumer):
 
     def disconnect(self, _close_code):
         """Disconnect client from group"""
+        if not isinstance(self.channel_layer, RedisChannelLayer):
+            return
         async_to_sync(self.channel_layer.group_add("updates", self.channel_name))
 
     def receive(self, text_data: str = "", _bytes_data: bytes = b""):

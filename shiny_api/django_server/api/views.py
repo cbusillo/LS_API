@@ -1,8 +1,8 @@
 """View for API access to Shiny Stuff"""
 import locale
 import socket
-from django.core.handlers.wsgi import WSGIRequest  # type: ignore
-from django.shortcuts import render  # type: ignore
+from django.core.handlers.wsgi import WSGIRequest
+from django.shortcuts import render
 from shiny_api.classes.ls_workorder import Workorder
 from shiny_api.modules.load_config import Config
 from shiny_api.modules.label_print import print_text

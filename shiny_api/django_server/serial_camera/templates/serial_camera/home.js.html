@@ -1,49 +1,4 @@
-{% extends "base.html" %}
-{% block content %}
-    <!-- Add a container for the dropdown and the video streams -->
-    <div class="container">
-        <!-- Move the dropdown to the top -->
-        <select id="camera-select">
-        </select>
-        <select id="rotation-select">
-            <option value="0">
-                0 degrees
-            </option>
-            <option value="90">
-                90 degrees
-            </option>
-            <option value="180">
-                180 degrees
-            </option>
-            <option value="-90">
-                -90 degrees
-            </option>
-        </select>
-        <button class="btn btn-primary" id="send-ten-frames-btn">Send 10 Frames</button>
-        <div id="extracted-text"></div>
-        <!-- Wrap the video streams and the images in a flexbox container -->
-        <div class="video-container">
-            <video id="video" width="640" height="360" autoplay>
-            </video>
-            <img id="output" width="640" alt="1 bit image" />
-        </div>
-    </div>
-    <canvas id="canvas" style="display:none;"></canvas>
-    <!-- Add some basic styling -->
-    <style>
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .video-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-    </style>
-    <script>
+<script>
     let video = document.getElementById('video');
     let canvas = document.getElementById('canvas');
     let ctx = canvas.getContext('2d');
@@ -238,5 +193,4 @@ let socket = connectWebSocket();
     }
 const sendTenFramesBtn = document.getElementById('send-ten-frames-btn');
 sendTenFramesBtn.addEventListener('click', sendTenFrames);
-    </script>
-{% endblock content %}
+</script>
