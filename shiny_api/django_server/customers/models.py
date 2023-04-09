@@ -3,20 +3,6 @@ from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
 
-class Email(models.Model):
-    """Contact email from dict"""
-
-    address = models.EmailField()
-    use_type = models.CharField(max_length=100)
-
-
-class Phone(models.Model):
-    """Contact phone"""
-
-    number = PhoneNumberField(blank=True)
-    use_type = models.CharField(max_length=20)
-
-
 class Customer(models.Model):
     """Customer object from LS"""
 
@@ -35,8 +21,27 @@ class Customer(models.Model):
     discount_id = models.IntegerField(blank=True, null=True)
     tax_category_id = models.IntegerField(blank=True, null=True)
     is_modified = models.BooleanField(default=False)
-    emails = models.ManyToManyField(Email, blank=True)
-    phones = models.ManyToManyField(Phone, blank=True)
 
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"
+
+    @property
+    def full_name(self) -> str:
+        """Return string of full name"""
+        return f"{self.first_name} {self.last_name}"
+
+
+class Email(models.Model):
+    """Contact email from dict"""
+
+    address = models.EmailField()
+    use_type = models.CharField(max_length=100)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="emails")
+
+
+class Phone(models.Model):
+    """Contact phone"""
+
+    number = PhoneNumberField(blank=True)
+    use_type = models.CharField(max_length=20)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="phones")

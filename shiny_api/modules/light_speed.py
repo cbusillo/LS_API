@@ -8,7 +8,6 @@ from datetime import datetime
 from functools import lru_cache
 import pytz
 from selenium import webdriver
-from shiny_api.modules.shiny_django import get_updatable_fields
 from django.db import transaction, models  # pylint: disable=wrong-import-order
 from django.utils import timezone  # pylint: disable=wrong-import-order
 from shiny_api.classes.ls_customer import Customer as LSCustomer
@@ -214,11 +213,15 @@ def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustome
     shiny_customer.discount_id = ls_customer.discount_id
     shiny_customer.tax_category_id = ls_customer.tax_category_id
 
-    phones = [ShinyPhone(number=phone.number, use_type=phone.use_type) for phone in ls_customer.contact.phones.contact_phone]
+    shiny_customer.save()
 
-    emails = [ShinyEmail(address=email.address, use_type=email.use_type) for email in ls_customer.contact.emails.contact_email]
+    for phone in ls_customer.contact.phones.contact_phone:
+        ShinyPhone(number=phone.number, use_type=phone.use_type, customer=shiny_customer).save()
 
-    return shiny_customer, phones, emails
+    for email in ls_customer.contact.emails.contact_email:
+        ShinyEmail(address=email.address, use_type=email.use_type, customer=shiny_customer).save()
+
+    logging.debug("Shiny customer %s created/updated", shiny_customer.full_name)
 
 
 def shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None = None):
@@ -236,8 +239,6 @@ def shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None 
         logging.warning("Invalid model type passed to shiny_model_from_ls")
         return
 
-    shiny_entities_to_update = []
-    shiny_entities_to_create = []
     start_time = timezone.now()
 
     for ls_entity in ls_entities:
@@ -247,47 +248,21 @@ def shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None 
             shiny_entity = model.objects.get(**key_args)
         except model.DoesNotExist:
             shiny_entity = model(**key_args)
-            shiny_entities_to_create.append(shiny_entity)
 
         convert_function = getattr(sys.modules[__name__], f"shiny_{module_name}_from_ls")
-
-        shiny_entity, phones, emails = convert_function(shiny_entity, ls_entity, start_time)
-
-        if shiny_entity.pk:
-            shiny_entities_to_update.append(shiny_entity)
-
-        logging.debug("Shiny %s %s created/updated", model_name, shiny_entity)
-
-    with transaction.atomic():
-        model.objects.bulk_create(shiny_entities_to_create)
-        model.objects.bulk_update(
-            shiny_entities_to_update,
-            get_updatable_fields(model),
-        )
-        for ls_entity, shiny_entity in zip(ls_entities, shiny_entities_to_update):
-            # Create and link related Email and Phone objects
-            if isinstance(shiny_entity, ShinyCustomer):
-                shiny_customer, phones_to_add, emails_to_add = shiny_customer_from_ls(shiny_entity, ls_entity, start_time)
-
-                for phone in phones_to_add:
-                    phone.save()
-                    shiny_customer.phones.add(phone)
-
-                for email in emails_to_add:
-                    email.save()
-                    shiny_customer.emails.add(email)
-
-                shiny_customer.save()
+        convert_function(shiny_entity, ls_entity, start_time)
 
 
 def import_items():
     """temp function to import items from LS"""
-    shiny_model_from_ls(ShinyItem)
+    with transaction.atomic():
+        shiny_model_from_ls(ShinyItem)
 
 
 def import_customers():
     """temp function to import customers from LS"""
-    shiny_model_from_ls(ShinyCustomer)
+    with transaction.atomic():
+        shiny_model_from_ls(ShinyCustomer)
 
 
 def delete_all():
@@ -298,7 +273,7 @@ def delete_all():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    DELETE_ALL = True
+    DELETE_ALL = False
     if DELETE_ALL:
         ShinyItem.objects.all().delete()
         ShinyEmail.objects.all().delete()

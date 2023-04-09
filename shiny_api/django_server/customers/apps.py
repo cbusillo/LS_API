@@ -6,4 +6,4 @@ class CustomerConfig(AppConfig):
     """Class to name Inventory app"""
 
     name = "shiny_api.django_server.customers"
-    label = "customer"
+    label = "customers"

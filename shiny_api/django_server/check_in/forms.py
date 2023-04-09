@@ -19,7 +19,7 @@ class CheckIn(forms.Form):
     )
     text_output = forms.CharField(label="Output Label", required=False)
     customer_output = forms.ModelChoiceField(
-        label="Customers", required=False, queryset=None, widget=forms.Select(attrs={"size": 10})
+        label="Customers", required=False, queryset=None, widget=forms.Select(attrs={"size": 15}), empty_label=None
     )
 
     def __init__(self, *args, **kwargs):

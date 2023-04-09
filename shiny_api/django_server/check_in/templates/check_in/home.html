@@ -2,19 +2,17 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    {% include "check_in/home.js.html" %}
+    <script>{% include "check_in/home.js" %}</script>
     <div class="container">
         <div class="row">
             <div class="col-md-6">
                 <!-- Adjust column size as needed -->
-                <form method="post" autocomplete="off">
+                <form method="post" autocomplete="off" id="check-in-form" data-url="{% url 'check_in-partial_form_data' %}" data-csrf-token="{{ csrf_token }}" data-customers="{{ customers }}">
                     {{ form|crispy }}
                 </form>
             </div>
              <div class="col-md-6">
-                <!-- Add your content for the right-side container here -->
-                <div class="right-side-container">
-                    <p>Right-side content goes here.</p>
+                <div class="customer-detail-container">
                 </div>
             </div>
         </div>
