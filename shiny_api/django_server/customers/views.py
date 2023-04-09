@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.views import View
 
-from .forms import CustomerSearchForm
+from .forms import CustomerSearchList
 from .models import Customer
 
 
@@ -13,7 +13,7 @@ class CustomerListView(View):
 
     def get(self, request):
         """Create form on GET request and list items"""
-        form = CustomerSearchForm(request.GET)
+        form = CustomerSearchList(request.GET)
         customers = Customer.objects.all()
 
         if form.is_valid():

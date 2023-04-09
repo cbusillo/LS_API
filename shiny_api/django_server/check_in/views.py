@@ -1,28 +1,38 @@
 """App to check customers in"""
-from django.db.models import Q
-from django.forms.models import model_to_dict
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from shiny_api.django_server.customers.models import Customer
-from . import forms
+from ..customers.forms import CustomerDetailForm, CustomerSearch
 
 
-def partial_form_data(request):
+def partial_customer_form_data(request):
     """Receive form data as it is being entered"""
+    form = CustomerSearch(request.POST or None)
+    if form.is_valid():
+        last_name = form.cleaned_data.get("last_name_input")
+        first_name = form.cleaned_data.get("first_name_input")
+        html_customer_output = form.get_customer_options(last_name, first_name)
 
-    if request.method == "POST" and request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        last_name = request.POST.get("last_name")
-        first_name = request.POST.get("first_name")
-        customer_filter = Q(last_name__icontains=last_name) & Q(first_name__icontains=first_name)
-        if filter_has_value(customer_filter):
-            order_by = "last_name first_name"
+        test_output = html_customer_output
+
+        customer_id = request.POST.get("customer_id")
+        if customer_id:
+            customer = Customer.objects.get(id=customer_id)
+            customer_detail_form = CustomerDetailForm(instance=customer)
+            customer_detail_form_html = render_to_string(
+                "customers/customer_detail.html",
+                {"customer_detail_form": customer_detail_form},
+                request=request,
+            )
         else:
-            order_by = "-update_time"
-        customers = Customer.objects.filter(customer_filter).order_by("last_name", "first_name")
+            customer_detail_form_html = None
 
-        customers_list = [model_to_dict(customer) for customer in customers]
-        test_output = " ".join([customer.first_name for customer in customers])
-        response_data = {"message": f"Received data: {test_output}", "customers": customers_list[:100]}
+        response_data = {
+            "message": f"Received data: {test_output}",
+            "html_customer_options": html_customer_output,
+            "customer_detail_form": customer_detail_form_html,
+        }
         return JsonResponse(response_data)
 
     return JsonResponse({"message": "Invalid request."}, status=400)
@@ -33,20 +43,7 @@ def home(request):
     customers = Customer.objects.all().order_by("-update_time")[:15]
     if customers.count() == 0:
         return redirect("ls_functions:home")
-    check_in_form = forms.CheckIn(customers=customers)
+    customer_search = CustomerSearch(customers=customers)
 
-    context = {"form": check_in_form}
+    context = {"customer_search_form": customer_search}
     return render(request, "check_in/home.html", context)
-
-
-def filter_has_value(query_filter: Q) -> bool:
-    """Check for any values in filter"""
-    for child in query_filter.children:
-        if isinstance(child, Q):
-            if filter_has_value(child):
-                return True
-        else:
-            _, value = child
-            if value:
-                return True
-    return False

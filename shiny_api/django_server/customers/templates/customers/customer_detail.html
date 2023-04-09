@@ -1,0 +1,11 @@
+{% load crispy_forms_tags %}
+{% if customer_detail_form %}
+    <form method="post"
+          id="customer_detail_form"
+          data-url="{% url 'check_in:home' %}">
+        {{ customer_detail_form|crispy }}
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+{% else %}
+    <p>Please select a customer</p>
+{% endif %}

@@ -6,5 +6,5 @@ app_name = "check_in"
 
 urlpatterns = [
     path("", views.home, name="home"),
-    path("partial_form_data/", views.partial_form_data, name="partial_form_data"),
+    path("partial_customer_form_data/", views.partial_customer_form_data, name="partial_customer_form_data"),
 ]

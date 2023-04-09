@@ -26,7 +26,8 @@ class Customer(models.Model):
         """Save customer"""
         self.first_name = self.first_name.strip()
         self.last_name = self.last_name.strip()
-        self.title = self.title.strip()
+        if self.title:
+            self.title = self.title.strip()
         self.company = self.company.strip()
         super().save(*args, **kwargs)
 

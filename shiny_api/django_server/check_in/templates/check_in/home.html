@@ -1,20 +1,23 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
-
 {% block content %}
-    <script>{% include "check_in/home.js" %}</script>
     <div class="container">
         <div class="row">
             <div class="col-md-6">
                 <!-- Adjust column size as needed -->
-                <form method="post" autocomplete="off" id="check-in-form" data-url="{% url 'check_in:partial_form_data' %}" data-csrf-token="{{ csrf_token }}" data-customers="{{ customers }}">
-                    {{ form|crispy }}
+                <form method="post"
+                      autocomplete="off"
+                      id="customer_search_form"
+                      data-url="{% url 'check_in:partial_customer_form_data' %}"
+                      data-csrf-token="{{ csrf_token }}"
+                      data-customers="{{ customers }}">
+                    {{ customer_search_form|crispy }}
                 </form>
             </div>
-             <div class="col-md-6">
-                <div class="customer-detail-container">
-                </div>
+            <div class="col-md-6">
+                <div class="customer-detail-container"></div>
             </div>
         </div>
     </div>
+    <script>{% include "check_in/home.js" %}</script>
 {% endblock content %}

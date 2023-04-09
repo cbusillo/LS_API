@@ -1,89 +1,74 @@
 
-$(document).ready(
-    function () {
-        const lastNameField = $('#id_last_name_input');
-        const firstNameField = $('#id_first_name_input');
+var customerSearchForm = $("#customer_search_form");
+const csrfToken = customerSearchForm.data('csrf-token');
+var lastNameInput = customerSearchForm.find("#id_last_name_input");
+var firstNameInput = customerSearchForm.find("#id_first_name_input");
+var customerOutput = customerSearchForm.find("#id_customer_output");
+const outputField = $('#id_text_output');
+var customerDetailForm = $('.customer-detail-container form');
+var customerDetailContainer = $('.customer-detail-container');
 
-        const customerSelectField = $('select[name="customer_output"]');
-        const outputField = $('#id_text_output');
-        const form = $('#check-in-form');
-        const url = form.data('url');
-        const csrfToken = form.data('csrf-token');
-        let lastResponse;
+// Add an event listener to the customer_detail_form to include the CSRF token in the POST data
+customerDetailForm.submit(function () {
+    var csrfInput = '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">';
+    customerDetailForm.append(csrfInput);
+});
 
-        function fetchData() {
-            const lastName = lastNameField.val();
-            const firstName = firstNameField.val();
-
-            $.ajax({
-                url: url,
-                type: 'POST',
-                data: {
-                    'last_name': lastName,
-                    'first_name': firstName,
-                    'csrfmiddlewaretoken': csrfToken
-                },
-                dataType: 'json',
-                success: function (response) {
-
-                    outputField.val(response.message);
-                    displayCustomers(response.customers);
-
-                    lastResponse = response;
-                },
-                error: function (response) {
-                    console.error(response.message);
-                }
-            });
-        }
-        fetchData();
-        lastNameField.on('input', fetchData);
-        firstNameField.on('input', fetchData);
-
-
-        function displayCustomers(customers) {
-            customerSelectField.empty();
-            customers.forEach((customer, index) => {
-                const option = $('<option>');
-                option.text(customer.first_name + ' ' + customer.last_name);
-                option.val(customer.id);
-                if (index === 0) {
-                    option.attr('selected', true); // select first option
-                    displayCustomerDetails(customer); // display details for first customer
-                }
-                customerSelectField.append(option);
-            });
-        }
-
-        function displayCustomerDetails(customer) {
-            const container = $('.customer-detail-container');
-            container.empty();
-
-            const fields = [['First Name', customer.first_name],
-            ['Last Name', customer.last_name],
-            ['Title', customer.title],
-            ['Company', customer.company],
-            ['Create Time', customer.create_time],
-            ['Update Time', customer.update_time],
-            ['Updated from LS Time', customer.updated_from_ls_time],
-
-            ];
-
-            fields.forEach(field => {
-                const row = $('<p>');
-                row.text(`${field[0]}: ${field[1]}`);
-                container.append(row);
-            });
-
-            const nameRow = $('<p>');
-            nameRow.text(`Name: ${customer.first_name} ${customer.last_name}`);
-            container.prepend(nameRow);
-        }
-        customerSelectField.on('change', function () {
-            const selectedCustomerId = parseInt($(this).val());
-            const selectedCustomer = lastResponse.customers.find(customer => customer.id === selectedCustomerId);
-            displayCustomerDetails(selectedCustomer);
+// Add an event listener to the customerOutput select to display the selected customer's information
+customerOutput.change(function () {
+    var customerId = $(this).val();
+    if (customerId) {
+        $.ajax({
+            url: customerSearchForm.data("url"),
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                customer_id: customerId,
+                csrfmiddlewaretoken: csrfToken
+            },
+            success: function (data) {
+                outputField.val(data.customer_detail_form);
+                customerDetailContainer.html(data.customer_detail_form);
+                customerDetailForm = $('.customer-detail-container form');
+                customerDetailForm.submit(function () {
+                    if (!customerDetailForm.find('input[name="csrfmiddlewaretoken"]').length) { // check if CSRF token input field already exists
+                        var csrfInput = '<input type="hidden" name="csrfmiddlewaretoken" value="' + cCsrfToken + '">';
+                        customerDetailForm.append(csrfInput);
+                    }
+                });
+            },
+            error: function (xhr, status, error) {
+                console.log('Error:', error);
+            }
         });
+    } else {
+        customerDetailContainer.html('');
     }
-);
+});
 
+lastNameInput.on("keyup", function () {
+    updateCustomerOutput();
+});
+firstNameInput.on("keyup", function () {
+    updateCustomerOutput();
+});
+
+function updateCustomerOutput() {
+    customerDetailContainer.html('');
+    $.ajax({
+        url: customerSearchForm.data("url"),
+        type: 'POST',
+        data: {
+            last_name_input: lastNameInput.val(),
+            first_name_input: firstNameInput.val(),
+            csrfmiddlewaretoken: csrfToken
+        },
+        dataType: "json",
+        success: function (data) {
+            outputField.val(data.message);
+            if (data.html_customer_options) {
+                customerOutput.html(data.html_customer_options);
+            }
+        },
+    });
+};
