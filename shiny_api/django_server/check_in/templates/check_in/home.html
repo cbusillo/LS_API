@@ -1,14 +1,21 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+
 {% block content %}
     {% include "check_in/home.js.html" %}
     <div class="container">
         <div class="row">
             <div class="col-md-6">
                 <!-- Adjust column size as needed -->
-                <form>
+                <form method="post" autocomplete="off">
                     {{ form|crispy }}
                 </form>
+            </div>
+             <div class="col-md-6">
+                <!-- Add your content for the right-side container here -->
+                <div class="right-side-container">
+                    <p>Right-side content goes here.</p>
+                </div>
             </div>
         </div>
     </div>

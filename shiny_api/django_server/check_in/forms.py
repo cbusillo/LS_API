@@ -1,4 +1,4 @@
-"""Form for check_in app.""" ""
+"""Form for check_in app."""
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field
@@ -7,10 +7,20 @@ from crispy_forms.layout import Layout, Field
 class CheckIn(forms.Form):
     """Form for check_in app."""
 
-    last_name_input = forms.CharField(label="Last Name", required=False)
-    first_name_input = forms.CharField(label="First Name", required=False)
+    last_name_input = forms.CharField(
+        label="",
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Search Last Name", "autocomplete": "off", "autocorrect": "off"}),
+    )
+    first_name_input = forms.CharField(
+        label="",
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Search First Name", "autocomplete": "off", "autocorrect": "off"}),
+    )
     text_output = forms.CharField(label="Output Label", required=False)
-    customer_output = forms.ModelChoiceField(label="Customers", required=False, queryset=None)
+    customer_output = forms.ModelChoiceField(
+        label="Customers", required=False, queryset=None, widget=forms.Select(attrs={"size": 10})
+    )
 
     def __init__(self, *args, **kwargs):
         customers = kwargs.pop("customers", None)
@@ -21,8 +31,8 @@ class CheckIn(forms.Form):
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            Field("last_name_input", css_class="form-control", placeholder="First Name"),
-            Field("last_name_input", css_class="form-control", placeholder="Last Name"),
-            Field("customer_output", css_class="form-select", size="10"),
+            Field("first_name_input", css_class="form-control"),
+            Field("last_name_input", css_class="form-control"),
+            Field("customer_output", css_class="form-select"),
             Field("text_output", css_class="form-control", placeholder=""),
         )

@@ -52,8 +52,7 @@ class Emails:
         """Emails from dict"""
         if obj == "":
             self.contact_email = []
-            return
-        if isinstance(obj.get("ContactEmail"), list):
+        elif isinstance(obj.get("ContactEmail"), list):
             self.contact_email = [ContactEmail(y) for y in obj.get("ContactEmail")]
         else:
             self.contact_email = [ContactEmail(obj.get("ContactEmail"))]
@@ -67,8 +66,7 @@ class Phones:
         """Phones from dict"""
         if obj == "":
             self.contact_phone = []
-            return
-        if isinstance(obj.get("ContactPhone"), list):
+        elif isinstance(obj.get("ContactPhone"), list):
             self.contact_phone = [ContactPhone(y) for y in obj.get("ContactPhone")]
         else:
             self.contact_phone = [ContactPhone(obj.get("ContactPhone"))]
