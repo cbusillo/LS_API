@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.urls import path, include
 from django.views.generic import RedirectView
 from pwa import urls as pwa_urls
@@ -20,13 +21,7 @@ from pwa import urls as pwa_urls
 urlpatterns = [
     path("", include(pwa_urls)),
     path("", RedirectView.as_view(url="label_printer/")),
-    path("api/", include("shiny_api.django_server.api.urls")),
-    path("ls_functions/", include("shiny_api.django_server.ls_functions.urls")),
-    path("label_printer/", include("shiny_api.django_server.label_printer.urls")),
-    path("sickw/", include("shiny_api.django_server.sickw.urls")),
-    path("inventory/", include("shiny_api.django_server.inventory.urls")),
-    path("customers/", include("shiny_api.django_server.customers.urls")),
-    path("serial_camera/", include("shiny_api.django_server.serial_camera.urls")),
-    path("check_in/", include("shiny_api.django_server.check_in.urls")),
-    path("config/", include("shiny_api.django_server.config.urls")),
 ]
+
+for app in settings.SHINY_INSTALLED_APPS:
+    urlpatterns.append(path(app + "/", include(app + ".urls", namespace=app)))
