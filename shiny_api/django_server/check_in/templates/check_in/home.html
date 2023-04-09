@@ -7,7 +7,7 @@
         <div class="row">
             <div class="col-md-6">
                 <!-- Adjust column size as needed -->
-                <form method="post" autocomplete="off" id="check-in-form" data-url="{% url 'check_in-partial_form_data' %}" data-csrf-token="{{ csrf_token }}" data-customers="{{ customers }}">
+                <form method="post" autocomplete="off" id="check-in-form" data-url="{% url 'check_in:partial_form_data' %}" data-csrf-token="{{ csrf_token }}" data-customers="{{ customers }}">
                     {{ form|crispy }}
                 </form>
             </div>

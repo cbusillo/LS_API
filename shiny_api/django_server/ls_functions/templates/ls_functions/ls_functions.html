@@ -6,7 +6,7 @@
         {% for module_function, button_description in buttons.items %}
         <div class="col">
             <a class="text-decoration-none btn btn-lg btn-secondary my-2 py-3"
-                href="{% url 'ls_functions' module_function_name=module_function %}">
+                href="{% url 'ls_functions:home' module_function_name=module_function %}">
                 {{ button_description }}</a>
         </div>
         {% endfor %}

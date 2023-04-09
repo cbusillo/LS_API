@@ -35,7 +35,7 @@ def ls_functions(request: WSGIRequest, module_function_name: str = ""):
     thread.daemon = True
     running_function[module_function_name] = True
     thread.start()
-    return redirect(ls_functions)
+    return redirect("ls_functions:home")
 
 
 def run_function(function_to_exec, module_function_name):

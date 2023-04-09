@@ -3,6 +3,8 @@ from django.urls import path
 
 from . import views
 
+app_name = "serial_camera"
+
 urlpatterns = [
-    path("", views.home, name="serial_camera-home"),
+    path("", views.home, name="home"),
 ]

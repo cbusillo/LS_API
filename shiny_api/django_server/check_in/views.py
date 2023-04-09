@@ -29,7 +29,7 @@ def home(request):
     """Render home page"""
     customers = Customer.objects.all().order_by("last_name")[:15]
     if customers.count() == 0:
-        redirect("main:ls_functions:home")
+        return redirect("ls_functions:home")
     check_in_form = forms.CheckIn(customers=customers)
 
     context = {"form": check_in_form}

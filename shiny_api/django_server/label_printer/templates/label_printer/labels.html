@@ -5,7 +5,7 @@
             <li class="nav-item">
                 <a class="nav-link{% if label_list == active_label_group %} active{% endif %}"
                    aria-current="page"
-                   href="{% url 'label_printer' active_label_group=label_list %}">{{ label_list }}</a>
+                   href="{% url 'label_printer:home' active_label_group=label_list %}">{{ label_list }}</a>
             </li>
         {% endfor %}
     </ul>

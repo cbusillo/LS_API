@@ -22,14 +22,14 @@
         <header class="site-header">
             <nav class="navbar">
                 <div class="container-fluid">
-                    <a class="nav-link" href="{% url 'label_printer' %}">Label Printer</a>
-                    <a class="nav-link" href="{% url 'check_in-home' %}">Check in</a>
-                    <a class="nav-link" href="{% url 'ls_functions' %}">Lightspeed Functions</a>
-                    <a class="nav-link" href="{% url 'inventory-item_list' %}">Inventory/Items</a>
-                    <a class="nav-link" href="{% url 'customers-customer_list' %}">Customers</a>
-                    <a class="nav-link" href="{% url 'sickw-bulk_lookup' %}">Sickw</a>
-                    <a class="nav-link" href="{% url 'config-config_list' %}">Config</a>
-                    <a class="nav-link" href="{% url 'serial_camera-home' %}">Serial Camera</a>
+                    <a class="nav-link" href="{% url 'label_printer:home' %}">Label Printer</a>
+                    <a class="nav-link" href="{% url 'check_in:home' %}">Check in</a>
+                    <a class="nav-link" href="{% url 'ls_functions:home' %}">Lightspeed Functions</a>
+                    <a class="nav-link" href="{% url 'inventory:item_list' %}">Inventory/Items</a>
+                    <a class="nav-link" href="{% url 'customers:customer_list' %}">Customers</a>
+                    <a class="nav-link" href="{% url 'sickw:bulk_lookup' %}">Sickw</a>
+                    <a class="nav-link" href="{% url 'config:config_list' %}">Config</a>
+                    <a class="nav-link" href="{% url 'serial_camera:home' %}">Serial Camera</a>
                 </div>
             </nav>
             {% block navbar %}
