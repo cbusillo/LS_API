@@ -22,6 +22,14 @@ class Customer(models.Model):
     tax_category_id = models.IntegerField(blank=True, null=True)
     is_modified = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        """Save customer"""
+        self.first_name = self.first_name.strip()
+        self.last_name = self.last_name.strip()
+        self.title = self.title.strip()
+        self.company = self.company.strip()
+        super().save(*args, **kwargs)
+
     def __str__(self) -> str:
         return f"{self.first_name} {self.last_name}"
 

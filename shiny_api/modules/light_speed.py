@@ -252,6 +252,8 @@ def shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None 
         convert_function = getattr(sys.modules[__name__], f"shiny_{module_name}_from_ls")
         convert_function(shiny_entity, ls_entity, start_time)
 
+    send_message(f"Finished updating {model_name}s")
+
 
 def import_items():
     """temp function to import items from LS"""
@@ -268,6 +270,8 @@ def import_customers():
 def delete_all():
     """temp function to delete all items and customers from shiny db"""
     ShinyItem.objects.all().delete()
+    ShinyEmail.objects.all().delete()
+    ShinyPhone.objects.all().delete()
     ShinyCustomer.objects.all().delete()
 
 
@@ -275,8 +279,6 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     DELETE_ALL = False
     if DELETE_ALL:
-        ShinyItem.objects.all().delete()
-        ShinyEmail.objects.all().delete()
-        ShinyPhone.objects.all().delete()
-        ShinyCustomer.objects.all().delete()
+        delete_all()
+
     import_customers()
