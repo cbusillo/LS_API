@@ -3,7 +3,6 @@ from django import forms
 from django.db.models import Q
 from django.urls import reverse_lazy
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field
 from phonenumber_field.formfields import PhoneNumberField
 from .models import Customer, Phone, Email
 
@@ -86,6 +85,18 @@ class CustomerSearch(forms.Form):
         customers = Customer.objects.filter(customer_filter).distinct().order_by(*order_by)[:100]
         self.fields["customer_output"].queryset = customers
         return str(self["customer_output"].as_widget())
+
+    def get_customer_list(self, first_name, last_name, phone_number, email_address):
+        """Get customer list for display"""
+        customer_filter = (
+            Q(last_name__icontains=last_name)
+            & Q(first_name__icontains=first_name)
+            & Q(phones__number__icontains=phone_number)
+            & Q(emails__address__icontains=email_address)
+        )
+        order_by = "last_name", "first_name"
+        customers = Customer.objects.filter(customer_filter).distinct().order_by(*order_by)
+        return customers
 
 
 def filter_has_value(query_filter: Q) -> bool:

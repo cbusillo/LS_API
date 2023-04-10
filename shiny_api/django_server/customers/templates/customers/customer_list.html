@@ -5,8 +5,10 @@
     <h1>Customer</h1>
     <form method="get">
       <div class="form-row align-items-center row">
-        <div class="col-3">{{ form.first_name|as_crispy_field }}</div>
-        <div class="col-3">{{ form.last_name|as_crispy_field }}</div>
+        <div class="col-3">{{ form.first_name_input|as_crispy_field }}</div>
+        <div class="col-3">{{ form.last_name_input|as_crispy_field }}</div>
+        <div class="col-3">{{ form.phone_number_input|as_crispy_field }}</div>
+        <div class="col-3">{{ form.email_address_input|as_crispy_field }}</div>
         <div class="col-auto">
           <button type="submit" class="btn btn-primary mt-3">Search</button>
         </div>
