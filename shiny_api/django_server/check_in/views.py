@@ -1,6 +1,6 @@
 """App to check customers in"""
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from shiny_api.modules.light_speed import import_customers
 from ..customers.models import Customer
@@ -67,6 +67,8 @@ def home(request):
     """Render home page"""
     import_customers()
     customers = Customer.objects.all().order_by("-update_time")[:15]
+    if customers.count() == 0:
+        return redirect("ls_functions:home")
     customer_search = CustomerSearch(customers=customers)
 
     context = {"customer_search_form": customer_search}
