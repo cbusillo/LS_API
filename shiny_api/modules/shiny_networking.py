@@ -1,4 +1,5 @@
 """Module with useful netowrking functions"""
+import logging
 import subprocess
 import paramiko
 
@@ -7,9 +8,7 @@ def is_host_available(host: str) -> bool:
     """Test if ping is successful"""
     command = ["ping", "-c", "1", host]
     try:
-        response = subprocess.check_output(
-            command, stderr=subprocess.STDOUT, universal_newlines=True, timeout=2
-        )
+        response = subprocess.check_output(command, stderr=subprocess.STDOUT, universal_newlines=True, timeout=2)
     except subprocess.CalledProcessError:
         return False
     except subprocess.TimeoutExpired:
@@ -41,13 +40,9 @@ def scp_file_from_host(hostname: str, filename: str) -> bytes | None:
         return file_contents
 
     except paramiko.AuthenticationException:
-        print("Authentication failed. Please check your username and password.")
+        logging.error("Authentication failed. Please check your username and password.")
     except paramiko.SSHException as ssh_error:
-        print(f"SSH error: {ssh_error}")
+        logging.error("SSH error: %s", ssh_error)
     finally:
         ssh.close()
     return None
-
-
-if __name__ == "__main__":
-    print(is_host_available)

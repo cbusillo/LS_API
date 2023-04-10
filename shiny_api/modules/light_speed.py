@@ -55,7 +55,7 @@ def update_item_price():
     # call LS API to load all items and return a list of Item objects
     output = "Loading items"
     send_message(output)
-    print(output)
+    logging.info(output)
     items = LSItem.get_items_by_category(categories=Config.DEVICE_CATEGORIES_FOR_PRICE)
     for item in items:
         # interate through items to generate pricing and save to LS
@@ -115,7 +115,7 @@ def update_item_price():
                 output = (
                     f"{item.description} Size:{size_mult} Age:{device_age}" f" Base:{device_base_price} Item Price: {device_price}"
                 )
-                print(output)
+                logging.info(output)
                 send_message(output)
                 # load new price into all three LS item prices in Item object
                 for item_price in item.prices.item_price:
@@ -126,7 +126,7 @@ def update_item_price():
                 if item.is_modified:
                     output = f"Updating {item.description}"
                     send_message(output)
-                    print(f"    {output}")
+                    logging.info(output)
                     item.save_item_price()
                 break
 
@@ -135,7 +135,7 @@ def format_customer_phone():
     """Load and iterate through customers, updating formatting on phone numbers."""
     customers = LSCustomer.get_customers()
     customers_updated = 0
-    print("Updating customers")
+    logging.info("Updating customers")
     send_message("Updating customers")
     for index, customer in enumerate(customers):
         if len(customer.contact.phones.contact_phone) == 0:
@@ -159,7 +159,7 @@ def format_customer_phone():
             customers_updated += 1
             output = f"{customers_updated}: Updating Customer #{index}"
             send_message(output)
-            print(output, end="\r")
+            logging.info(output)
             customer.update_phones()
 
 

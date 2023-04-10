@@ -1,5 +1,6 @@
 """Connect to RingCentral API"""
 from subprocess import Popen, PIPE
+import logging
 import socket
 from shiny_api.modules.load_config import Config
 
@@ -39,7 +40,8 @@ def send_message_ssh(phone_number: str, message: str, ip_address: str = "", host
         stdout=PIPE,
         stderr=PIPE,
     ) as popen:
-        print(popen.communicate(bytes(script_source, encoding="utf8")))
+        popen_output = popen.communicate(bytes(script_source, encoding="utf8"))
+        logging.info(popen_output)
 
 
 if __name__ == "__main__":
