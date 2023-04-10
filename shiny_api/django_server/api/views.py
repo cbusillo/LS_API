@@ -1,6 +1,5 @@
 """View for API access to Shiny Stuff"""
 import locale
-import socket
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render
 from shiny_api.classes.ls_workorder import Workorder
@@ -67,9 +66,7 @@ def ring_central_send_message(request: WSGIRequest):
         context["title"] = "No IP address"
         return render(request, "api/error.html", context)
 
-    hostname = socket.gethostbyaddr(ip_address)[0]
-
-    send_message(mobile_number, message, hostname)
+    send_message(mobile_number, message, ip_address)
     if str(request.GET.get("manual")).lower() != "true":
         context["auto_close"] = "True"
 
