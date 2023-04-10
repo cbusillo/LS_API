@@ -94,12 +94,16 @@ def filter_has_value(query_filter: Q) -> bool:
 
 
 class CustomerDetailForm(forms.ModelForm):
+    """show all relevant customer info"""
+
     class Meta:
         model = Customer
-        exclude = ["ls_customer_id"]
+        exclude = ["ls_customer_id"]  # pylint: disable=modelform-uses-exclude
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.fields["update_time"].widget = forms.TextInput(attrs={"readonly": "readonly"})
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(

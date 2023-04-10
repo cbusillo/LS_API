@@ -28,7 +28,8 @@ class Customer(models.Model):
         self.last_name = self.last_name.strip()
         if self.title:
             self.title = self.title.strip()
-        self.company = self.company.strip()
+        if self.company:
+            self.company = self.company.strip()
         super().save(*args, **kwargs)
 
     def __str__(self) -> str:

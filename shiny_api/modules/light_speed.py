@@ -194,7 +194,8 @@ def shiny_item_from_ls(shiny_item: ShinyItem, ls_item: LSItem, start_time: datet
     shiny_item.update_time = start_time
     shiny_item.updated_from_ls_time = start_time
 
-    return shiny_item
+    shiny_item.save()
+    logging.debug("Shiny Item %s created/updated", shiny_item.description)
 
 
 def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustomer, start_time: datetime):
