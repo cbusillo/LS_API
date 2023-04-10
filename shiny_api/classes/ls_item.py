@@ -5,8 +5,8 @@ import re
 import shlex
 from typing import Any
 from dataclasses import dataclass
-from shiny_api.classes.ls_client import Client, string_to_datetime
-from shiny_api.modules.load_config import Config
+from .ls_client import Client, string_to_datetime
+from ..modules.load_config import Config
 
 
 def atoi(text: str):
@@ -113,7 +113,6 @@ class Item:
     client = Client()
 
     def __init__(self, item_id: int = 0, ls_item: Any = None):
-
         if ls_item is None:
             if item_id == 0:
                 raise ValueError("Must provide item_id or ls_item")

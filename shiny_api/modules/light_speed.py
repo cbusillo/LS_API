@@ -217,10 +217,12 @@ def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustome
     shiny_customer.save()
 
     for phone in ls_customer.contact.phones.contact_phone:
-        ShinyPhone(number=phone.number, use_type=phone.use_type, customer=shiny_customer).save()
+        if not ShinyPhone.objects.filter(number=phone.number, use_type=phone.use_type, customer=shiny_customer).exists():
+            ShinyPhone(number=phone.number, use_type=phone.use_type, customer=shiny_customer).save()
 
     for email in ls_customer.contact.emails.contact_email:
-        ShinyEmail(address=email.address, use_type=email.use_type, customer=shiny_customer).save()
+        if not ShinyEmail.objects.filter(address=email.address, use_type=email.use_type, customer=shiny_customer).exists():
+            ShinyEmail(address=email.address, use_type=email.use_type, customer=shiny_customer).save()
 
     logging.debug("Shiny customer %s created/updated", shiny_customer.full_name)
 

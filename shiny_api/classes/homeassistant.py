@@ -20,11 +20,7 @@ class HomeAssistant:
     @classmethod
     def get_functions(cls) -> list[str]:
         """Return functions"""
-        methods = [
-            method
-            for method, _ in inspect.getmembers(cls, predicate=inspect.isfunction)
-            if not method.startswith("__")
-        ]
+        methods = [method for method, _ in inspect.getmembers(cls, predicate=inspect.isfunction) if not method.startswith("__")]
         return methods
 
     def status(self):
