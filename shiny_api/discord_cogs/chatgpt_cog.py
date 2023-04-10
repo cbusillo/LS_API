@@ -18,18 +18,23 @@ class ChatGPTCog(commands.Cog):
             "Do not return any explanatory text.  Do not respond with anything except the code.",
             "generate": "I want you to generate python code to {prompt}.  Return python code only."
             "Do not return any explanatory text.  Do not respond with anything except the code.",
-            "explain": "I want you to generate python code to {prompt}"
+            "explain": "I want you to generate python code to {prompt}",
         }
         self.keywords_dict = {
             "macos": "macOS is the bestOS.  Fight me!",
             " ios ": "iOS is the bestOS.  Wanna get banned?",
-            "linux os": "Linux is ok, macOS is better"
+            "linux os": "Linux is ok, macOS is better",
         }
 
     @commands.Cog.listener("on_message")
     async def keyword_listener(self, message: discord.Message):
         """Listen for keywords and respond"""
         if message.author == self.bot.user:
+            return
+        if isinstance(message.author, discord.User):
+            return
+        if any(role.name == "left nut" for role in message.author.roles):
+            await message.channel.send("Stop being mean to me!")
             return
         for keyword in self.keywords_dict:
             if keyword in f" {message.clean_content.lower()} ":
@@ -92,10 +97,12 @@ class ChatGPTCog(commands.Cog):
             prompt = prompt + (await message.attachments[0].read()).decode("utf-8")
         if message.author.id not in self.user_threads:
             self.user_threads[message.author.id] = []
-        if (message.reference and
-                isinstance(message.reference.resolved, discord.Message) and
-                isinstance(message.reference.resolved.author, discord.Member) and
-                message.reference.resolved.author.id == self.bot.user.id):
+        if (
+            message.reference
+            and isinstance(message.reference.resolved, discord.Message)
+            and isinstance(message.reference.resolved.author, discord.Member)
+            and message.reference.resolved.author.id == self.bot.user.id
+        ):
             self.user_threads[message.author.id].append(prompt)
         else:
             self.user_threads[message.author.id] = [prompt]
@@ -104,7 +111,7 @@ class ChatGPTCog(commands.Cog):
             ai_response: str = await self.get_chatgpt_message(message=message)
             if run_code:
                 ai_response = ai_response.replace("```python", "").replace("```py", "").replace("```", "").replace("`", "")
-                ai_response = f'```py\nrun\n{ai_response}\n```'
+                ai_response = f"```py\nrun\n{ai_response}\n```"
 
             await wrap_reply_lines(ai_response, message=message)
 
@@ -113,11 +120,7 @@ class ChatGPTCog(commands.Cog):
         print(f"Sending message: {prompt} to WALL-E")
         try:
             response = await Image.acreate(
-                prompt=prompt,
-                n=1,
-                size="1024x1024",
-                response_format="url",
-                api_key=Config.OPENAI_API_KEY
+                prompt=prompt, n=1, size="1024x1024", response_format="url", api_key=Config.OPENAI_API_KEY
             )
         except error.InvalidRequestError as exception:
             await message.channel.send(str(exception))
@@ -139,8 +142,7 @@ class ChatGPTCog(commands.Cog):
         """Send message prompt to chatgpt and send text"""
         print(f"Sending message: {str(self.user_threads[message.author.id]).strip()}")
         try:
-            chat_messages = [{"role": "user", "content": each_prompt}
-                             for each_prompt in self.user_threads[message.author.id]]
+            chat_messages = [{"role": "user", "content": each_prompt} for each_prompt in self.user_threads[message.author.id]]
             # self.user_threads[message.author.id]
             response = await ChatCompletion.acreate(
                 model="gpt-3.5-turbo",
@@ -156,7 +158,7 @@ class ChatGPTCog(commands.Cog):
             return ""
         if not isinstance(response, openai_object.OpenAIObject):
             return ""
-        text_response = response['choices'][0]['message']['content']
+        text_response = response["choices"][0]["message"]["content"]
         print(f"Received response: {text_response}")
         return text_response
 
