@@ -63,7 +63,7 @@ class ChatGPTCog(commands.Cog):
         if isinstance(self.bot.user, discord.ClientUser) and self.bot.user.mentioned_in(message):
             if isinstance(message.author, discord.User):
                 return False
-            if any(role.name == "left nut" for role in message.author.roles) and self.bot.user in message.mentions:
+            if any(role.name == "left nut" for role in message.author.roles):
                 await message.channel.send("Stop being mean to me!")
                 return False
             return True
