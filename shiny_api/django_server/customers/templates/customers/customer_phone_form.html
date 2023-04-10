@@ -1,0 +1,8 @@
+{% load crispy_forms_tags %}
+<div class="card-header">
+    <h4 class="card-title">Phone {{ customer_phone.prefix|slice:"-1" }}</h4>
+</div>
+<div class="card-body">
+    {% crispy customer_phone_form %}
+    <button type="button" class="btn btn-danger float-end btn-sm" id="delete-phone-btn">Delete</button>
+</div>

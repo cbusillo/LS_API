@@ -7,6 +7,7 @@ var customerOutput = customerSearchForm.find("#id_customer_output");
 const outputField = $('#id_text_output');
 var customerDetailForm = $('.customer-detail-container form');
 var customerDetailContainer = $('.customer-detail-container');
+var customerPhoneContainer = $('.customer-phone-container');
 
 // Add an event listener to the customer_detail_form to include the CSRF token in the POST data
 customerDetailForm.submit(function () {
@@ -29,13 +30,7 @@ customerOutput.change(function () {
             success: function (data) {
                 outputField.val(data.customer_detail_form);
                 customerDetailContainer.html(data.customer_detail_form);
-                customerDetailForm = $('.customer-detail-container form');
-                customerDetailForm.submit(function () {
-                    if (!customerDetailForm.find('input[name="csrfmiddlewaretoken"]').length) { // check if CSRF token input field already exists
-                        var csrfInput = '<input type="hidden" name="csrfmiddlewaretoken" value="' + cCsrfToken + '">';
-                        customerDetailForm.append(csrfInput);
-                    }
-                });
+                customerPhoneContainer.html(data.customer_phone_form);
             },
             error: function (xhr, status, error) {
                 console.log('Error:', error);
@@ -66,9 +61,13 @@ function updateCustomerOutput() {
         dataType: "json",
         success: function (data) {
             outputField.val(data.message);
-            if (data.html_customer_options) {
-                customerOutput.html(data.html_customer_options);
+            if (data.customer_options) {
+                customerOutput.html(data.customer_options);
+                customerOutput.val(customerOutput.find('option:first').val());
+                customerOutput.trigger('change');
             }
         },
     });
 };
+customerOutput.val(customerOutput.find('option:first').val());
+customerOutput.trigger('change');

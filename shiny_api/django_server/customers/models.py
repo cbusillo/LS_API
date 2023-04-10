@@ -1,5 +1,6 @@
 """Shiny Customer class."""
 from django.db import models
+from django.db.models.query import QuerySet
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -21,6 +22,8 @@ class Customer(models.Model):
     discount_id = models.IntegerField(blank=True, null=True)
     tax_category_id = models.IntegerField(blank=True, null=True)
     is_modified = models.BooleanField(default=False)
+    phones: QuerySet["Phone"]
+    emails: QuerySet["Email"]
 
     def save(self, *args, **kwargs):
         """Save customer"""
@@ -48,6 +51,9 @@ class Email(models.Model):
     use_type = models.CharField(max_length=100)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="emails")
 
+    class Meta:
+        unique_together = ("address", "customer", "use_type")
+
 
 class Phone(models.Model):
     """Contact phone"""
@@ -55,3 +61,6 @@ class Phone(models.Model):
     number = PhoneNumberField(blank=True)
     use_type = models.CharField(max_length=20)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="phones")
+
+    class Meta:
+        unique_together = ("number", "customer", "use_type")

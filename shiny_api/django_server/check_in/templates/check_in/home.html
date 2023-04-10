@@ -3,7 +3,7 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-5">
                 <!-- Adjust column size as needed -->
                 <form method="post"
                       autocomplete="off"
@@ -14,8 +14,9 @@
                     {{ customer_search_form|crispy }}
                 </form>
             </div>
-            <div class="col-md-6">
-                <div class="customer-detail-container"></div>
+            <div class="col-md-7">
+                <div class="customer-detail-container row"></div>
+                <div class="customer-phone-container row"></div>
             </div>
         </div>
     </div>
