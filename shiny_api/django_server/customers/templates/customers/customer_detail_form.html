@@ -1,11 +1,23 @@
 {% load crispy_forms_tags %}
-<form method="post">
-    {% csrf_token %}
-    {% crispy customer_detail_form %}
-    <div class="col">
-        <button type="button" class="btn btn-secondary btn-sm" id="add-phone-btn">Add Phone</button>
-    </div>
-    <div class="col">
-        <button type="submit" class="btn btn-primary btn-sm">Save</button>
-    </div>
-</form>
+<style>
+.no-border {
+border: none;
+padding-left: 0;
+padding-right: 0;
+margin-left: 0;
+margin-right: 0;
+}
+</style>
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col col-md-6 pe-1 me-0">{{ customer_detail_form.first_name|as_crispy_field }}</div>
+            <div class="col col-md-6 ps-0 ms-0">{{ customer_detail_form.last_name|as_crispy_field }}</div>
+        </div>
+        <div class="row">{{ customer_detail_form.title|as_crispy_field }}</div>
+        <div class="row">{{ customer_detail_form.company|as_crispy_field }}</div>
+        <div class="row">{{ customer_detail_form.updated_from_ls_time|as_crispy_field }}</div>
+        <div class="row">{{ customer_detail_form.archived|as_crispy_field }}</div>
+    </form>
+</div>
