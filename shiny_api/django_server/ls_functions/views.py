@@ -1,11 +1,13 @@
 """View for LS Functions"""
+import logging
 from importlib import import_module
 from threading import Thread
+
 from asgiref.sync import async_to_sync
-from channels_redis.core import RedisChannelLayer
 from channels.layers import get_channel_layer
+from channels_redis.core import RedisChannelLayer
 from django.core.handlers.wsgi import WSGIRequest
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 
 # from django_eventstream import send_event
 from shiny_api.django_server.settings import running_function
@@ -55,7 +57,7 @@ def send_message(message: str) -> None:
     if not isinstance(channel_layer, RedisChannelLayer):
         return
     async_to_sync(channel_layer.group_send)("updates", {"type": "status", "message": message})
-    print("updates", {"type": "status", "message": message})
+    logging.info("updates channel message: %s", message)
 
     # if app is None:
     #     return

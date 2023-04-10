@@ -1,10 +1,12 @@
 """App to check customers in"""
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
+
 from shiny_api.modules.light_speed import import_customers
+
+from ..customers.forms import CustomerForm, CustomerSearch, EmailForm, PhoneForm
 from ..customers.models import Customer
-from ..customers.forms import CustomerSearch, CustomerForm, PhoneForm, EmailForm
 
 
 def partial_customer_form_data(request):
