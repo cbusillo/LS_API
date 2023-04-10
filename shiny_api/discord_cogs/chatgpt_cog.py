@@ -31,11 +31,7 @@ class ChatGPTCog(commands.Cog):
         """Listen for keywords and respond"""
         if message.author == self.bot.user:
             return
-        if isinstance(message.author, discord.User):
-            return
-        if any(role.name == "left nut" for role in message.author.roles):
-            await message.channel.send("Stop being mean to me!")
-            return
+
         for keyword in self.keywords_dict:
             if keyword in f" {message.clean_content.lower()} ":
                 await message.channel.send(self.keywords_dict.get(keyword))
@@ -65,6 +61,11 @@ class ChatGPTCog(commands.Cog):
             return False
 
         if isinstance(self.bot.user, discord.ClientUser) and self.bot.user.mentioned_in(message):
+            if isinstance(message.author, discord.User):
+                return False
+            if any(role.name == "left nut" for role in message.author.roles) and self.bot.user in message.mentions:
+                await message.channel.send("Stop being mean to me!")
+                return False
             return True
         if message.guild is None:
             return True
