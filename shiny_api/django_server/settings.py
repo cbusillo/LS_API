@@ -8,8 +8,11 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 
 import locale
+import logging
 from pathlib import Path
 from shiny_api.modules.load_config import Config
+
+logging.basicConfig(level=logging.DEBUG)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
@@ -139,7 +142,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-running_function: dict = {}
+running_functions: dict = {}
 
 STATICFILES_DIRS = [Path(BASE_DIR / "static")]
 

@@ -4,7 +4,6 @@ import logging
 import time
 from urllib.parse import urljoin
 import requests
-from rich import print as pprint
 from shiny_api.django_server.ls_functions.views import send_message
 
 from shiny_api.modules.load_config import Config
@@ -134,6 +133,13 @@ class Client(requests.Session):
         url = Config.LS_URLS["workorder"].format(workorderID=workorder_id)
         return next(self._entries(url, key_name="Workorder"))
 
+    def get_workorders_json(self, date_filter: datetime | None = None):
+        """Get all workorders"""
+        params = {"limit": "100"}
+        if date_filter:
+            params["timeStamp"] = f">,{date_filter}"
+        return self._entries(Config.LS_URLS["workorders"], "Workorder", params=params)
+
     def get_item_json(self, item_id: int):
         """Get item"""
         url = Config.LS_URLS["item"].format(itemID=item_id)
@@ -144,12 +150,3 @@ class Client(requests.Session):
         """Get all size attributes"""
         url = Config.LS_URLS["itemMatrix"]
         return self._entries(url, "ItemMatrix", params={"load_relations": '["ItemAttributeSet"]'})
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    client = Client()
-    for index, item in enumerate(client.get_items_json()):
-        pprint(f"Count:{index} ID:{item['itemID']} ")
-    # response = client.get_item_json("19")
-    # pprint(response.json())

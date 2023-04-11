@@ -14,7 +14,7 @@ class Customer(models.Model):
     company = models.CharField(max_length=100, blank=True, null=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
-    updated_from_ls_time = models.DateTimeField(null=True)
+    update_from_ls_time = models.DateTimeField(null=True)
     archived = models.BooleanField()
     contact_id = models.IntegerField()
     credit_account_id = models.IntegerField(blank=True, null=True)

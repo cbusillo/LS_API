@@ -126,10 +126,10 @@ class Item:
         self.system_sku = int(ls_item.get("systemSku"))
         self.default_cost = Decimal(ls_item.get("defaultCost"))
         self.avg_cost = Decimal(ls_item.get("avgCost"))
-        self.tax = bool(ls_item.get("tax").lower() == "true")
-        self.archived = bool(ls_item.get("archived").lower() == "true")
+        self.tax = ls_item.get("tax").lower() == "true"
+        self.archived = ls_item.get("archived").lower() == "true"
         self.item_type = str(ls_item.get("itemType"))
-        self.serialized = bool(ls_item.get("serialized").lower() == "true")
+        self.serialized = ls_item.get("serialized").lower() == "true"
         self.description = str(ls_item.get("description"))
         self.upc = ls_item.get("upc")
         self.custom_sku = str(ls_item.get("customSku"))
@@ -173,7 +173,7 @@ class Item:
         self.client.put(url, json=put_item)
 
     @classmethod
-    def get_all_items(cls, date_filter: datetime | None = None):
+    def get_items(cls, date_filter: datetime | None = None):
         """Run API auth."""
         for item in cls.client.get_items_json(date_filter=date_filter):
             yield Item(ls_item=item)
@@ -202,11 +202,3 @@ class Item:
 
         filtered_list = [item for item in item_list if all(word.lower() in item.description.lower() for word in descriptions)]
         return filtered_list
-
-
-if __name__ == "__main__":
-    test_items = Item.get_all_items()
-    for index, test_item in enumerate(test_items):
-        print(test_item)
-        if index == 4:
-            break

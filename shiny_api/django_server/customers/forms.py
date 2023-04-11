@@ -117,8 +117,8 @@ class CustomerForm(forms.ModelForm):
 
     class Meta:
         model = Customer
-        fields = ["first_name", "last_name", "title", "company", "archived", "updated_from_ls_time"]
-        readonly_fields = "updated_from_ls_time"
+        fields = ["first_name", "last_name", "title", "company", "archived", "update_from_ls_time"]
+        readonly_fields = "update_from_ls_time"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

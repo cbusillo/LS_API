@@ -2,7 +2,6 @@
 from typing import Any
 from dataclasses import dataclass
 from datetime import datetime
-from rich import print as pprint
 from shiny_api.classes.ls_client import Client
 from shiny_api.modules.load_config import Config
 
@@ -120,7 +119,7 @@ class Customer:
         self.company = str(ls_customer.get("company"))
         self.create_time = str(ls_customer.get("createTime"))
         self.time_stamp = str(ls_customer.get("timeStamp"))
-        self.archived = bool(ls_customer.get("archived").lower() == "true")
+        self.archived = ls_customer.get("archived").lower() == "true"
         self.contact_id = str(ls_customer.get("contactID"))
         self.credit_account_id = str(ls_customer.get("creditAccountID"))
         self.customer_type_id = str(ls_customer.get("customerTypeID"))
@@ -171,9 +170,3 @@ class Customer:
             return
         for customer in cls.client.get_customers_json(date_filter=date_filter):
             yield Customer(ls_customer=customer)
-
-
-if __name__ == "__main__":
-    test = Customer.get_customers()
-    for x in test:
-        pprint(x)

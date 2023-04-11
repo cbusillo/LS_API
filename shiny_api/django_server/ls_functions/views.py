@@ -10,7 +10,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import redirect, render
 
 # from django_eventstream import send_event
-from shiny_api.django_server.settings import running_function
+from shiny_api.django_server.settings import running_functions
 
 
 def ls_functions(request: WSGIRequest, module_function_name: str = ""):
@@ -20,13 +20,15 @@ def ls_functions(request: WSGIRequest, module_function_name: str = ""):
         "shiny_api.modules.light_speed|update_item_price": "Update iPhone/iPad Prices",
         "shiny_api.modules.light_speed|import_items": "Import Items",
         "shiny_api.modules.light_speed|import_customers": "Import Customers",
+        "shiny_api.modules.light_speed|import_workorders": "Import Workorders",
         "shiny_api.modules.light_speed|delete_all": "Delete All",
         "shiny_api.modules.scroll|run": "Scroll",
+        "shiny_api.django_server.ls_functions.views|reset_running_functions": "Reset Running Functions",
     }
     context: dict[str, object] = {}
     context["title"] = "Light Speed Functions"
 
-    if module_function_name == "" or running_function.get(module_function_name, False):
+    if module_function_name == "" or running_functions.get(module_function_name, False):
         context["buttons"] = buttons
         return render(request, "ls_functions/ls_functions.html", context)
 
@@ -36,7 +38,7 @@ def ls_functions(request: WSGIRequest, module_function_name: str = ""):
     function_to_exec = getattr(module, function_name)
     thread = Thread(target=run_function, args=[function_to_exec, module_function_name])
     thread.daemon = True
-    running_function[module_function_name] = True
+    running_functions[module_function_name] = True
     thread.start()
     return redirect("ls_functions:home")
 
@@ -48,7 +50,7 @@ def run_function(function_to_exec, module_function_name):
         return
     send_message(f"starting {module_function_name}.{function_to_exec}")
     function_to_exec()
-    running_function[module_function_name] = False
+    running_functions[module_function_name] = False
     #     sse.publish({"message": f"{status}Finished!"}, type='status')
 
 
@@ -60,7 +62,7 @@ def send_message(message: str) -> None:
     async_to_sync(channel_layer.group_send)("updates", {"type": "status", "message": message})
     logging.info("updates channel message: %s", message)
 
-    # if app is None:
-    #     return
-    # with app.app_context():
-    #     sse.publish({"message": message}, type='status')
+
+def reset_running_functions():
+    """Reset running function"""
+    running_functions.clear()

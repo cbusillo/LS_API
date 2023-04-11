@@ -8,10 +8,12 @@ from datetime import datetime
 from functools import lru_cache
 import pytz
 from selenium import webdriver
+from django.core.exceptions import ValidationError
 from django.db import transaction, models  # pylint: disable=wrong-import-order
 from django.utils import timezone  # pylint: disable=wrong-import-order
 from shiny_api.classes.ls_customer import Customer as LSCustomer
 from shiny_api.classes.ls_item import Item as LSItem
+from shiny_api.classes.ls_workorder import Workorder as LSWorkorder
 from shiny_api.modules.load_config import Config
 
 from shiny_api.django_server.inventory.models import Item as ShinyItem
@@ -20,6 +22,7 @@ from shiny_api.django_server.customers.models import (
     Phone as ShinyPhone,
     Email as ShinyEmail,
 )
+from shiny_api.django_server.workorders.models import Workorder as ShinyWorkorder
 from shiny_api.django_server.ls_functions.views import send_message
 
 
@@ -126,7 +129,7 @@ def update_item_price():
                 if item.is_modified:
                     output = f"Updating {item.description}"
                     send_message(output)
-                    logging.info(output)
+                    logging.infls_wo(output)
                     item.save_item_price()
                 break
 
@@ -163,22 +166,43 @@ def format_customer_phone():
             customer.update_phones()
 
 
-def shiny_updated_from_ls_time(model: type[models.Model]):
+def shiny_update_from_ls_time(model: type[models.Model]):
     """Convert LS date string to datetime"""
     local_tz = pytz.timezone("America/New_York")
     default_time = datetime(2000, 1, 1, 0, 0, 0, 0, tzinfo=local_tz)
     try:
-        latest_ls_update_time = model.objects.filter(updated_from_ls_time__isnull=False).latest("updated_from_ls_time")
+        latest_ls_update_time = model.objects.filter(update_from_ls_time__isnull=False).latest("update_from_ls_time")
     except model.DoesNotExist:
         return default_time
-    if hasattr(latest_ls_update_time, "updated_from_ls_time"):
-        return latest_ls_update_time.updated_from_ls_time  # pyright: reportGeneralTypeIssues=false
-    else:
-        return default_time
+    if hasattr(latest_ls_update_time, "update_from_ls_time"):
+        return latest_ls_update_time.update_from_ls_time  # pyright: reportGeneralTypeIssues=false
+    return default_time
+
+
+def shiny_workorder_from_ls(shiny_workorder: ShinyWorkorder, ls_workorder: LSWorkorder, start_time: datetime):
+    """Convert LS Workorder to Shiny Workorder"""
+    shiny_workorder.ls_workorder_id = ls_workorder.workorder_id
+    shiny_workorder.time_in = ls_workorder.time_in if ls_workorder.time_in != "None" else None
+    shiny_workorder.eta_out = ls_workorder.eta_out if ls_workorder.eta_out != "None" else None
+    shiny_workorder.note = ls_workorder.note
+    shiny_workorder.warranty = ls_workorder.warranty
+    shiny_workorder.tax = ls_workorder.tax
+    shiny_workorder.archived = ls_workorder.archived
+    shiny_workorder.update_time = start_time
+    shiny_workorder.update_from_ls_time = start_time
+    shiny_workorder.total = ls_workorder.total
+    shiny_workorder.status = ls_workorder.status
+    try:
+        shiny_workorder.customer = ShinyCustomer.objects.get(ls_customer_id=ls_workorder.customer_id)
+    except ShinyCustomer.DoesNotExist:
+        shiny_workorder.customer = None
+
+    return shiny_workorder, None
 
 
 def shiny_item_from_ls(shiny_item: ShinyItem, ls_item: LSItem, start_time: datetime):
     """translation layer for LSItem to ShinyItem"""
+    shiny_item.ls_item_id = ls_item.item_id
     shiny_item.default_cost = ls_item.default_cost or None
     shiny_item.average_cost = ls_item.avg_cost or None
     shiny_item.tax = ls_item.tax
@@ -192,10 +216,9 @@ def shiny_item_from_ls(shiny_item: ShinyItem, ls_item: LSItem, start_time: datet
     shiny_item.item_matrix_id = ls_item.item_matrix_id
     shiny_item.item_attributes = None
     shiny_item.update_time = start_time
-    shiny_item.updated_from_ls_time = start_time
+    shiny_item.update_from_ls_time = start_time
 
-    shiny_item.save()
-    logging.debug("Shiny Item %s created/updated", shiny_item.description)
+    return shiny_item, None
 
 
 def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustomer, start_time: datetime):
@@ -206,38 +229,40 @@ def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustome
     shiny_customer.title = ls_customer.title
     shiny_customer.company = ls_customer.company
     shiny_customer.update_time = start_time
-    shiny_customer.updated_from_ls_time = start_time
+    shiny_customer.update_from_ls_time = start_time
     shiny_customer.archived = ls_customer.archived
     shiny_customer.contact_id = ls_customer.contact_id
     shiny_customer.credit_account_id = ls_customer.credit_account_id
     shiny_customer.customer_type_id = ls_customer.customer_type_id
     shiny_customer.discount_id = ls_customer.discount_id
     shiny_customer.tax_category_id = ls_customer.tax_category_id
-
-    shiny_customer.save()
+    run_after = []
 
     for phone in ls_customer.contact.phones.contact_phone:
         if not ShinyPhone.objects.filter(number=phone.number, use_type=phone.use_type, customer=shiny_customer).exists():
-            ShinyPhone(number=phone.number, use_type=phone.use_type, customer=shiny_customer).save()
+            run_after.append(ShinyPhone(number=phone.number, use_type=phone.use_type, customer=shiny_customer).save)
 
     for email in ls_customer.contact.emails.contact_email:
         if not ShinyEmail.objects.filter(address=email.address, use_type=email.use_type, customer=shiny_customer).exists():
-            ShinyEmail(address=email.address, use_type=email.use_type, customer=shiny_customer).save()
+            run_after.append(ShinyEmail(address=email.address, use_type=email.use_type, customer=shiny_customer).save)
 
-    logging.debug("Shiny customer %s created/updated", shiny_customer.full_name)
+    return shiny_customer, run_after
 
 
 def shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None = None):
     """Get LS items since date_filter and iterate through them"""
     if date_filter is None:
-        date_filter = shiny_updated_from_ls_time(model)
+        date_filter = shiny_update_from_ls_time(model)
 
     model_name = model.__name__
     if model_name == "Item":
-        ls_entities = LSItem.get_all_items(date_filter=date_filter)
+        ls_entities = LSItem.get_items(date_filter=date_filter)
     elif model_name == "Customer":
         ls_entities = LSCustomer.get_customers(date_filter=date_filter)
-
+    elif model_name == "Workorder":
+        with transaction.atomic():
+            shiny_model_from_ls(ShinyCustomer)
+        ls_entities = LSWorkorder.get_workorders(date_filter=date_filter)
     else:
         logging.warning("Invalid model type passed to shiny_model_from_ls")
         return
@@ -253,7 +278,18 @@ def shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None 
             shiny_entity = model(**key_args)
 
         convert_function = getattr(sys.modules[__name__], f"shiny_{module_name}_from_ls")
-        convert_function(shiny_entity, ls_entity, start_time)
+        shiny_entity, run_after = convert_function(shiny_entity, ls_entity, start_time)
+
+        try:
+            shiny_entity.save()
+        except ValidationError as error:
+            logging.error("Error saving Shiny %s %s", model_name, error)
+
+        if run_after:
+            for each_func in run_after:
+                each_func()
+
+        logging.debug("Saved Shiny %s %s", model_name, shiny_entity)
 
     send_message(f"Finished updating {model_name}s")
 
@@ -270,12 +306,20 @@ def import_customers():
         shiny_model_from_ls(ShinyCustomer)
 
 
+def import_workorders():
+    """temp function to import workorders from LS"""
+
+    with transaction.atomic():
+        shiny_model_from_ls(ShinyWorkorder)
+
+
 def delete_all():
     """temp function to delete all items and customers from shiny db"""
     ShinyItem.objects.all().delete()
     ShinyEmail.objects.all().delete()
     ShinyPhone.objects.all().delete()
     ShinyCustomer.objects.all().delete()
+    ShinyWorkorder.objects.all().delete()
 
 
 if __name__ == "__main__":
@@ -284,4 +328,4 @@ if __name__ == "__main__":
     if DELETE_ALL:
         delete_all()
 
-    import_customers()
+    import_workorders()

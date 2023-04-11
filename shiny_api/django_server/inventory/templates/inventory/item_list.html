@@ -1,15 +1,11 @@
 {% extends 'base.html' %}
-
 {% load crispy_forms_tags %}
-
 {% block content %}
   <div class="container">
     <h1>Items</h1>
     <form method="get">
       <div class="form-row align-items-center">
-        <div class="col-auto">
-          {{ form.description|as_crispy_field }}
-        </div>
+        <div class="col-auto">{{ form.description|as_crispy_field }}</div>
         <div class="col-auto">
           <button type="submit" class="btn btn-primary mb-2">Search</button>
         </div>
@@ -41,4 +37,4 @@
     </table>
     {% include "pagination.html" with entities=page_obj %}
   </div>
-{% endblock %}
+{% endblock content %}

@@ -40,7 +40,7 @@ class Item(models.Model):
     manufacturer_sku = models.CharField(max_length=20)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
-    updated_from_ls_time = models.DateTimeField(null=True)
+    update_from_ls_time = models.DateTimeField(null=True)
     item_matrix_id = models.IntegerField()
     item_attributes = models.ForeignKey(ItemAttributes, on_delete=models.CASCADE, null=True)
 

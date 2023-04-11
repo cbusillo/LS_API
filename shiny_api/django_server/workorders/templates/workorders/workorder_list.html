@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="container">
+        <h1>Workorders</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add Workorder</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Time In</th>
+                    <th>ETA Out</th>
+                    <th>Note</th>
+                    <th>Warranty</th>
+                    <th>Tax</th>
+                    <th>Archived</th>
+                    <th>Customer ID</th>
+                    <th>Serialized ID</th>
+                    <th>Sale ID</th>
+                    <th>Sale Line ID</th>
+                    <th>Item Description</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for workorder in page_obj %}
+                    <tr>
+                        <td>{{ workorder.ls_workorder_id }}</td>
+                        <td>{{ workorder.time_in }}</td>
+                        <td>{{ workorder.eta_out }}</td>
+                        <td>{{ workorder.note }}</td>
+                        <td>{{ workorder.warranty }}</td>
+                        <td>{{ workorder.tax }}</td>
+                        <td>{{ workorder.archived }}</td>
+                        <td>{{ workorder.ls_customer_id }}</td>
+                        <td>{{ workorder.ls_serialized_id }}</td>
+                        <td>{{ workorder.ls_sale_id }}</td>
+                        <td>{{ workorder.ls_sale_line_id }}</td>
+                        <td>
+                            {{ workorder.ls_item_description }}
+                        </td>
+                        <td>
+                            {{ workorder.total }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% include "pagination.html" with entities=page_obj %}
+    </div>
+{% endblock content %}
