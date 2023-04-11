@@ -3,6 +3,7 @@ import locale
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render
 from shiny_api.classes.ls_workorder import Workorder
+from shiny_api.classes.ls_customer import Customer
 from shiny_api.modules.load_config import Config
 from shiny_api.modules.label_print import print_text
 from shiny_api.modules.ring_central import send_message_ssh as send_message
@@ -18,11 +19,12 @@ def workorder_label(request: WSGIRequest):
         context["title"] = "No workorder ID"
         return render(request, "api/error.html", context)
     workorder = Workorder(workorder_id)
+    customer = Customer(workorder.customer_id)
     for line in workorder.note.split("\n"):
         if line[0:2].lower() == "pw" or line[0:2].lower() == "pc":
             password = line
     print_text(
-        f"{workorder.customer.first_name} {workorder.customer.last_name}",
+        f"{customer.first_name} {customer.last_name}",
         barcode=f"2500000{workorder.workorder_id}",
         quantity=quantity,
         text_bottom=password,
@@ -38,9 +40,10 @@ def ring_central_send_message(request: WSGIRequest):
     context = {}
 
     workorder = Workorder(int(request.GET.get("workorderID", 0)))
+    customer = Customer(workorder.customer_id)
     mobile_number = None
 
-    for phone in workorder.customer.contact.phones.contact_phone:
+    for phone in customer.contact.phones.contact_phone:
         if phone.use_type == "Mobile":
             mobile_number = phone.number
     if mobile_number is None:
@@ -57,7 +60,7 @@ def ring_central_send_message(request: WSGIRequest):
 
     message = Config.RESPONSE_MESSAGES[message_number]
     message = message.format(
-        name=workorder.customer.first_name,
+        name=customer.first_name,
         product=item_description,
         total=locale.currency(workorder.total),
     )
