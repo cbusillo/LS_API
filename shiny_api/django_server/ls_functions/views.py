@@ -21,6 +21,7 @@ def ls_functions(request: WSGIRequest, module_function_name: str = ""):
         "shiny_api.modules.light_speed|import_items": "Import Items",
         "shiny_api.modules.light_speed|import_customers": "Import Customers",
         "shiny_api.modules.light_speed|delete_all": "Delete All",
+        "shiny_api.modules.scroll|run": "Scroll",
     }
     context: dict[str, object] = {}
     context["title"] = "Light Speed Functions"
