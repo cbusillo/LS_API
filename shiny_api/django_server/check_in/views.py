@@ -67,7 +67,7 @@ def partial_customer_form_data(request):
 
 def home(request):
     """Render home page"""
-    customers = Customer.objects.all().order_by("-update_time")[:15]
+    customers = Customer.objects.all().order_by("-update_time")[:100]
     if customers.count() == 0:
         return redirect("ls_functions:home")
     import_customers()
