@@ -67,6 +67,8 @@ class Client(requests.Session):
         """extened request method to add base url and timeouts"""
         if "://" not in url:
             url = urljoin(self.base_url, url)
+        if "timeout" not in kwargs:
+            kwargs["timeout"] = 10
         response_code = 0
         retries = 5
         while response_code != 200:
