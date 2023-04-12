@@ -21,6 +21,7 @@ def ls_functions(request: WSGIRequest, module_function_name: str = ""):
         "shiny_app.modules.light_speed|import_items": "Import Items",
         "shiny_app.modules.light_speed|import_customers": "Import Customers",
         "shiny_app.modules.light_speed|import_workorders": "Import Workorders",
+        "shiny_app.modules.light_speed|import_all": "Import All",
         "shiny_app.modules.light_speed|delete_all": "Delete All",
         "shiny_app.modules.scroll|run": "Scroll",
         "shiny_app.django_server.ls_functions.views|reset_running_functions": "Reset Running Functions",
