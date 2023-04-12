@@ -141,10 +141,10 @@ def format_customer_phone():
     logging.info("Updating customers")
     send_message("Updating customers")
     for index, customer in enumerate(customers):
-        if len(customer.contact.phones.contact_phone) == 0:
+        if len(customer.contact.phones.contact_phones) == 0:
             continue
         has_mobile = False
-        for each_number in customer.contact.phones.contact_phone:
+        for each_number in customer.contact.phones.contact_phones:
             cleaned_number = re.sub(r"[^0-9x]", "", each_number.number)
 
             if each_number.number != cleaned_number:
@@ -238,11 +238,11 @@ def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustome
     shiny_customer.tax_category_id = ls_customer.tax_category_id
     functions_to_execute_after = []
 
-    for phone in ls_customer.contact.phones.contact_phone:
+    for phone in ls_customer.contact.phones.contact_phones:
         if not ShinyPhone.objects.filter(number=phone.number, use_type=phone.use_type, customer=shiny_customer).exists():
             functions_to_execute_after.append(ShinyPhone(number=phone.number, use_type=phone.use_type, customer=shiny_customer).save)
 
-    for email in ls_customer.contact.emails.contact_email:
+    for email in ls_customer.contact.emails.contact_emails:
         if not ShinyEmail.objects.filter(address=email.address, use_type=email.use_type, customer=shiny_customer).exists():
             functions_to_execute_after.append(
                 ShinyEmail(address=email.address, use_type=email.use_type, customer=shiny_customer).save

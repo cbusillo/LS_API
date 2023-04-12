@@ -43,7 +43,7 @@ def ring_central_send_message(request: WSGIRequest):
     customer = Customer(workorder.customer_id)
     mobile_number = None
 
-    for phone in customer.contact.phones.contact_phone:
+    for phone in customer.contact.phones.contact_phones:
         if phone.use_type == "Mobile":
             mobile_number = phone.number
     if mobile_number is None:
