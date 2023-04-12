@@ -285,14 +285,15 @@ def _shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None
         except ValidationError as error:
             logging.error("Error saving Shiny %s %s", model_name, error)
 
+        logging.debug("Saved Shiny %s %s", model_name, shiny_entity)
+
         if functions_to_execute_after:
             for function_to_execute in functions_to_execute_after:
                 try:
                     function_to_execute()
                 except ValidationError as error:
                     logging.error("Error saving Shiny %s %s", model_name, error)
-
-        logging.debug("Saved Shiny %s %s", model_name, shiny_entity)
+            logging.debug("Saved Shiny %s's children", model_name)
 
     send_message(f"Finished updating {model_name}s")
 
