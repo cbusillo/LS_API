@@ -1,6 +1,6 @@
 """Class to import customer objects from LS API"""
 import logging
-from typing import Any
+from typing import Any, Generator
 from dataclasses import dataclass
 from datetime import datetime
 from shiny_app.classes.ls_client import Client, string_to_datetime
@@ -113,7 +113,7 @@ class Customer:
 
     client = Client()
 
-    def __init__(self, customer_id: int = 0, ls_customer: Any = None, client: Client | None = None):
+    def __init__(self, customer_id: int = 0, ls_customer: Any = None):
         """Customer object from dict"""
         if ls_customer is None:
             if customer_id == 0:
@@ -142,7 +142,7 @@ class Customer:
     def __repr__(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
-    def update_phones(self):
+    def update_phones(self) -> None:
         """call API put to update pricing"""
         if self.contact.phones is None:
             return
@@ -174,7 +174,7 @@ class Customer:
         self.client.put(url, json=put_customer)
 
     @classmethod
-    def get_customers(cls, customer_id: int = 0, date_filter: datetime | None = None):
+    def get_customers(cls, customer_id: int = 0, date_filter: datetime | None = None) -> Generator["Customer", None, None]:
         """Generator to return all customers from LS API"""
         if customer_id != 0:
             yield Customer(customer_id=customer_id)
