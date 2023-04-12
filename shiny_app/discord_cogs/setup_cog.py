@@ -33,14 +33,14 @@ class SetupCog(commands.Cog):
         if "imagingserver" in platform.node().lower():
             if "restart" in context.message.clean_content.lower():
                 await context.channel.send("Restarting server!!!")
-                subprocess.run(["ssh", "127.0.0.1", "~/launch_shiny_api.sh"], check=False)
+                subprocess.run(["ssh", "127.0.0.1", "~/launch_shiny_app.sh"], check=False)
             await context.defer()
             subprocess.run(["git", "fetch"], check=False)
             result = subprocess.run(["git", "diff", "origin/main", "--quiet"], check=False)
             if result.returncode:
                 print("Restarting server!!!")
                 await context.channel.send("Updating and restarting server!!!")
-                subprocess.run(["ssh", "127.0.0.1", "~/launch_shiny_api.sh"], check=False)
+                subprocess.run(["ssh", "127.0.0.1", "~/launch_shiny_app.sh"], check=False)
 
             await asyncio.sleep(2)
 
