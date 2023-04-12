@@ -11,19 +11,19 @@ from selenium import webdriver
 from django.core.exceptions import ValidationError
 from django.db import transaction, models  # pylint: disable=wrong-import-order
 from django.utils import timezone  # pylint: disable=wrong-import-order
-from shiny_api.classes.ls_customer import Customer as LSCustomer
-from shiny_api.classes.ls_item import Item as LSItem
-from shiny_api.classes.ls_workorder import Workorder as LSWorkorder
-from shiny_api.modules.load_config import Config
+from shiny_app.classes.ls_customer import Customer as LSCustomer
+from shiny_app.classes.ls_item import Item as LSItem
+from shiny_app.classes.ls_workorder import Workorder as LSWorkorder
+from shiny_app.modules.load_config import Config
 
-from shiny_api.django_server.inventory.models import Item as ShinyItem
-from shiny_api.django_server.customers.models import (
+from shiny_app.django_server.inventory.models import Item as ShinyItem
+from shiny_app.django_server.customers.models import (
     Customer as ShinyCustomer,
     Phone as ShinyPhone,
     Email as ShinyEmail,
 )
-from shiny_api.django_server.workorders.models import Workorder as ShinyWorkorder
-from shiny_api.django_server.ls_functions.views import send_message
+from shiny_app.django_server.workorders.models import Workorder as ShinyWorkorder
+from shiny_app.django_server.ls_functions.views import send_message
 
 
 @lru_cache

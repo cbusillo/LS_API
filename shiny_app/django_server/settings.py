@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import locale
 import logging
 from pathlib import Path
-from shiny_api.modules.load_config import Config
+from shiny_app.modules.load_config import Config
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 SHINY_INSTALLED_APPS = [
-    "shiny_api.django_server." + path.name
+    "shiny_app.django_server." + path.name
     for path in Path(BASE_DIR).glob("./*")
     if path.is_dir() and path.name not in ["__pycache__", "templates", "static"]
 ]
@@ -62,7 +62,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "shiny_api.django_server.urls"
+ROOT_URLCONF = "shiny_app.django_server.urls"
 
 TEMPLATES = [
     {
@@ -79,8 +79,8 @@ TEMPLATES = [
         },
     },
 ]
-WSGI_APPLICATION = "shiny_api.django_server.wsgi.application"
-ASGI_APPLICATION = "shiny_api.django_server.asgi.application"
+WSGI_APPLICATION = "shiny_app.django_server.wsgi.application"
+ASGI_APPLICATION = "shiny_app.django_server.asgi.application"
 
 CHANNEL_LAYERS = {
     "default": {

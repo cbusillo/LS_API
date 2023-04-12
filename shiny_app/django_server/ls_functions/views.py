@@ -10,20 +10,20 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import redirect, render
 
 # from django_eventstream import send_event
-from shiny_api.django_server.settings import running_functions
+from shiny_app.django_server.settings import running_functions
 
 
 def ls_functions(request: WSGIRequest, module_function_name: str = ""):
     """View for Light Speed Functions"""
     buttons = {
-        "shiny_api.modules.light_speed|format_customer_phone": "Format Customer Phone Numbers",
-        "shiny_api.modules.light_speed|update_item_price": "Update iPhone/iPad Prices",
-        "shiny_api.modules.light_speed|import_items": "Import Items",
-        "shiny_api.modules.light_speed|import_customers": "Import Customers",
-        "shiny_api.modules.light_speed|import_workorders": "Import Workorders",
-        "shiny_api.modules.light_speed|delete_all": "Delete All",
-        "shiny_api.modules.scroll|run": "Scroll",
-        "shiny_api.django_server.ls_functions.views|reset_running_functions": "Reset Running Functions",
+        "shiny_app.modules.light_speed|format_customer_phone": "Format Customer Phone Numbers",
+        "shiny_app.modules.light_speed|update_item_price": "Update iPhone/iPad Prices",
+        "shiny_app.modules.light_speed|import_items": "Import Items",
+        "shiny_app.modules.light_speed|import_customers": "Import Customers",
+        "shiny_app.modules.light_speed|import_workorders": "Import Workorders",
+        "shiny_app.modules.light_speed|delete_all": "Delete All",
+        "shiny_app.modules.scroll|run": "Scroll",
+        "shiny_app.django_server.ls_functions.views|reset_running_functions": "Reset Running Functions",
     }
     context: dict[str, object] = {}
     context["title"] = "Light Speed Functions"

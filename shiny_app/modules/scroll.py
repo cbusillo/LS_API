@@ -9,7 +9,7 @@ from pygments.formatters import TerminalFormatter  # pylint: disable=no-name-in-
 from pygments.lexers import PythonLexer  # pylint: disable=no-name-in-module
 
 if __name__ != "__main__":
-    from shiny_api.django_server.ls_functions.views import send_message
+    from shiny_app.django_server.ls_functions.views import send_message
 
 
 class PrintSource:
@@ -21,7 +21,7 @@ class PrintSource:
 
         self.file_types = file_types or ["*.py", "*.json", "*.html", "*.css", "*.js"]
 
-        self.source_code_root = source_code_root or Path.home() / "VSCode" / "Shiny_API"
+        self.source_code_root = source_code_root or Path.home() / "VSCode" / "shiny_app"
 
         self.file_names = self.get_file_names()
 

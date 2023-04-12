@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 from dataclasses import dataclass
 import requests
-from shiny_api.modules.load_config import Config
+from shiny_app.modules.load_config import Config
 
 
 @dataclass
@@ -15,8 +15,7 @@ class Device:
     def __init__(self, serial_number: str) -> None:
         """load data from API"""
         self.success = False
-        params = {"Apikey": Config.PHONECHECK_API_KEY,
-                  "imei": serial_number, "Username": "cloudshinycomputers"}
+        params = {"Apikey": Config.PHONECHECK_API_KEY, "imei": serial_number, "Username": "cloudshinycomputers"}
         response = requests.post(url=Config.PC_API_URL["device"], data=params, timeout=60)
         response_json: dict = response.json()
 
@@ -34,8 +33,7 @@ class Device:
         self.imei: int = response_json.get("IMEI", "")
         self.carrier: str = response_json.get("Carrier", "")
         self.color: str = response_json.get("Color", "")
-        self.first_tested: datetime = datetime.strptime(
-            response_json.get("DeviceCreatedDate", ""), "%Y-%m-%d %H:%M:%S")
+        self.first_tested: datetime = datetime.strptime(response_json.get("DeviceCreatedDate", ""), "%Y-%m-%d %H:%M:%S")
         self.battery_cycle_count: int = response_json.get("BatteryCycle", "")
         self.battery_health_percentage: int = response_json.get("BatteryDesignMaxCapacity", "")
         self.unlock_status: str = response_json.get("UnlockStatus", "")

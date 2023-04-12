@@ -2,7 +2,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-import shiny_api.classes.phonecheck as pc
+import shiny_app.classes.phonecheck as pc
 
 
 class PhoneCheckCog(commands.Cog):

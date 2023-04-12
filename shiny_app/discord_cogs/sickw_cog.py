@@ -2,7 +2,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from shiny_api.classes.sickw import Sickw
+from shiny_app.classes.sickw import Sickw
 
 
 class SickwCog(commands.Cog):

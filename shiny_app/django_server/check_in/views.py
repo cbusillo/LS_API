@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 
-from shiny_api.modules.light_speed import import_customers
+from shiny_app.modules.light_speed import import_customers
 
 from ..customers.forms import CustomerForm, CustomerSearch, EmailForm, PhoneForm
 from ..customers.models import Customer

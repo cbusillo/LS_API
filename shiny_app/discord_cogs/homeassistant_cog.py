@@ -3,7 +3,7 @@ from typing import Type
 import discord
 from discord import app_commands
 from discord.ext import commands
-import shiny_api.classes.homeassistant as ha
+import shiny_app.classes.homeassistant as ha
 
 
 class HomeAssistantCog(commands.Cog):
@@ -16,8 +16,7 @@ class HomeAssistantCog(commands.Cog):
     def get_functions(function_name: Type[ha.HomeAssistant] | ha.TaylorSwiftly):
         """Get all functions from a class"""
         return [
-            app_commands.Choice(name=function_choice, value=function_choice)
-            for function_choice in function_name.get_functions()
+            app_commands.Choice(name=function_choice, value=function_choice) for function_choice in function_name.get_functions()
         ]
 
     @app_commands.command(name="vacuum")  # type: ignore
@@ -45,9 +44,7 @@ class HomeAssistantCog(commands.Cog):
         """Tesla commands"""
         taylor = ha.TaylorSwiftly()
         status = taylor.get_functions()[choices]()
-        await context.response.send_message(
-            f"Taylor Swiftly {choices.split()[1]} is {status or choices}"
-        )
+        await context.response.send_message(f"Taylor Swiftly {choices.split()[1]} is {status or choices}")
 
 
 async def setup(bot: commands.Bot):

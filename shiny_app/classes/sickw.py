@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from bs4 import BeautifulSoup
 import requests
-from shiny_api.modules.load_config import Config
+from shiny_app.modules.load_config import Config
 
 
 class SickConstants:

@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault(key="DJANGO_SETTINGS_MODULE", value="shiny_api.django_server.settings")
+os.environ.setdefault(key="DJANGO_SETTINGS_MODULE", value="shiny_app.django_server.settings")
 
 application = get_wsgi_application()

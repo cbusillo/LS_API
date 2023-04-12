@@ -4,7 +4,7 @@ import sys
 from subprocess import Popen, PIPE
 import discord
 from discord.ext import commands
-from shiny_api.modules.discord_bot import wrap_reply_lines
+from shiny_app.modules.discord_bot import wrap_reply_lines
 
 
 class DiscordPyCog(commands.Cog):

@@ -3,7 +3,7 @@ import textwrap
 import discord
 from discord import app_commands
 from discord.ext import commands
-from shiny_api.classes.ls_item import Item
+from shiny_app.classes.ls_item import Item
 
 
 class LightSpeedCog(commands.Cog):
@@ -25,11 +25,7 @@ class LightSpeedCog(commands.Cog):
         for item in items:
             message_output += f"{item.description} is ${item.prices.item_price[0].amount}\n"
 
-        lines = textwrap.wrap(
-            message_output,
-            width=2000,
-            replace_whitespace=False,
-            break_long_words=False)
+        lines = textwrap.wrap(message_output, width=2000, replace_whitespace=False, break_long_words=False)
         for line in lines:
             await context.followup.send(line)
 

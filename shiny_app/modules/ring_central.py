@@ -2,7 +2,7 @@
 from subprocess import Popen, PIPE
 import logging
 import socket
-from shiny_api.modules.load_config import Config
+from shiny_app.modules.load_config import Config
 
 
 def get_user_from_host(hostname: str) -> str:

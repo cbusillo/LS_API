@@ -4,7 +4,7 @@ import textwrap
 import discord
 from discord.ext import commands
 
-from shiny_api.modules.load_config import Config
+from shiny_app.modules.load_config import Config
 
 
 class ShinyBot(commands.Bot):
@@ -16,7 +16,7 @@ class ShinyBot(commands.Bot):
     async def setup_hook(self):
         for file in Config.COG_DIR.iterdir():
             if file.suffix == ".py" and file.name != "__init__.py":
-                await self.load_extension(f"shiny_api.discord_cogs.{file.stem}")
+                await self.load_extension(f"shiny_app.discord_cogs.{file.stem}")
 
 
 async def wrap_reply_lines(lines: str, message: discord.Message):

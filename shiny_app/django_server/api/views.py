@@ -2,11 +2,11 @@
 import locale
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render
-from shiny_api.classes.ls_workorder import Workorder
-from shiny_api.classes.ls_customer import Customer
-from shiny_api.modules.load_config import Config
-from shiny_api.modules.label_print import print_text
-from shiny_api.modules.ring_central import send_message_ssh as send_message
+from shiny_app.classes.ls_workorder import Workorder
+from shiny_app.classes.ls_customer import Customer
+from shiny_app.modules.load_config import Config
+from shiny_app.modules.label_print import print_text
+from shiny_app.modules.ring_central import send_message_ssh as send_message
 
 
 def workorder_label(request: WSGIRequest):

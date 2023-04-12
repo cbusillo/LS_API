@@ -2,7 +2,7 @@
 from datetime import datetime
 from dataclasses import dataclass
 from typing import Any
-from shiny_api.classes.ls_client import Client
+from shiny_app.classes.ls_client import Client
 
 
 @dataclass
