@@ -129,7 +129,7 @@ def update_item_price():
                 if item.is_modified:
                     output = f"Updating {item.description}"
                     send_message(output)
-                    logging.infls_wo(output)
+                    logging.info(output)
                     item.save_item_price()
                 break
 
