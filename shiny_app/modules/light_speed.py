@@ -236,17 +236,19 @@ def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustome
     shiny_customer.customer_type_id = ls_customer.customer_type_id
     shiny_customer.discount_id = ls_customer.discount_id
     shiny_customer.tax_category_id = ls_customer.tax_category_id
-    run_after = []
+    functions_to_execute_after = []
 
     for phone in ls_customer.contact.phones.contact_phone:
         if not ShinyPhone.objects.filter(number=phone.number, use_type=phone.use_type, customer=shiny_customer).exists():
-            run_after.append(ShinyPhone(number=phone.number, use_type=phone.use_type, customer=shiny_customer).save)
+            functions_to_execute_after.append(ShinyPhone(number=phone.number, use_type=phone.use_type, customer=shiny_customer).save)
 
     for email in ls_customer.contact.emails.contact_email:
         if not ShinyEmail.objects.filter(address=email.address, use_type=email.use_type, customer=shiny_customer).exists():
-            run_after.append(ShinyEmail(address=email.address, use_type=email.use_type, customer=shiny_customer).save)
+            functions_to_execute_after.append(
+                ShinyEmail(address=email.address, use_type=email.use_type, customer=shiny_customer).save
+            )
 
-    return shiny_customer, run_after
+    return shiny_customer, functions_to_execute_after
 
 
 def _shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None = None):
@@ -276,16 +278,19 @@ def _shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None
             shiny_entity = model(**key_args)
 
         convert_function = getattr(sys.modules[__name__], f"shiny_{module_name}_from_ls")
-        shiny_entity, run_after = convert_function(shiny_entity, ls_entity, start_time)
+        shiny_entity, functions_to_execute_after = convert_function(shiny_entity, ls_entity, start_time)
 
         try:
             shiny_entity.save()
         except ValidationError as error:
             logging.error("Error saving Shiny %s %s", model_name, error)
 
-        if run_after:
-            for each_func in run_after:
-                each_func()
+        if functions_to_execute_after:
+            for function_to_execute in functions_to_execute_after:
+                try:
+                    function_to_execute()
+                except ValidationError as error:
+                    logging.error("Error saving Shiny %s %s", model_name, error)
 
         logging.debug("Saved Shiny %s %s", model_name, shiny_entity)
 
@@ -314,11 +319,11 @@ def import_workorders():
 
 def delete_all():
     """temp function to delete all items and customers from shiny db"""
+    ShinyWorkorder.objects.all().delete()
     ShinyItem.objects.all().delete()
     ShinyEmail.objects.all().delete()
     ShinyPhone.objects.all().delete()
     ShinyCustomer.objects.all().delete()
-    ShinyWorkorder.objects.all().delete()
 
 
 if __name__ == "__main__":
