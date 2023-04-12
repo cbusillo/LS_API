@@ -3,18 +3,18 @@ from datetime import datetime
 from decimal import Decimal
 import re
 import shlex
-from typing import Any
+from typing import Any, Generator
 from dataclasses import dataclass
 from .ls_client import Client, string_to_datetime
 from ..modules.load_config import Config
 
 
-def atoi(text: str):
+def atoi(text: str) -> int | str:
     """check if text is number for natrual number sort"""
     return int(text) if text.isdigit() else text
 
 
-def natural_keys(text: str):
+def natural_keys(text: str) -> list[int | str]:
     """sort numbers like a human"""
     match text.lower():
         case "1tb":
@@ -33,10 +33,10 @@ class SizeAttributes:
 
     size_attributes = []  # type: ignore
 
-    def __init__(self, obj: Any):
+    def __init__(self, size_attributes: Any):
         """Return items from json dict into SizeAttribute object."""
-        self.item_matrix_id = str(obj.get("itemMatrixID"))
-        self.attribute2_value = str(obj.get("attribute2Value"))
+        self.item_matrix_id = int(size_attributes.get("itemMatrixID"))
+        self.attribute2_value = size_attributes.get("attribute2Value") or ""
 
     @staticmethod
     def return_sizes(item_matrix_id: str) -> list[str]:
@@ -76,14 +76,14 @@ class SizeAttributes:
 class ItemAttributes:
     """Attribute object for item.  This holds the specific attribute on item."""
 
-    def __init__(self, obj: Any):
+    def __init__(self, item_attributes: Any):
         """Load ItemAttributes object from json dict."""
-        if obj is None:
+        if item_attributes is None:
             return
-        self.attribute1 = str(obj.get("attribute1"))
-        self.attribute2 = str(obj.get("attribute2"))
-        self.attribute3 = str(obj.get("attribute3"))
-        self.item_attribute_set_id = str(obj.get("itemAttributeSetID"))
+        self.attribute1 = item_attributes.get("attribute1") or ""
+        self.attribute2 = item_attributes.get("attribute2") or ""
+        self.attribute3 = item_attributes.get("attribute3") or ""
+        self.item_attribute_set_id = int(item_attributes.get("itemAttributeSetID"))
 
 
 @dataclass
@@ -92,18 +92,18 @@ class ItemPrice:
 
     def __init__(self, obj: Any):
         """ItemPrice from dict"""
-        self.amount = str(obj.get("amount"))
-        self.use_type_id = str(obj.get("useTypeID"))
-        self.use_type = str(obj.get("useType"))
+        self.amount = obj.get("amount") or ""
+        self.use_type_id = int(obj.get("useTypeID"))
+        self.use_type = obj.get("useType") or ""
 
 
 @dataclass
 class Prices:
     """Prices class from LS"""
 
-    def __init__(self, obj: Any):
+    def __init__(self, prices: Any):
         """Prices from dict"""
-        self.item_price = [ItemPrice(y) for y in obj.get("ItemPrice")]
+        self.item_price = [ItemPrice(y) for y in prices.get("ItemPrice")]
 
 
 @dataclass
@@ -128,12 +128,12 @@ class Item:
         self.avg_cost = Decimal(ls_item.get("avgCost"))
         self.tax = ls_item.get("tax").lower() == "true"
         self.archived = ls_item.get("archived").lower() == "true"
-        self.item_type = str(ls_item.get("itemType"))
+        self.item_type = ls_item.get("itemType") or ""
         self.serialized = ls_item.get("serialized").lower() == "true"
-        self.description = str(ls_item.get("description"))
-        self.upc = ls_item.get("upc")
-        self.custom_sku = str(ls_item.get("customSku"))
-        self.manufacturer_sku = str(ls_item.get("manufacturerSku"))
+        self.description = ls_item.get("description") or ""
+        self.upc = ls_item.get("upc") or ""
+        self.custom_sku = ls_item.get("customSku") or ""
+        self.manufacturer_sku = ls_item.get("manufacturerSku") or ""
         self.create_time = string_to_datetime(ls_item.get("createTime"))
         self.time_stamp = string_to_datetime(ls_item.get("timeStamp"))
         self.category_id = int(ls_item.get("categoryID"))
@@ -146,10 +146,10 @@ class Item:
         self.sizes = SizeAttributes.return_sizes(ls_item.get("itemMatrixID"))
         self.is_modified = False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.item_id} - {self.description}"
 
-    def save_item_price(self):
+    def save_item_price(self) -> None:
         """Call API put to update pricing."""
         put_item = {
             "Prices": {
@@ -173,13 +173,13 @@ class Item:
         self.client.put(url, json=put_item)
 
     @classmethod
-    def get_items(cls, date_filter: datetime | None = None):
+    def get_items(cls, date_filter: datetime | None = None) -> Generator["Item", None, None]:
         """Run API auth."""
         for item in cls.client.get_items_json(date_filter=date_filter):
             yield Item(ls_item=item)
 
     @classmethod
-    def get_items_by_category(cls, categories: list[str], date_filter: datetime | None = None):
+    def get_items_by_category(cls, categories: list[str], date_filter: datetime | None = None) -> Generator["Item", None, None]:
         """Run API auth."""
         if not isinstance(categories, list):
             categories = [categories]
@@ -188,7 +188,7 @@ class Item:
                 yield Item(ls_item=item)
 
     @classmethod
-    def get_items_by_desciption(cls, descriptions: str | list[str]):
+    def get_items_by_desciption(cls, descriptions: str | list[str]) -> list["Item"]:
         """Return LS Item by searching description using OR and then filtering for all words"""
         if not isinstance(descriptions, list):
             descriptions = shlex.split(descriptions)
