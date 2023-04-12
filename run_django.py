@@ -3,9 +3,9 @@
 import logging
 import subprocess
 from pathlib import Path
-import shiny_api.modules.django_server as django_server
-from shiny_api.modules.load_config import Config
-from shiny_api.modules.shiny_networking import is_host_available, scp_file_from_host
+import shiny_app.modules.django_server as django_server
+from shiny_app.modules.load_config import Config
+from shiny_app.modules.shiny_networking import is_host_available, scp_file_from_host
 
 
 def start_django_server():
@@ -23,10 +23,10 @@ def start_django_server():
                 if remote_file:
                     local_file.write(remote_file)
     print(subprocess.run(["pkill", "-f", "stunnel"], check=False))
-    print(subprocess.Popen("python shiny_api/modules/django_server.py migrate", shell=True))
+    print(subprocess.Popen("python shiny_app/modules/django_server.py migrate", shell=True))
 
-    print(subprocess.Popen("/usr/local/bin/stunnel shiny_api/config/stunnel.ini", shell=True))
-    print(subprocess.Popen("/opt/homebrew/bin/stunnel shiny_api/config/stunnel.ini", shell=True))
+    print(subprocess.Popen("/usr/local/bin/stunnel shiny_app/config/stunnel.ini", shell=True))
+    print(subprocess.Popen("/opt/homebrew/bin/stunnel shiny_app/config/stunnel.ini", shell=True))
     django_server.main()
 
 

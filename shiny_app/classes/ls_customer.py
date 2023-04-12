@@ -2,8 +2,8 @@
 from typing import Any
 from dataclasses import dataclass
 from datetime import datetime
-from shiny_api.classes.ls_client import Client
-from shiny_api.modules.load_config import Config
+from shiny_app.classes.ls_client import Client
+from shiny_app.modules.load_config import Config
 
 
 @dataclass

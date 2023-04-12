@@ -1,6 +1,5 @@
 """Shiny Workorder class."""
 from django.db import models
-from django.db.models.query import QuerySet
 from ..customers.models import Customer
 
 
@@ -19,4 +18,7 @@ class Workorder(models.Model):
     update_from_ls_time = models.DateTimeField(null=True)
     total = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20)
-    customer: QuerySet["Customer"]
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+
+    def __str__(self) -> str:
+        return f"{self.customer.full_name} - {self.status} - {self.time_in}"

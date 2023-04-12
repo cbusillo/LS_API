@@ -1,9 +1,9 @@
 [tool.poetry]
-name = "shiny_api"
+name = "shiny_app"
 version = "0.2.83"
 description = "Interface with LS and Camera Scanner"
 authors = ["Chris Busillo <info@shinycomputers.com>"]
-packages = [{include = "shiny_api"}]
+packages = [{include = "shiny_app"}]
 
 [tool.poetry.dependencies]
 python = "3.11.*"

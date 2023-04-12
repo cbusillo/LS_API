@@ -24,6 +24,7 @@ class Customer(models.Model):
     is_modified = models.BooleanField(default=False)
     phones: QuerySet["Phone"]
     emails: QuerySet["Email"]
+    customer: QuerySet["Customer"]
 
     def save(self, *args, **kwargs):
         """Save customer"""

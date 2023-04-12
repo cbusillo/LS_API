@@ -195,7 +195,7 @@ def shiny_workorder_from_ls(shiny_workorder: ShinyWorkorder, ls_workorder: LSWor
     try:
         shiny_workorder.customer = ShinyCustomer.objects.get(ls_customer_id=ls_workorder.customer_id)
     except ShinyCustomer.DoesNotExist:
-        shiny_workorder.customer = None
+        shiny_workorder.customer = ShinyCustomer.objects.get(ls_customer_id=5896)
 
     return shiny_workorder, None
 
@@ -249,7 +249,7 @@ def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustome
     return shiny_customer, run_after
 
 
-def shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None = None):
+def _shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None = None):
     """Get LS items since date_filter and iterate through them"""
     if date_filter is None:
         date_filter = shiny_update_from_ls_time(model)
@@ -260,8 +260,6 @@ def shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None 
     elif model_name == "Customer":
         ls_entities = LSCustomer.get_customers(date_filter=date_filter)
     elif model_name == "Workorder":
-        with transaction.atomic():
-            shiny_model_from_ls(ShinyCustomer)
         ls_entities = LSWorkorder.get_workorders(date_filter=date_filter)
     else:
         logging.warning("Invalid model type passed to shiny_model_from_ls")
@@ -297,20 +295,21 @@ def shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None 
 def import_items():
     """temp function to import items from LS"""
     with transaction.atomic():
-        shiny_model_from_ls(ShinyItem)
+        _shiny_model_from_ls(ShinyItem)
 
 
 def import_customers():
     """temp function to import customers from LS"""
     with transaction.atomic():
-        shiny_model_from_ls(ShinyCustomer)
+        _shiny_model_from_ls(ShinyCustomer)
 
 
 def import_workorders():
     """temp function to import workorders from LS"""
-
     with transaction.atomic():
-        shiny_model_from_ls(ShinyWorkorder)
+        _shiny_model_from_ls(ShinyCustomer)
+    with transaction.atomic():
+        _shiny_model_from_ls(ShinyWorkorder)
 
 
 def delete_all():
