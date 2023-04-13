@@ -182,8 +182,8 @@ def shiny_update_from_ls_time(model: type[models.Model]):
 def shiny_workorder_from_ls(shiny_workorder: ShinyWorkorder, ls_workorder: LSWorkorder, start_time: datetime):
     """Convert LS Workorder to Shiny Workorder"""
     shiny_workorder.ls_workorder_id = ls_workorder.workorder_id
-    shiny_workorder.time_in = ls_workorder.time_in if ls_workorder.time_in != "None" else None
-    shiny_workorder.eta_out = ls_workorder.eta_out if ls_workorder.eta_out != "None" else None
+    shiny_workorder.time_in = ls_workorder.time_in
+    shiny_workorder.eta_out = ls_workorder.eta_out
     shiny_workorder.note = ls_workorder.note
     shiny_workorder.warranty = ls_workorder.warranty
     shiny_workorder.tax = ls_workorder.tax
