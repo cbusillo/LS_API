@@ -11,28 +11,7 @@
     </ul>
 {% endblock navbar %}
 {% block content %}
-    <script>
-        document.addEventListener('keydown', function(event) {
-        if (event.metaKey && event.keyCode === 80) { 
-            document.getElementById('custom_label_print').click(); 
-            event.preventDefault(); 
-        }
-        });
-        const textArea = document.getElementById('custom-label-text');
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const textArea = document.getElementById('custom-label-text');
-
-        if (textArea) {
-            textArea.addEventListener('focus', function() {
-                const self = this;
-                setTimeout(function() {
-                    self.select();
-                }, 10);
-            });
-        }
-    });
-    </script>
+    <script>{% include "label_printer/labels.js" %}</script>
     <form method="post">
         {% csrf_token %}
         <div class="container">
@@ -56,6 +35,8 @@
                         <div class="col">
                             <input class="form-control"
                                    type="number"
+                                   min="1"
+                                   max="100"
                                    name="quantity"
                                    style="width:75px"
                                    value="1"/>
