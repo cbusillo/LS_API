@@ -147,7 +147,7 @@ running_functions: dict = {}
 STATICFILES_DIRS = [Path(BASE_DIR / "static")]
 
 PWA_SERVICE_WORKER_PATH = Path(STATICFILES_DIRS[0] / "pwa_sw.js")
-PWA_APP_NAME = "Shiny API"
+PWA_APP_NAME = "Shiny App"
 PWA_APP_DESCRIPTION = "Shiny Stuff"
 PWA_APP_THEME_COLOR = "#0A0302"
 PWA_APP_BACKGROUND_COLOR = "#ffffff"
@@ -155,7 +155,7 @@ PWA_APP_DISPLAY = "standalone"
 PWA_START_URL = "/"
 PWA_APP_SCOPE = "/"
 PWA_APP_ORIENTATION = "any"
-PWA_APP_START_URL = "/ls_functions/"
+PWA_APP_START_URL = "/"
 PWA_APP_STATUS_BAR_COLOR = "default"
 PWA_APP_ICONS = [{"src": "/static/logo_160.png", "sizes": "160x160"}]
 # PWA_APP_ICONS_APPLE = [{"src": "/static/logo.jpg", "sizes": "160x160"}]
