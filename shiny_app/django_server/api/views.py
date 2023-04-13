@@ -53,10 +53,11 @@ def ring_central_send_message(request: WSGIRequest):
     if workorder.total == 0 and request.GET.get("message") == "2":  # if we send a message with price with $0 price
         message_number += 1
     item_description = workorder.item_description
-    for word in Config.STYLIZED_NAMES:
-        if word.lower() in item_description.lower() and word not in item_description:
-            index = item_description.lower().find(word.lower())
-            item_description = item_description[:index] + word + item_description[index + len(word) :]
+    if item_description:
+        for word in Config.STYLIZED_NAMES:
+            if word.lower() in item_description.lower() and word not in item_description:
+                index = item_description.lower().find(word.lower())
+                item_description = item_description[:index] + word + item_description[index + len(word) :]
 
     message = Config.RESPONSE_MESSAGES[message_number]
     message = message.format(
