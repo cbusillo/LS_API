@@ -1,16 +1,23 @@
 """call and iterate Item class do update pricing"""
 # pylint: disable=ungrouped-imports
 import re
+import os
 import json
 import logging
 import sys
 from datetime import datetime
 from functools import lru_cache
 import pytz
+import undetected_chromedriver as uc
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.remote.webelement import WebElement
 from django.core.exceptions import ValidationError
 from django.db import transaction, models  # pylint: disable=wrong-import-order
 from django.utils import timezone  # pylint: disable=wrong-import-order
+from urllib.parse import urlparse, parse_qs
 from shiny_app.classes.ls_customer import Customer as LSCustomer
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import Workorder as LSWorkorder
@@ -24,6 +31,11 @@ from shiny_app.django_server.customers.models import (
 )
 from shiny_app.django_server.workorders.models import Workorder as ShinyWorkorder
 from shiny_app.django_server.ls_functions.views import send_message
+
+os.system("killall -u cbusillo 'Google Chrome'")
+driver_options = webdriver.ChromeOptions()
+driver_options.headless = True
+driver = uc.Chrome(options=driver_options)
 
 
 @lru_cache
@@ -39,6 +51,57 @@ def get_website_prices(browser: webdriver.Safari, url: str):
     json_price = json_price.replace('"shop"}}}}', '"shop"}}')
     json_price = json_price.replace('{"step":"select"}}}}}', '{"step":"select"}}}')
     return json.loads(json_price)
+
+
+class js_function_available:
+    def __init__(self, function_name):
+        self.function_name = function_name
+
+    def __call__(self, driver):
+        try:
+            return driver.execute_script(f"return typeof window.{self.function_name} === 'function';")
+        except Exception as e:
+            return False
+
+
+def element_to_be_clickable_by_css_selector(css_selector: str) -> WebElement:
+    def element_to_be_clickable(driver) -> WebElement:
+        element = driver.find_element(By.CSS_SELECTOR, css_selector)
+        if element.is_enabled():
+            return element
+        return None
+
+    return element_to_be_clickable
+
+
+def create_workorder(customer_id: int) -> int:
+    """Create a workorder in LS using Selenium"""
+    if customer_id == 0:
+        return None
+    driver.get(
+        "https://us.merchantos.com/?name=workbench.views.beta_workorder&form_name=view&id=undefined&tab=details"
+    )  # crewate workorder url
+
+    wait = WebDriverWait(driver, 10)
+    if "/login?" in driver.current_url:
+        login_field = wait.until(EC.visibility_of_element_located((By.ID, "login-input")))
+        password_field = wait.until(EC.visibility_of_element_located((By.ID, "password-input")))
+        login_button = wait.until(element_to_be_clickable_by_css_selector(".vd-btn.vd-btn--do"))
+
+        login_field.send_keys(Config.LS_LOGIN_EMAIL)
+        password_field.send_keys(Config.LS_LOGIN_PASSWORD)
+
+        login_button.click()
+    wait.until(js_function_available("merchantos.quick_customer.attachCustomer"))
+    time.sleep(1.5)
+
+    driver.execute_script(f"window.merchantos.quick_customer.attachCustomer({customer_id})")
+    wait.until(lambda driver: "&id=undefined&" not in driver.current_url)
+    workorder_ids = parse_qs(urlparse(driver.current_url).query).get("id")
+    workorder_id = None
+    if workorder_ids:
+        workorder_id = workorder_ids[0]
+    return workorder_id
 
 
 def update_item_price():

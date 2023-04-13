@@ -29,6 +29,7 @@ daphne = "^4.0.0"
 pytesseract = "^0.3.10"
 opencv-python = "^4.7.0.72"
 pytz = "^2023.3"
+undetected-chromedriver = "^3.4.6"
 
 [tool.poetry.group.dev.dependencies]
 types-paramiko = "^3.0.0.6"

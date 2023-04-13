@@ -19,6 +19,15 @@
                 <div id="customer-detail-container" class="row"></div>
                 <div id="customer-phone-container" class="row"></div>
                 <div id="customer-email-container" class="row"></div>
+                <div id="workorder-buttons-container" class="row d-none">
+                    <div class="col-md-12">
+                        <button data-url="{% url 'check_in:create_workorder' %}"
+                                id="create-workorder-button"
+                                class="btn btn-primary">
+                            Create Work Order
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -69,6 +69,8 @@ class Config:
     OPENAI_API_KEY = secret_file.get("openai_api_key")
     PHONECHECK_API_KEY = secret_file.get("phonecheck_api_key")
     DJANGO_SECRET_KEY = secret_file.get("django_secret_key")
+    LS_LOGIN_EMAIL = secret_file.get("ls_login_email")
+    LS_LOGIN_PASSWORD = secret_file.get("ls_login_password")
 
     HOMEASSISTANT_API = {
         store_key: {config_key: config_value for config_key, config_value in store_value.items()}

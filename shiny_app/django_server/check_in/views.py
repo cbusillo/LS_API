@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 
-from shiny_app.modules.light_speed import import_customers
+from shiny_app.modules.light_speed import import_customers, create_workorder
 
 from ..customers.forms import CustomerForm, CustomerSearch, EmailForm, PhoneForm
 from ..customers.models import Customer
@@ -63,6 +63,19 @@ def partial_customer_form_data(request):
         return JsonResponse(response_data)
 
     return JsonResponse({"message": "Invalid request."}, status=400)
+
+
+def create_workorder_view(request):
+    """Create a work order for a customer"""
+    if request.method == "POST":
+        print(request.POST)
+        customer_id = request.POST.get("customer_id")
+        customer = Customer.objects.get(id=customer_id)
+        ls_customer_id = customer.ls_customer_id
+        if ls_customer_id:
+            workorder_id = create_workorder(ls_customer_id)
+            return JsonResponse({"workorder_id": workorder_id})
+    return JsonResponse({})
 
 
 def home(request):

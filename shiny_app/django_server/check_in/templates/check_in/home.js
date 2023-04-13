@@ -11,10 +11,38 @@ var customerDetailForm = $('#customer-detail-container');
 var customerDetailContainer = $('#customer-detail-container');
 var customerPhoneContainer = $('#customer-phone-container');
 var customerEmailContainer = $('#customer-email-container');
+var workorderButtonsContainer = $('#workorder-buttons-container');
+const createWorkorderButton = document.getElementById('create-workorder-button');
 
 customerDetailForm.submit(function () {
     var csrfInput = '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">';
     customerDetailForm.append(csrfInput);
+});
+
+createWorkorderButton.addEventListener('click', async function (event) {
+    event.preventDefault();
+    var customerId = customerOutput.val();
+
+    if (customerId) {
+        $.ajax({
+            url: createWorkorderButton.getAttribute('data-url'),
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                customer_id: customerId,
+                csrfmiddlewaretoken: csrfToken
+            },
+            success: function (data) {
+                var workorderId = data.workorder_id;
+                if (workorderId > 0) {
+                    openWorkorderInSafari(workorderId);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log('Error:', error);
+            }
+        });
+    }
 });
 
 customerOutput.change(function () {
@@ -29,6 +57,7 @@ customerOutput.change(function () {
                 csrfmiddlewaretoken: csrfToken
             },
             success: function (data) {
+                workorderButtonsContainer.removeClass('d-none');
                 customerDetailContainer.html(data.customer_detail_form);
                 customerPhoneContainer.html(data.customer_phone_form);
                 customerEmailContainer.html(data.customer_email_form);
@@ -79,5 +108,14 @@ function updateCustomerOutput() {
         },
     });
 };
+
+function openWorkorderInSafari(workorderId) {
+    console.info(`Opening workorder ${workorderId} in Safari...`)
+    const windowName = "workorderWindow"
+    const workorderUrl = `https://us.merchantos.com/?name=workbench.views.beta_workorder&form_name=view&id=${workorderId}&tab=details`
+    window.open(workorderUrl, '_blank');
+}
+
+
 customerOutput.val(customerOutput.find('option:first').val());
 customerOutput.trigger('change');
