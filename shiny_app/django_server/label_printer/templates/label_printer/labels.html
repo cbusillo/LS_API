@@ -24,8 +24,7 @@
                               name="custom_label_text">{{ custom_label_text }}</textarea>
                 </div>
                 <div class="col-md-3">
-                    <input class="form-control"
-                           style="text-transform:uppercase"
+                    <input class="form-control text-uppercase"
                            type="text"
                            name="barcode"
                            placeholder="Barcode"/>
@@ -57,7 +56,7 @@
                                    name="date"
                                    autocomplete="off"
                                    checked/>
-                            <label class="btn btn-outline-secondary" style="width:100%;" for="btncheck1">
+                            <label class="btn btn-outline-secondary" for="btncheck1">
                                 Include
                                 Date
                             </label>
@@ -84,8 +83,7 @@
                         <button type="submit"
                                 name="label_text"
                                 value="{{ label }}"
-                                class="btn btn-lg btn-secondary my-2 py-3"
-                                style="width: 100%">
+                                class="btn btn-lg btn-secondary my-2 py-3 w-100">
                             {{ label }}
                         </button>
                     </div>
@@ -94,5 +92,5 @@
             </div>
         </div>
     </form>
-    <div class"text-white">{{ error }}</div>
+    <div class="text-white">{{ error }}</div>
 {% endblock content %}
