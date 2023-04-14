@@ -55,7 +55,7 @@ def get_website_prices(browser: webdriver.Safari, url: str):
     return json.loads(json_price)
 
 
-if os.environ.get("RUN_MAIN", None) != "true":
+if os.environ.get("RUN_MAIN", None) == "true":
     os.system("killall -u cbusillo 'Google Chrome'")
     driver = Driver(headless2=True, uc=True)
 
