@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "shiny_app"
-version = "0.2.84"
+version = "0.2.85"
 description = "Shiny App, for all your Shiny needs"
 authors = ["Chris Busillo <info@shinycomputers.com>"]
 packages = [{include = "shiny_app"}]
