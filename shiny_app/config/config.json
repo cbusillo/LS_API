@@ -19,8 +19,8 @@
         "itemMatrix": "ItemMatrix.json",
         "customers": "Customer.json",
         "customer": "Customer/{customerID}.json",
-        "workorder": "DisplayTemplate/Workorder/{workorderID}.json",
-        "workorders": "DisplayTemplate/Workorder.json"
+        "workorder": "Workorder/{workorderID}.json",
+        "workorders": "Workorder.json"
     },
     "google_sheets_serial_name": "Shiny API",
     "google_sheets_serial_print": "true"
