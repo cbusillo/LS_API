@@ -56,7 +56,7 @@ def get_website_prices(browser: webdriver.Safari, url: str):
 
 
 os.system("killall -u cbusillo 'Google Chrome'")
-driver = Driver(headless2=True, uc=True)
+driver = Driver(headless2=False, uc=True)
 
 
 class js_function_available:
