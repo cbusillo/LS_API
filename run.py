@@ -16,10 +16,11 @@ def main():
     if "stop" in sys.argv:
         return
     logging.info("Starting new processes")
-    subprocess.Popen("/usr/local/bin/poetry run discord", shell=True)
+    path = "/usr/local/bin:/opt/homebrew/bin/"
+    subprocess.Popen(["/usr/bin/env", "-P", path, "poetry", "run", "discord"], shell=False)
     subprocess.Popen(
-        "/usr/local/bin/poetry run django",
-        shell=True,
+        ["/usr/bin/env", "-P", path, "poetry", "run", "django"],
+        shell=False,
         stdin=subprocess.DEVNULL,
     )
 

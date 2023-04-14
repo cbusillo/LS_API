@@ -22,11 +22,11 @@ def start_django_server():
                 )
                 if remote_file:
                     local_file.write(remote_file)
+    path = "/usr/local/bin:/opt/homebrew/bin/"
     print(subprocess.run(["pkill", "-f", "stunnel"], check=False))
-    print(subprocess.Popen("python shiny_app/modules/django_server.py migrate", shell=True))
+    print(subprocess.Popen(["/usr/bin/env", "-P", path, "python", "shiny_app/modules/django_server.py migrate"], shell=False))
 
-    print(subprocess.Popen("/usr/local/bin/stunnel shiny_app/config/stunnel.ini", shell=True))
-    print(subprocess.Popen("/opt/homebrew/bin/stunnel shiny_app/config/stunnel.ini", shell=True))
+    print(subprocess.Popen(["/usr/bin/env", "-P", path, "stunnel", "shiny_app/config/stunnel.ini"], shell=False))
     django_server.main()
 
 

@@ -69,7 +69,6 @@ class DiscordPyCog(commands.Cog):
 
         if any(keyword in message_code.lower() for keyword in keywords) and is_shiny is False:
             return "Contains protected keywords", ""
-
         popen = Popen(["/usr/local/bin/gtimeout", "15", sys.executable, "-"], stderr=PIPE, stdout=PIPE, stdin=PIPE, cwd=os.getcwd())
         code_result, code_error = popen.communicate(bytes(message_code, encoding="utf-8"))
         return code_result.decode("utf8"), code_error.decode("utf8")
