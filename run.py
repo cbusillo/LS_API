@@ -16,10 +16,10 @@ def main():
     if "stop" in sys.argv:
         return
     logging.info("Starting new processes")
-    subprocess.Popen("poetry run discord", shell=True)
+    subprocess.Popen("poetry run discord", shell=False)
     subprocess.Popen(
         "poetry run django",
-        shell=True,
+        shell=False,
         stdin=subprocess.DEVNULL,
     )
 
