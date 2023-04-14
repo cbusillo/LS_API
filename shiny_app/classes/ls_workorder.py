@@ -39,7 +39,6 @@ class Workorder:
         self.item_description = (
             None if (serialized := ls_workorder.get("Serialized")) is None else serialized.get("description").strip() or None
         )
-        self.total = float(ls_workorder.get("m").get("total"))
         self.status = (
             None if (workorder_status := ls_workorder.get("WorkorderStatus")) is None else workorder_status.get("name") or None
         )
