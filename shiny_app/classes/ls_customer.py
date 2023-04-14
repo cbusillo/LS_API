@@ -8,22 +8,6 @@ from shiny_app.modules.load_config import Config
 
 
 @dataclass
-class ContactAddress:
-    """Contact Address"""
-
-    def __init__(self, address: dict[str, str]):
-        """Load ContactAddress from dict"""
-        self.address1 = address.get("address1") or ""
-        self.address2 = address.get("address2") or ""
-        self.city = address.get("city") or ""
-        self.state = address.get("state") or ""
-        self.zip = address.get("zip") or ""
-        self.country = address.get("country") or ""
-        self.country_code = address.get("countryCode") or ""
-        self.state_code = address.get("stateCode") or ""
-
-
-@dataclass
 class ContactEmail:
     """Contact email from dict"""
 
