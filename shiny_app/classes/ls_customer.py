@@ -79,17 +79,6 @@ class Phones:
 
 
 @dataclass
-class Addresses:
-    """Address class from LS"""
-
-    def __init__(self, address: dict[str, str]):
-        """Addresses from dict"""
-        contact_address = address.get("ContactAddress")
-        if isinstance(contact_address, dict):
-            self.contact_address = ContactAddress(contact_address)
-
-
-@dataclass
 class Contact:
     """Contact class from LS"""
 
@@ -100,7 +89,6 @@ class Contact:
         self.no_email = obj.get("noEmail") or ""
         self.no_phone = obj.get("noPhone") or ""
         self.no_mail = obj.get("noMail") or ""
-        self.addresses = Addresses(obj.get("Addresses"))
         self.phones = Phones(obj.get("Phones"))
         self.emails = Emails(obj.get("Emails"))
         self.websites = obj.get("Websites") or ""
@@ -117,7 +105,7 @@ class Customer:
         """Customer object from dict"""
         if ls_customer is None:
             if customer_id == 0:
-                raise ValueError("Customer ID or LS Customer object required")
+                return
             self.customer_id = customer_id
             ls_customer = self.client.get_customer_json(self.customer_id)
         self.customer_id = ls_customer.get("customerID") or 0

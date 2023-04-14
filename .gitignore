@@ -9,5 +9,4 @@
 *.pem
 *.log
 *.sqlite3
-db.sqlite3
-poetry.lock
+*.lock

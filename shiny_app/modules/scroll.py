@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Scroll through all the source code in the project."""
 import random
+import argparse
 from pathlib import Path
 from time import sleep
 
@@ -57,9 +58,9 @@ class PrintSource:
             file_names.extend(self.source_code_root.rglob(file_type))
         return file_names
 
-    def set_delay(self, delay_smallest: float = 0.1, delay_largest: float = 5):
+    def set_delay(self, min_delay: float = 0.1, max_delay: float = 2):
         """Set new delay between printing lines."""
-        self.print_delay = random.uniform(delay_smallest, delay_largest)
+        self.print_delay = random.uniform(min_delay, max_delay)
 
     def run_forever(self):
         """Start the program."""
@@ -74,11 +75,18 @@ class PrintSource:
             self.scroll_source()
 
 
-def run(loops: int = 1):
+def run(loops: int, max_delay: float):
     """Run."""
     printer = PrintSource()
-    printer.run(loops)
+    printer.set_delay(max_delay=max_delay)
+    for _ in range(loops):
+        printer.scroll_source()
 
 
 if __name__ == "__main__":
-    run(10000)
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument("loops", type=int, default=1)
+    arg_parser.add_argument("max_delay", type=float, default=2)
+    args = arg_parser.parse_args()
+
+    run(args.loops, args.max_delay)

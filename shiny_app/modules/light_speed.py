@@ -25,7 +25,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction, models  # pylint: disable=wrong-import-order
 from django.utils import timezone  # pylint: disable=wrong-import-order
 from urllib.parse import urlparse, parse_qs
-from shiny_app.classes.ls_customer import Customer as LSCustomer
+from shiny_app.classes.ls_customer import Customer as LSCustomer, Contact as LSContact, Phones as LSPhones, Emails as LSEmails
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import Workorder as LSWorkorder
 from shiny_app.modules.load_config import Config
@@ -56,7 +56,7 @@ def get_website_prices(browser: webdriver.Safari, url: str):
 
 
 os.system("killall -u cbusillo 'Google Chrome'")
-driver = Driver(headless2=False, uc=True)
+driver = Driver(headless2=True, uc=True)
 
 
 class js_function_available:
@@ -254,7 +254,7 @@ def shiny_workorder_from_ls(shiny_workorder: ShinyWorkorder, ls_workorder: LSWor
     shiny_workorder.archived = ls_workorder.archived
     shiny_workorder.update_time = start_time
     shiny_workorder.update_from_ls_time = start_time
-    shiny_workorder.total = ls_workorder.total
+    # shiny_workorder.total = ls_workorder.total
     shiny_workorder.status = ls_workorder.status
     try:
         shiny_workorder.customer = ShinyCustomer.objects.get(ls_customer_id=ls_workorder.customer_id)
@@ -403,4 +403,13 @@ if __name__ == "__main__":
         delete_all()
 
     # import_all()
-    print(create_workorder(14020))
+    customer = LSCustomer()
+    customer.first_name = "test"
+    customer.last_name = "test"
+    customer.contact = LSContact(
+        [
+            LSPhones({"ContactPhone": {"number": "1234566789", "useType": "mobile"}}),
+            LSEmails({"ContactEmail": {"address": "test@test.com", "useType": "Primary"}}),
+        ]
+    )
+    print()
