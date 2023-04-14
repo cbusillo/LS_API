@@ -1,5 +1,4 @@
 """View for API access to Shiny Stuff"""
-import locale
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render
 from shiny_app.classes.ls_workorder import Workorder
@@ -50,8 +49,8 @@ def ring_central_send_message(request: WSGIRequest):
         context["title"] = "No mobile number"
         return render(request, "api/error.html", context)
     message_number = int(request.GET.get("message", 0))
-    if workorder.total == 0 and request.GET.get("message") == "2":  # if we send a message with price with $0 price
-        message_number += 1
+    # if workorder.total == 0 and request.GET.get("message") == "2":  # if we send a message with price with $0 price
+    #     message_number += 1
     item_description = workorder.item_description
     if item_description:
         for word in Config.STYLIZED_NAMES:
@@ -63,7 +62,7 @@ def ring_central_send_message(request: WSGIRequest):
     message = message.format(
         name=customer.first_name,
         product=item_description,
-        total=locale.currency(workorder.total),
+        # total=locale.currency(workorder.total),
     )
     ip_address = request.META.get("REMOTE_ADDR")
     if ip_address is None:

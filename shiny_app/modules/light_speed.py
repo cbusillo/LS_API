@@ -1,5 +1,5 @@
 """call and iterate Item class do update pricing"""
-# pylint: disable=ungrouped-imports
+# pylint: disable=ungrouped-imports, wrong-import-position
 import re
 import os
 import json
@@ -13,9 +13,9 @@ if __name__ == "__main__":
     django.setup()
 from datetime import datetime
 from functools import lru_cache
+from urllib.parse import urlparse, parse_qs
 import pytz
 from seleniumbase import Driver
-from seleniumbase import page_actions
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -24,7 +24,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from django.core.exceptions import ValidationError
 from django.db import transaction, models  # pylint: disable=wrong-import-order
 from django.utils import timezone  # pylint: disable=wrong-import-order
-from urllib.parse import urlparse, parse_qs
+
 from shiny_app.classes.ls_customer import Customer as LSCustomer, Contact as LSContact, Phones as LSPhones, Emails as LSEmails
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import Workorder as LSWorkorder
@@ -38,6 +38,11 @@ from shiny_app.django_server.customers.models import (
 )
 from shiny_app.django_server.workorders.models import Workorder as ShinyWorkorder
 from shiny_app.django_server.ls_functions.views import send_message
+
+driver: Driver
+if os.environ.get("RUN_MAIN", None) == "true":
+    os.system("killall -u cbusillo 'Google Chrome'")
+    driver = Driver(headless2=True, uc=True)
 
 
 @lru_cache
@@ -55,24 +60,23 @@ def get_website_prices(browser: webdriver.Safari, url: str):
     return json.loads(json_price)
 
 
-if os.environ.get("RUN_MAIN", None) == "true":
-    os.system("killall -u cbusillo 'Google Chrome'")
-    driver = Driver(headless2=True, uc=True)
+class JsFunctionAvailable:
+    """check if a javascript function is available"""
 
-
-class js_function_available:
     def __init__(self, function_name):
         self.function_name = function_name
 
-    def __call__(self, driver):
+    def __call__(self):
         try:
             return driver.execute_script(f"return typeof window.{self.function_name} === 'function';")
-        except Exception as e:
+        except Exception:
             return False
 
 
 def element_to_be_clickable_by_css_selector(css_selector: str) -> WebElement:
-    def element_to_be_clickable(driver) -> WebElement:
+    """check if an element is ready to be clicked"""
+
+    def element_to_be_clickable() -> WebElement:
         element = driver.find_element(By.CSS_SELECTOR, css_selector)
         if element.is_enabled():
             return element
@@ -94,7 +98,7 @@ def create_workorder(customer_id: int) -> int:
         password_field.send_keys(Config.LS_LOGIN_PASSWORD)
 
         login_button.click()
-    wait.until(js_function_available("merchantos.quick_customer.attachCustomer"))
+    wait.until(JsFunctionAvailable("merchantos.quick_customer.attachCustomer"))
     time.sleep(0.5)
 
     driver.execute_script(f"window.merchantos.quick_customer.attachCustomer({customer_id})")
@@ -383,6 +387,7 @@ def import_workorders():
 
 
 def import_all():
+    """Import everything from LS, use to create db"""
     import_items()
     import_customers()
     import_workorders()
@@ -404,10 +409,10 @@ if __name__ == "__main__":
         delete_all()
 
     # import_all()
-    customer = LSCustomer()
-    customer.first_name = "test"
-    customer.last_name = "test"
-    customer.contact = LSContact(
+    test_customer = LSCustomer()
+    test_customer.first_name = "test"
+    test_customer.last_name = "test"
+    test_customer.contact = LSContact(
         [
             LSPhones({"ContactPhone": {"number": "1234566789", "useType": "mobile"}}),
             LSEmails({"ContactEmail": {"address": "test@test.com", "useType": "Primary"}}),
