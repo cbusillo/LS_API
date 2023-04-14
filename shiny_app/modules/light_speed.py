@@ -5,10 +5,17 @@ import os
 import json
 import logging
 import sys
+import time
+
+if __name__ == "__main__":
+    import django
+
+    django.setup()
 from datetime import datetime
 from functools import lru_cache
 import pytz
-import undetected_chromedriver as uc
+from seleniumbase import Driver
+from seleniumbase import page_actions
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -32,11 +39,6 @@ from shiny_app.django_server.customers.models import (
 from shiny_app.django_server.workorders.models import Workorder as ShinyWorkorder
 from shiny_app.django_server.ls_functions.views import send_message
 
-os.system("killall -u cbusillo 'Google Chrome'")
-driver_options = webdriver.ChromeOptions()
-driver_options.headless = True
-driver = uc.Chrome(options=driver_options)
-
 
 @lru_cache
 def get_website_prices(browser: webdriver.Safari, url: str):
@@ -51,6 +53,10 @@ def get_website_prices(browser: webdriver.Safari, url: str):
     json_price = json_price.replace('"shop"}}}}', '"shop"}}')
     json_price = json_price.replace('{"step":"select"}}}}}', '{"step":"select"}}}')
     return json.loads(json_price)
+
+
+os.system("killall -u cbusillo 'Google Chrome'")
+driver = Driver(headless2=True, uc=True)
 
 
 class js_function_available:
@@ -76,12 +82,7 @@ def element_to_be_clickable_by_css_selector(css_selector: str) -> WebElement:
 
 def create_workorder(customer_id: int) -> int:
     """Create a workorder in LS using Selenium"""
-    if customer_id == 0:
-        return None
-    driver.get(
-        "https://us.merchantos.com/?name=workbench.views.beta_workorder&form_name=view&id=undefined&tab=details"
-    )  # crewate workorder url
-
+    driver.get("https://us.merchantos.com/?name=workbench.views.beta_workorder&form_name=view&id=undefined&tab=details")
     wait = WebDriverWait(driver, 10)
     if "/login?" in driver.current_url:
         login_field = wait.until(EC.visibility_of_element_located((By.ID, "login-input")))
@@ -93,7 +94,7 @@ def create_workorder(customer_id: int) -> int:
 
         login_button.click()
     wait.until(js_function_available("merchantos.quick_customer.attachCustomer"))
-    time.sleep(1.5)
+    time.sleep(0.5)
 
     driver.execute_script(f"window.merchantos.quick_customer.attachCustomer({customer_id})")
     wait.until(lambda driver: "&id=undefined&" not in driver.current_url)
@@ -401,4 +402,5 @@ if __name__ == "__main__":
     if DELETE_ALL:
         delete_all()
 
-    import_workorders()
+    # import_all()
+    print(create_workorder(14020))

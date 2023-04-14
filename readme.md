@@ -7,4 +7,4 @@ git clone https://github.com/cbusillo/Shiny_App
 cd Shiny_App
 poetry shell
 python shiny_app/modules/django_server.py migrate
-
+pip install seleniumbase #dep conflict poetry refuses to install
