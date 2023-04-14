@@ -133,11 +133,12 @@ class Client(requests.Session):
     def get_workorder_json(self, workorder_id: int):
         """Get workorder"""
         url = Config.LS_URLS["workorder"].format(workorderID=workorder_id)
-        return next(self._entries(url, key_name="Workorder"))
+        params = {"load_relations": "all"}
+        return next(self._entries(url, key_name="Workorder", params=params))
 
     def get_workorders_json(self, date_filter: datetime | None = None):
         """Get all workorders"""
-        params = {"limit": "100"}
+        params = {"limit": "100", "load_relations": "all"}
         if date_filter:
             params["timeStamp"] = f">,{date_filter}"
         return self._entries(Config.LS_URLS["workorders"], "Workorder", params=params)
