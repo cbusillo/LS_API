@@ -137,13 +137,13 @@ class PhoneForm(forms.ModelForm):
 
     class Meta:
         model = Phone
-        fields = ["number", "use_type"]
+        fields = ["number", "type"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_show_labels = False
-        self.fields["use_type"].widget.attrs["class"] = "no-border text-center form-control-sm"
+        self.fields["type"].widget.attrs["class"] = "no-border text-center form-control-sm"
 
 
 class EmailForm(forms.ModelForm):
@@ -151,10 +151,10 @@ class EmailForm(forms.ModelForm):
 
     class Meta:
         model = Email
-        fields = ["address", "use_type"]
+        fields = ["address", "type"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_show_labels = False
-        self.fields["use_type"].widget.attrs["class"] = "no-border text-center form-control-sm"
+        self.fields["type"].widget.attrs["class"] = "no-border text-center form-control-sm"

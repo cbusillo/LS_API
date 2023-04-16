@@ -17,6 +17,7 @@ from urllib.parse import urlparse, parse_qs
 import pytz
 from seleniumbase import Driver
 from selenium import webdriver
+from selenium.common.exceptions import JavascriptException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -25,7 +26,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction, models  # pylint: disable=wrong-import-order
 from django.utils import timezone  # pylint: disable=wrong-import-order
 
-from shiny_app.classes.ls_customer import Customer as LSCustomer, Contact as LSContact, Phones as LSPhones, Emails as LSEmails
+from shiny_app.classes.ls_customer import Customer as LSCustomer
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import Workorder as LSWorkorder
 from shiny_app.modules.load_config import Config
@@ -66,17 +67,17 @@ class JsFunctionAvailable:
     def __init__(self, function_name):
         self.function_name = function_name
 
-    def __call__(self):
+    def __call__(self, driver):
         try:
             return driver.execute_script(f"return typeof window.{self.function_name} === 'function';")
-        except Exception:
+        except JavascriptException:
             return False
 
 
 def element_to_be_clickable_by_css_selector(css_selector: str) -> WebElement:
     """check if an element is ready to be clicked"""
 
-    def element_to_be_clickable() -> WebElement:
+    def element_to_be_clickable(driver) -> WebElement:
         element = driver.find_element(By.CSS_SELECTOR, css_selector)
         if element.is_enabled():
             return element
@@ -128,7 +129,7 @@ def update_item_price():
     output = "Loading items"
     send_message(output)
     logging.info(output)
-    items = LSItem.get_items_by_category(categories=Config.DEVICE_CATEGORIES_FOR_PRICE)
+    items = LSItem.get_items(categories=Config.DEVICE_CATEGORIES_FOR_PRICE)
     for item in items:
         # interate through items to generate pricing and save to LS
         # Generate pricing from devices.json and apple website by item from LS
@@ -203,38 +204,6 @@ def update_item_price():
                 break
 
 
-def format_customer_phone():
-    """Load and iterate through customers, updating formatting on phone numbers."""
-    customers = LSCustomer.get_customers()
-    customers_updated = 0
-    logging.info("Updating customers")
-    send_message("Updating customers")
-    for index, customer in enumerate(customers):
-        if len(customer.contact.phones.contact_phones) == 0:
-            continue
-        has_mobile = False
-        for each_number in customer.contact.phones.contact_phones:
-            cleaned_number = re.sub(r"[^0-9x]", "", each_number.number)
-
-            if each_number.number != cleaned_number:
-                each_number.number = cleaned_number
-                customer.is_modified = True
-            if len(each_number.number) == 7:
-                each_number.number = f"757{each_number.number}"
-                customer.is_modified = True
-            if len(each_number.number) == 11:
-                each_number.number = each_number.number[1:]
-                customer.is_modified = True
-            if each_number.use_type == "Mobile":
-                has_mobile = True
-        if customer.is_modified or has_mobile is False:
-            customers_updated += 1
-            output = f"{customers_updated}: Updating Customer #{index}"
-            send_message(output)
-            logging.info(output)
-            customer.update_phones()
-
-
 def shiny_update_from_ls_time(model: type[models.Model]):
     """Convert LS date string to datetime"""
     local_tz = pytz.timezone("America/New_York")
@@ -273,7 +242,7 @@ def shiny_item_from_ls(shiny_item: ShinyItem, ls_item: LSItem, start_time: datet
     """translation layer for LSItem to ShinyItem"""
     shiny_item.ls_item_id = ls_item.item_id
     shiny_item.default_cost = ls_item.default_cost or None
-    shiny_item.average_cost = ls_item.avg_cost or None
+    shiny_item.average_cost = ls_item.average_cost or None
     shiny_item.tax = ls_item.tax
     shiny_item.archived = ls_item.archived
     shiny_item.item_type = ls_item.item_type
@@ -293,7 +262,7 @@ def shiny_item_from_ls(shiny_item: ShinyItem, ls_item: LSItem, start_time: datet
 def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustomer, start_time: datetime):
     """translation layer for LSCustomer to ShinyCustomer"""
     shiny_customer.ls_customer_id = ls_customer.customer_id
-    shiny_customer.first_name = ls_customer.first_name.strip()
+    shiny_customer.first_name = ls_customer.first_name
     shiny_customer.last_name = ls_customer.last_name
     shiny_customer.title = ls_customer.title
     shiny_customer.company = ls_customer.company
@@ -303,19 +272,16 @@ def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustome
     shiny_customer.contact_id = ls_customer.contact_id
     shiny_customer.credit_account_id = ls_customer.credit_account_id
     shiny_customer.customer_type_id = ls_customer.customer_type_id
-    shiny_customer.discount_id = ls_customer.discount_id
     shiny_customer.tax_category_id = ls_customer.tax_category_id
     functions_to_execute_after = []
 
-    for phone in ls_customer.contact.phones.contact_phones:
-        if not ShinyPhone.objects.filter(number=phone.number, use_type=phone.use_type, customer=shiny_customer).exists():
-            functions_to_execute_after.append(ShinyPhone(number=phone.number, use_type=phone.use_type, customer=shiny_customer).save)
+    for phone in ls_customer.phones:
+        if not ShinyPhone.objects.filter(number=phone.number, type=phone.type, customer=shiny_customer).exists():
+            functions_to_execute_after.append(ShinyPhone(number=phone.number, type=phone.type, customer=shiny_customer).save)
 
-    for email in ls_customer.contact.emails.contact_emails:
-        if not ShinyEmail.objects.filter(address=email.address, use_type=email.use_type, customer=shiny_customer).exists():
-            functions_to_execute_after.append(
-                ShinyEmail(address=email.address, use_type=email.use_type, customer=shiny_customer).save
-            )
+    for email in ls_customer.emails:
+        if not ShinyEmail.objects.filter(address=email.address, type=email.type, customer=shiny_customer).exists():
+            functions_to_execute_after.append(ShinyEmail(address=email.address, type=email.type, customer=shiny_customer).save)
 
     return shiny_customer, functions_to_execute_after
 
@@ -412,10 +378,7 @@ if __name__ == "__main__":
     test_customer = LSCustomer()
     test_customer.first_name = "test"
     test_customer.last_name = "test"
-    test_customer.contact = LSContact(
-        [
-            LSPhones({"ContactPhone": {"number": "1234566789", "useType": "mobile"}}),
-            LSEmails({"ContactEmail": {"address": "test@test.com", "useType": "Primary"}}),
-        ]
-    )
-    print()
+    test_customer.phones = LSCustomer.Phone({"ContactPhone": {"number": "1234566789", "useType": "mobile"}})
+    test_customer.emails = LSCustomer.Email({"ContactEmail": {"address": "test@test.com", "useType": "Primary"}})
+
+    print(test_customer)

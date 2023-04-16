@@ -19,7 +19,6 @@ class Customer(models.Model):
     contact_id = models.IntegerField()
     credit_account_id = models.IntegerField(blank=True, null=True)
     customer_type_id = models.IntegerField()
-    discount_id = models.IntegerField(blank=True, null=True)
     tax_category_id = models.IntegerField(blank=True, null=True)
     is_modified = models.BooleanField(default=False)
     phones: QuerySet["Phone"]
@@ -49,19 +48,19 @@ class Email(models.Model):
     """Contact email from dict"""
 
     address = models.EmailField()
-    use_type = models.CharField(max_length=100)
+    type = models.CharField(max_length=100)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="emails")
 
     class Meta:
-        unique_together = ("address", "customer", "use_type")
+        unique_together = ("address", "customer", "type")
 
 
 class Phone(models.Model):
     """Contact phone"""
 
     number = PhoneNumberField(blank=True)
-    use_type = models.CharField(max_length=20)
+    type = models.CharField(max_length=20)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="phones")
 
     class Meta:
-        unique_together = ("number", "customer", "use_type")
+        unique_together = ("number", "customer", "type")

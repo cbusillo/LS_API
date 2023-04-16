@@ -2,25 +2,13 @@
 from django.db import models
 
 
-class ItemAttributeSet(models.Model):
-    """Item Attribute Set model. This containts the type of the attributes."""
-
-    item_attribute_set_id = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=255)
-    attribute_name1 = models.CharField(max_length=255, blank=True)
-    attribute_name2 = models.CharField(max_length=255, blank=True)
-    attribute_name3 = models.CharField(max_length=255, blank=True)
-    system = models.BooleanField()
-    archived = models.BooleanField()
-
-
 class ItemAttributes(models.Model):
     """Represents the attributes of an item."""
 
     attribute1 = models.CharField(max_length=255, blank=True)
     attribute2 = models.CharField(max_length=255, blank=True)
     attribute3 = models.CharField(max_length=255, blank=True)
-    item_attribute_set = models.ForeignKey(ItemAttributeSet, on_delete=models.CASCADE)
+    item_attribute_id = models.IntegerField()
 
 
 class Item(models.Model):

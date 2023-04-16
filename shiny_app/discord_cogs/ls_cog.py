@@ -23,7 +23,7 @@ class LightSpeedCog(commands.Cog):
             return
         message_output = ""
         for item in items:
-            message_output += f"{item.description} is ${item.prices.item_price[0].amount}\n"
+            message_output += f"{item.description} is ${item.price}\n"
 
         lines = textwrap.wrap(message_output, width=2000, replace_whitespace=False, break_long_words=False)
         for line in lines:

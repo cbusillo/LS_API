@@ -8,7 +8,7 @@ then
     rm ~/.shiny/db.sqlite3
     for directory in ./shiny_app/django_server/*/
     do
-        if [[ $directory == *"__pycache__"* || $directory == *"templates"* || $directory == *"static" ]]
+        if [[ $directory == *"__pycache__"* || $directory == *"templates"* || $directory == *"static"* ]]
         then
             continue
         fi

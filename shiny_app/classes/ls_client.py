@@ -1,5 +1,6 @@
 """Client for Lightspeed API Inherited from requests.Session"""
 from datetime import datetime
+from typing import Any, Generator, Self, Optional
 import logging
 import time
 from urllib.parse import urljoin
@@ -7,16 +8,6 @@ import requests
 from shiny_app.django_server.ls_functions.views import send_message
 
 from shiny_app.modules.load_config import Config
-
-
-def string_to_datetime(date_string: str) -> datetime:
-    """Convert date string to datetime object"""
-    return datetime.strptime(date_string, "%Y-%m-%dT%H:%M:%S%z")
-
-
-def datetime_to_string(date_string: datetime) -> str:
-    """Convert datetime object to string"""
-    return date_string.strftime("%Y-%m-%dT%H:%M:%S%z")
 
 
 class Client(requests.Session):
@@ -81,7 +72,7 @@ class Client(requests.Session):
                 return None
         return request_response  # pyright: reportUnboundVariable=false
 
-    def _entries(self, url: str, key_name: str, params: dict | None = None):
+    def get_entities(self, url: str, key_name: str, params: Optional[dict] = None) -> Generator[Self, None, None]:
         """Iterate over all items in the API"""
 
         next_url = url
@@ -104,52 +95,55 @@ class Client(requests.Session):
             next_url = self._response.json()["@attributes"]["next"]
             page += 1
 
-    def get_items_json(self, category_id: str = "", description: str = "", date_filter: datetime | None = None):
-        """Get all items"""
-        params = {"load_relations": '["ItemAttributes"]', "limit": "100"}
+
+class BaseLSEntity:
+    """Base entity class for Lightspeed Objects"""
+
+    client = Client()
+    cls_params = {"limit": "100"}
+
+    def __init__(self) -> None:
+        self.fetch_from_api: Optional[bool] = None
+
+    @staticmethod
+    def string_to_datetime(string_input: str | None) -> datetime | None:
+        """Convert date string to datetime object"""
+        if string_input is None:
+            return None
+        return datetime.strptime(string_input, "%Y-%m-%dT%H:%M:%S%z")
+
+    @staticmethod
+    def datetime_to_string(datetime_input: datetime | None) -> str | None:
+        """Convert datetime object to string"""
+        if datetime_input is None:
+            return None
+        return datetime_input.strftime("%Y-%m-%dT%H:%M:%S%z")
+
+    @staticmethod
+    def safe_int(value: Any) -> Optional[int]:
+        """Return int or None"""
+        try:
+            return int(value)
+        except (ValueError, TypeError):
+            return None
+
+    @classmethod
+    def get_entities_json(
+        cls, entity_id: Optional[int] = None, params: Optional[dict[str, Any]] = None, date_filter: Optional[datetime] = None
+    ) -> Generator[Any, None, None]:
+        """Get one entity"""
+        if params is None:
+            params = {}
+        params.update(cls.cls_params)
+        key_name = cls.__name__
+        url = f"{key_name}.json"
+        if entity_id:
+            url = f"{key_name}/{entity_id}.json"
         if date_filter:
             params["timeStamp"] = f">,{date_filter}"
+        return cls.client.get_entities(url, key_name=key_name, params=params)
 
-        if category_id:
-            params["categoryID"] = category_id
-        if description:
-            params["or"] = description
-
-        return self._entries(Config.LS_URLS["items"], "Item", params=params)
-
-    def get_customers_json(self, date_filter: datetime | None = None):
-        """Get all items"""
-        params = {"load_relations": '["Contact"]', "limit": "100"}
-        if date_filter:
-            params["timeStamp"] = f">,{date_filter}"
-        return self._entries(Config.LS_URLS["customers"], "Customer", params=params)
-
-    def get_customer_json(self, customer_id: int):
-        """Get customer"""
-        url = Config.LS_URLS["customer"].format(customerID=customer_id)
-        params = {"load_relations": '["Contact"]'}
-        return next(self._entries(url, key_name="Customer", params=params))
-
-    def get_workorder_json(self, workorder_id: int):
-        """Get workorder"""
-        url = Config.LS_URLS["workorder"].format(workorderID=workorder_id)
-        params = {"load_relations": "all"}
-        return next(self._entries(url, key_name="Workorder", params=params))
-
-    def get_workorders_json(self, date_filter: datetime | None = None):
-        """Get all workorders"""
-        params = {"limit": "100", "load_relations": "all"}
-        if date_filter:
-            params["timeStamp"] = f">,{date_filter}"
-        return self._entries(Config.LS_URLS["workorders"], "Workorder", params=params)
-
-    def get_item_json(self, item_id: int):
-        """Get item"""
-        url = Config.LS_URLS["item"].format(itemID=item_id)
-        params = {"load_relations": '["ItemAttributes"]'}
-        return self._entries(url, key_name="Item", params=params)
-
-    def get_size_attributes_json(self):
-        """Get all size attributes"""
-        url = Config.LS_URLS["itemMatrix"]
-        return self._entries(url, "ItemMatrix", params={"load_relations": '["ItemAttributeSet"]'})
+    def put_entity_json(self, entity_id: int, data: dict[str, Any]) -> None:
+        """Update entity"""
+        url = f"{self.__class__.__name__}/{entity_id}.json"
+        self.client.put(url, json=data)

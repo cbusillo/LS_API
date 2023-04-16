@@ -19,6 +19,7 @@ def workorder_label(request: WSGIRequest):
         return render(request, "api/error.html", context)
     workorder = Workorder(workorder_id)
     customer = Customer(workorder.customer_id)
+
     for line in workorder.note.split("\n"):
         if line[0:2].lower() == "pw" or line[0:2].lower() == "pc":
             password = line
@@ -42,8 +43,8 @@ def ring_central_send_message(request: WSGIRequest):
     customer = Customer(workorder.customer_id)
     mobile_number = None
 
-    for phone in customer.contact.phones.contact_phones:
-        if phone.use_type == "Mobile":
+    for phone in customer.phones:
+        if phone.type == "Mobile":
             mobile_number = phone.number
     if mobile_number is None:
         context["title"] = "No mobile number"

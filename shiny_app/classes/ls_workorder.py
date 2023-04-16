@@ -1,53 +1,68 @@
 """Class to import workorder objects from LS API"""
 from datetime import datetime
 from dataclasses import dataclass
-from typing import Any, Generator
-from shiny_app.classes.ls_client import Client, string_to_datetime
+from typing import Any, Generator, Optional, Self
+from shiny_app.classes.ls_client import BaseLSEntity
 
 
 @dataclass
-class Workorder:
+class Workorder(BaseLSEntity):
     """Workorder object from LS"""
 
-    client = Client()
+    default_params = {"load_relations": '["Serialized", "WorkorderStatus"]'}
 
-    def __init__(self, workorder_id: int = 0, ls_workorder: Any = None):
+    workorder_id: Optional[int] = None
+    time_in: Optional[datetime] = None
+    eta_out: Optional[datetime] = None
+    note: str = ""
+    warranty: Optional[bool] = None
+    tax: Optional[bool] = None
+    archived: Optional[bool] = None
+    time_stamp: Optional[datetime] = None
+    customer_id: Optional[int] = None
+    serialized_id: Optional[int] = None
+    sale_id: Optional[int] = None
+    sale_line_id: Optional[int] = None
+    item_description: Optional[str] = None
+    status: Optional[str] = None
+
+    def __init__(self, *args, **kwargs):
         """Workorder object from dict"""
-        if ls_workorder is None:
-            if workorder_id == 0:
-                raise ValueError("Must provide workorder_id or ls_workorder")
-            ls_workorder = self.client.get_workorder_json(workorder_id)
-        if ls_workorder is None:
-            self.workorder_id = 0
-            return
+        super().__init__()
+        self.__dict__.update(kwargs)
 
-        if not ls_workorder:
-            return
-        self.workorder_id = int(ls_workorder.get("workorderID"))
-        self.system_sku = int(ls_workorder.get("systemSku"))
-        self.time_in = None if (time_in := ls_workorder.get("timeIn")) is None else string_to_datetime(time_in)
-        self.eta_out = None if (eta_out := ls_workorder.get("etaOut")) is None else string_to_datetime(eta_out)
-        self.note = ls_workorder.get("note") or ""
-        self.warranty = ls_workorder.get("warranty").lower() == "true"
-        self.tax = ls_workorder.get("tax").lower() == "true"
-        self.archived = ls_workorder.get("archived").lower() == "true"
-        self.time_stamp = string_to_datetime(ls_workorder.get("timeStamp"))
-        self.customer_id = int(ls_workorder.get("customerID"))
-        self.serialized_id = int(ls_workorder.get("serializedID"))
-        self.sale_id = int(ls_workorder.get("saleID"))
-        self.sale_line_id = int(ls_workorder.get("saleLineID"))
-        self.item_description = (
-            None if (serialized := ls_workorder.get("Serialized")) is None else serialized.get("description").strip() or None
-        )
-        self.status = (
-            None if (workorder_status := ls_workorder.get("WorkorderStatus")) is None else workorder_status.get("name") or None
-        )
+        if self.workorder_id and self.fetch_from_api:
+            workorder_json = next(self.get_entities_json(entity_id=self.workorder_id))
+            workorder = self.from_json(workorder_json)
+            self.__dict__.update(workorder.__dict__)
 
     @classmethod
-    def get_workorders(cls, workorder_id: int = 0, date_filter: datetime | None = None) -> Generator["Workorder", None, None]:
+    def from_json(cls, workorder_json: dict[str, Any]) -> Self:
+        """Workorder object from dict"""
+
+        if not isinstance(workorder_json, dict):
+            raise ValueError("Workorder must be a dict: " + str(workorder_json))
+
+        workorder_json_transformed = {
+            "workorder_id": cls.safe_int(workorder_json.get("workorderID")),
+            "time_in": cls.string_to_datetime(workorder_json.get("time_in")),
+            "eta_out": cls.string_to_datetime(workorder_json.get("eta_out")),
+            "note": workorder_json.get("note"),
+            "warranty": workorder_json.get("warranty", "").lower() == "true",
+            "tax": workorder_json.get("tax", "").lower() == "true",
+            "archived": workorder_json.get("archived", "").lower() == "true",
+            "time_stamp": cls.string_to_datetime(workorder_json.get("timeStamp")),
+            "customer_id": cls.safe_int(workorder_json.get("customerID")),
+            "serialized_id": cls.safe_int(workorder_json.get("serializedID")),
+            "sale_id": cls.safe_int(workorder_json.get("saleID")),
+            "sale_line_id": cls.safe_int(workorder_json.get("saleLineID")),
+            "item_description": workorder_json.get("Serialized", {}).get("description", "").strip(),
+            "status": workorder_json.get("WorkorderStatus", {}).get("name"),
+        }
+        return cls(**workorder_json_transformed)
+
+    @classmethod
+    def get_workorders(cls, date_filter: Optional[datetime] = None) -> Generator["Workorder", None, None]:
         """Run API auth."""
-        if workorder_id != 0:
-            yield Workorder(workorder_id=workorder_id)
-            return
-        for workorder in cls.client.get_workorders_json(date_filter=date_filter):
-            yield Workorder(ls_workorder=workorder)
+        for workorder in cls.get_entities_json(date_filter=date_filter, params=cls.default_params):
+            yield Workorder.from_json(workorder)
