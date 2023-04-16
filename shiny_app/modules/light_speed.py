@@ -1,6 +1,5 @@
 """call and iterate Item class do update pricing"""
 # pylint: disable=ungrouped-imports, wrong-import-position
-import re
 import os
 import json
 import logging

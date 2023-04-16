@@ -1,13 +1,14 @@
 """Client for Lightspeed API Inherited from requests.Session"""
-from datetime import datetime
-from typing import Any, Generator, Self, Optional
 import logging
 import time
-from urllib.parse import urljoin
-import requests
-from shiny_app.django_server.ls_functions.views import send_message
 from dataclasses import fields, is_dataclass
+from datetime import datetime
+from typing import Any, Generator, Optional, Self
+from urllib.parse import urljoin
 
+import requests
+
+from shiny_app.django_server.ls_functions.views import send_message
 from shiny_app.modules.load_config import Config
 
 
@@ -150,10 +151,10 @@ class BaseLSEntity:
         self.client.put(url, json=data)
 
     @classmethod
-    def discard_extra_args(cls, *args, **kwargs):
+    def discard_extra_args(cls, *args, **kwargs) -> Self:
         """Discard extra arguments passed to the constructor for dataclasses"""
         if not is_dataclass(cls):
-            return cls(*args, **kwargs)
+            raise TypeError("cls must be a dataclass")
         allowed_kwargs = {key: value for key, value in kwargs.items() if key in [field.name for field in fields(cls)]}
 
         return cls(**allowed_kwargs)
