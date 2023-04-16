@@ -1,11 +1,8 @@
 """Class to import customer objects from LS API"""
-import logging
-import re
 from typing import Any, Generator, Self, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
 from shiny_app.classes.ls_client import BaseLSEntity
-from shiny_app.django_server.ls_functions.views import send_message
 
 
 @dataclass
@@ -15,18 +12,18 @@ class Customer(BaseLSEntity):
     default_params = {"load_relations": '["Contact"]'}
 
     @dataclass
-    class Phone:
+    class Phone(BaseLSEntity):
         """Phone"""
 
         number: str
-        type: str
+        number_type: str
 
     @dataclass
-    class Email:
+    class Email(BaseLSEntity):
         """Email"""
 
-        address: Optional[str] = None
-        type: Optional[str] = None
+        address: str
+        address_type: str
 
     customer_id: Optional[int] = None
     first_name: str = ""
@@ -42,7 +39,6 @@ class Customer(BaseLSEntity):
     tax_category_id: Optional[int] = None
     phones: list[Phone] = field(default_factory=lambda: [])
     emails: list[Email] = field(default_factory=lambda: [])
-    is_modified: bool = False
 
     def __init__(self, *args, **kwargs):
         super().__init__()
@@ -52,6 +48,13 @@ class Customer(BaseLSEntity):
             customer_json = next(self.get_entities_json(entity_id=self.customer_id))
             customer = self.from_json(customer_json)
             self.__dict__.update(customer.__dict__)
+
+        if isinstance(self.phones, list) and all(isinstance(item, dict) for item in self.phones):
+            phones_json = self.phones.copy()
+            self.phones.clear()
+            for phone in phones_json:
+                if isinstance(phone, dict) and all(isinstance(key, str) for key in phone):
+                    self.phones.append(self.Phone.discard_extra_args(**phone))
 
     @classmethod
     def from_json(cls, customer_json: dict[str, Any]) -> Self:
@@ -108,7 +111,7 @@ class Customer(BaseLSEntity):
 
         numbers = {}
         for phone in self.phones:
-            numbers[phone.type] = phone.number
+            numbers[phone.number_type] = phone.number
 
         numbers["Mobile"] = (
             numbers.get("Mobile") or numbers.get("Home") or numbers.get("Work") or numbers.get("Fax") or numbers.get("Pager")
@@ -130,35 +133,3 @@ class Customer(BaseLSEntity):
             }
         }
         self.put_entity_json(self.customer_id, put_customer)
-
-
-def format_customer_phone():
-    """Load and iterate through customers, updating formatting on phone numbers."""
-    customers = Customer.get_customers()
-    customers_updated = 0
-    logging.info("Updating customers")
-    send_message("Updating customers")
-    for index, customer in enumerate(customers):
-        if len(customer.phones) == 0:
-            continue
-        has_mobile = False
-        for each_number in customer.phones:
-            cleaned_number = re.sub(r"[^0-9x]", "", each_number.number)
-
-            if each_number.number != cleaned_number:
-                each_number.number = cleaned_number
-                customer.is_modified = True
-            if len(each_number.number) == 7:
-                each_number.number = f"757{each_number.number}"
-                customer.is_modified = True
-            if len(each_number.number) == 11:
-                each_number.number = each_number.number[1:]
-                customer.is_modified = True
-            if each_number.type == "Mobile":
-                has_mobile = True
-        if customer.is_modified or has_mobile is False:
-            customers_updated += 1
-            output = f"{customers_updated}: Updating Customer #{index}"
-            send_message(output)
-            logging.info(output)
-            customer.update_phones()

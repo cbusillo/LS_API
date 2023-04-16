@@ -16,7 +16,7 @@ from shiny_app.django_server.settings import running_functions
 def ls_functions(request: WSGIRequest, module_function_name: str = ""):
     """View for Light Speed Functions"""
     buttons = {
-        "shiny_app.classes.ls_customer|format_customer_phone": "Format Customer Phone Numbers",
+        "shiny_app.django_server.customers.models|format_customer_phone": "Format Customer Phone Numbers",
         "shiny_app.modules.light_speed|update_item_price": "Update iPhone/iPad Prices",
         "shiny_app.modules.light_speed|import_items": "Import Items",
         "shiny_app.modules.light_speed|import_customers": "Import Customers",

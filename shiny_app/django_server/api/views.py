@@ -44,7 +44,7 @@ def ring_central_send_message(request: WSGIRequest):
     mobile_number = None
 
     for phone in customer.phones:
-        if phone.type == "Mobile":
+        if phone.number_type == "Mobile":
             mobile_number = phone.number
     if mobile_number is None:
         context["title"] = "No mobile number"

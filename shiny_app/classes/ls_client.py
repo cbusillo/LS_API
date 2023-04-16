@@ -6,6 +6,7 @@ import time
 from urllib.parse import urljoin
 import requests
 from shiny_app.django_server.ls_functions.views import send_message
+from dataclasses import fields, is_dataclass
 
 from shiny_app.modules.load_config import Config
 
@@ -147,3 +148,12 @@ class BaseLSEntity:
         """Update entity"""
         url = f"{self.__class__.__name__}/{entity_id}.json"
         self.client.put(url, json=data)
+
+    @classmethod
+    def discard_extra_args(cls, *args, **kwargs):
+        """Discard extra arguments passed to the constructor for dataclasses"""
+        if not is_dataclass(cls):
+            return cls(*args, **kwargs)
+        allowed_kwargs = {key: value for key, value in kwargs.items() if key in [field.name for field in fields(cls)]}
+
+        return cls(**allowed_kwargs)

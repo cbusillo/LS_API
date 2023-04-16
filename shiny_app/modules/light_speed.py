@@ -276,12 +276,16 @@ def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustome
     functions_to_execute_after = []
 
     for phone in ls_customer.phones:
-        if not ShinyPhone.objects.filter(number=phone.number, type=phone.type, customer=shiny_customer).exists():
-            functions_to_execute_after.append(ShinyPhone(number=phone.number, type=phone.type, customer=shiny_customer).save)
+        if not ShinyPhone.objects.filter(number=phone.number, number_type=phone.number_type, customer=shiny_customer).exists():
+            functions_to_execute_after.append(
+                ShinyPhone(number=phone.number, number_type=phone.number_type, customer=shiny_customer).save
+            )
 
     for email in ls_customer.emails:
-        if not ShinyEmail.objects.filter(address=email.address, type=email.type, customer=shiny_customer).exists():
-            functions_to_execute_after.append(ShinyEmail(address=email.address, type=email.type, customer=shiny_customer).save)
+        if not ShinyEmail.objects.filter(address=email.address, address_type=email.address_type, customer=shiny_customer).exists():
+            functions_to_execute_after.append(
+                ShinyEmail(address=email.address, address_type=email.address_type, customer=shiny_customer).save
+            )
 
     return shiny_customer, functions_to_execute_after
 
@@ -378,7 +382,7 @@ if __name__ == "__main__":
     test_customer = LSCustomer()
     test_customer.first_name = "test"
     test_customer.last_name = "test"
-    test_customer.phones = LSCustomer.Phone({"ContactPhone": {"number": "1234566789", "useType": "mobile"}})
-    test_customer.emails = LSCustomer.Email({"ContactEmail": {"address": "test@test.com", "useType": "Primary"}})
+    test_customer.phones = LSCustomer.Phone(**{"number": "1234566789", "number_type": "mobile"})
+    test_customer.emails = LSCustomer.Email(**{"address": "test@test.com", "address_type": "Primary"})
 
     print(test_customer)
