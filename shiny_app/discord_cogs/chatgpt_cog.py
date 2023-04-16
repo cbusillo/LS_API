@@ -3,7 +3,7 @@ import platform
 import discord
 from discord.ext import commands
 from openai import Image, openai_object, error, ChatCompletion
-from shiny_app.modules.load_config import Config
+from shiny_app.classes.config import Config
 from shiny_app.modules.discord_bot import wrap_reply_lines
 
 

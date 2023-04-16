@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 from dataclasses import dataclass
 import requests
-from shiny_app.modules.load_config import Config
+from shiny_app.classes.config import Config
 
 
 @dataclass

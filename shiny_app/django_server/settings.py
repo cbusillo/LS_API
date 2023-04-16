@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import locale
 import logging
 from pathlib import Path
-from shiny_app.modules.load_config import Config
+from shiny_app.classes.config import Config
 
 logging.basicConfig(level=logging.DEBUG)
 

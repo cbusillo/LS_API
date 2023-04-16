@@ -2,7 +2,7 @@
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render
 from pydantic import BaseModel
-from shiny_app.modules.load_config import Config
+from shiny_app.classes.config import Config
 from shiny_app.modules.label_print import print_text
 
 

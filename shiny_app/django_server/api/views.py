@@ -2,9 +2,6 @@
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render
 
-from shiny_app.modules.load_config import Config
-from shiny_app.modules.label_print import print_text
-from shiny_app.modules.ring_central import send_message_ssh as send_message
 from ..workorders.models import Workorder
 
 
@@ -27,39 +24,19 @@ def workorder_label(request: WSGIRequest):
 def ring_central_send_message(request: WSGIRequest):
     """Web listener to generate messages and send them via text"""
     context = {}
-
-    workorder = Workorder(int(request.GET.get("workorderID", 0)))
-    customer = Customer(workorder.customer_id)
-    mobile_number = None
-
-    for phone in customer.phones:
-        if phone.number_type == "Mobile":
-            mobile_number = phone.number
-    if mobile_number is None:
-        context["title"] = "No mobile number"
-        return render(request, "api/error.html", context)
-    message_number = int(request.GET.get("message", 0))
-    # if workorder.total == 0 and request.GET.get("message") == "2":  # if we send a message with price with $0 price
-    #     message_number += 1
-    item_description = workorder.item_description
-    if item_description:
-        for word in Config.STYLIZED_NAMES:
-            if word.lower() in item_description.lower() and word not in item_description:
-                index = item_description.lower().find(word.lower())
-                item_description = item_description[:index] + word + item_description[index + len(word) :]
-
-    message = Config.RESPONSE_MESSAGES[message_number]
-    message = message.format(
-        name=customer.first_name,
-        product=item_description,
-        # total=locale.currency(workorder.total),
-    )
     ip_address = request.META.get("REMOTE_ADDR")
     if ip_address is None:
         context["title"] = "No IP address"
         return render(request, "api/error.html", context)
 
-    send_message(mobile_number, message, ip_address)
+    workorder = Workorder.objects.get(ls_workorder_id=int(request.GET.get("workorderID", 0)))
+    mobile_number = workorder.customer.mobile_number
+    if mobile_number is None:
+        context["title"] = "No mobile number"
+        return render(request, "api/error.html", context)
+    message_number = int(request.GET.get("message", 0))
+    workorder.send_rc_message(message_number, mobile_number)
+
     if str(request.GET.get("manual")).lower() != "true":
         context["auto_close"] = "True"
 

@@ -3,7 +3,7 @@ import inspect
 import logging
 from typing import Callable
 from homeassistant_api import Client, Domain, Entity
-from shiny_app.modules.load_config import Config
+from shiny_app.classes.config import Config
 
 
 class HomeAssistant:

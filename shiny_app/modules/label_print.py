@@ -3,7 +3,7 @@ import datetime
 import textwrap
 from typing import List
 from simple_zpl2 import ZPLDocument, Code128_Barcode, NetworkPrinter
-from shiny_app.modules.load_config import Config
+from shiny_app.classes.config import Config
 
 LABEL_SIZE = {"width": 2, "height": 1.3}
 LABEL_TEXT_SIZE = {"width": 40, "height": 40, "small_width": 20, "small_height": 20}

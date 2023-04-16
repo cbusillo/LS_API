@@ -4,7 +4,7 @@ import textwrap
 import discord
 from discord.ext import commands
 
-from shiny_app.modules.load_config import Config
+from shiny_app.classes.config import Config
 
 
 class ShinyBot(commands.Bot):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python 3.11
 """File to run discord bot""" ""
 from shiny_app.modules import discord_bot
-from shiny_app.modules.load_config import Config
+from shiny_app.classes.config import Config
 
 
 def start_discord_bot():

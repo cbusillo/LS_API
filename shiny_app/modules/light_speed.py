@@ -28,7 +28,7 @@ from django.utils import timezone  # pylint: disable=wrong-import-order
 from shiny_app.classes.ls_customer import Customer as LSCustomer
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import Workorder as LSWorkorder
-from shiny_app.modules.load_config import Config
+from shiny_app.classes.config import Config
 
 from shiny_app.django_server.inventory.models import Item as ShinyItem
 from shiny_app.django_server.customers.models import (
@@ -228,6 +228,7 @@ def shiny_workorder_from_ls(shiny_workorder: ShinyWorkorder, ls_workorder: LSWor
     shiny_workorder.update_time = start_time
     shiny_workorder.update_from_ls_time = start_time
     # shiny_workorder.total = ls_workorder.total
+    shiny_workorder.item_description = ls_workorder.item_description
     shiny_workorder.status = ls_workorder.status
     try:
         shiny_workorder.customer = ShinyCustomer.objects.get(ls_customer_id=ls_workorder.customer_id)

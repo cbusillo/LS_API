@@ -48,6 +48,14 @@ class Customer(models.Model):
         """Return string of full name"""
         return f"{self.first_name} {self.last_name}"
 
+    @property
+    def mobile_number(self) -> str | None:
+        """Return mobile phone number"""
+        mobile_number = self.phones.filter(number_type="Mobile").first()
+        if mobile_number:
+            return mobile_number.number
+        return
+
 
 class Email(models.Model):
     """Contact email from dict"""

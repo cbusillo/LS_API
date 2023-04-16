@@ -4,7 +4,7 @@ import logging
 import subprocess
 from pathlib import Path
 import shiny_app.modules.django_server as django_server
-from shiny_app.modules.load_config import Config
+from shiny_app.classes.config import Config
 from shiny_app.modules.shiny_networking import is_host_available, scp_file_from_host
 
 
