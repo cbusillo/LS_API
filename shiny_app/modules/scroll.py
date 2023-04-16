@@ -75,7 +75,7 @@ class PrintSource:
             self.scroll_source()
 
 
-def run(loops: int, max_delay: float):
+def run(loops: int = 10, max_delay: float = 1):
     """Run."""
     printer = PrintSource()
     printer.set_delay(max_delay=max_delay)
