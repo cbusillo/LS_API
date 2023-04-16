@@ -1,5 +1,6 @@
 """Shiny Workorder class."""
 from django.db import models
+from shiny_app.modules.label_print import print_text
 from ..customers.models import Customer
 
 
@@ -22,3 +23,18 @@ class Workorder(models.Model):
 
     def __str__(self) -> str:
         return f"{self.customer.full_name} - {self.status} - {self.time_in}"
+
+    def print_label(self, quantity: int = 1) -> None:
+        """Print a label for this workorder."""
+        password = ""
+        note_string = str(self.note)
+        for line in note_string.split("\n"):
+            if line[0:2].lower() == "pw" or line[0:2].lower() == "pc":
+                password = line
+        print_text(
+            f"{self.customer.full_name}",
+            barcode=f"2500000{self.ls_workorder_id}",
+            quantity=quantity,
+            text_bottom=password,
+            print_date=True,
+        )

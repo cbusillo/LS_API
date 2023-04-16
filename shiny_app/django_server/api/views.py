@@ -1,35 +1,24 @@
 """View for API access to Shiny Stuff"""
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import render
-from shiny_app.classes.ls_workorder import Workorder
-from shiny_app.classes.ls_customer import Customer
+
 from shiny_app.modules.load_config import Config
 from shiny_app.modules.label_print import print_text
 from shiny_app.modules.ring_central import send_message_ssh as send_message
+from ..workorders.models import Workorder
 
 
 def workorder_label(request: WSGIRequest):
     """print a label for a workorder"""
     context = {}
-    password = ""
+
     quantity = int(request.GET.get("quantity", 1))
     workorder_id = int(request.GET.get("workorderID", 0))
     if workorder_id == 0:
         context["title"] = "No workorder ID"
         return render(request, "api/error.html", context)
-    workorder = Workorder(workorder_id)
-    customer = Customer(workorder.customer_id)
-
-    for line in workorder.note.split("\n"):
-        if line[0:2].lower() == "pw" or line[0:2].lower() == "pc":
-            password = line
-    print_text(
-        f"{customer.first_name} {customer.last_name}",
-        barcode=f"2500000{workorder.workorder_id}",
-        quantity=quantity,
-        text_bottom=password,
-        print_date=True,
-    )
+    workorder = Workorder.objects.get(ls_workorder_id=workorder_id)
+    workorder.print_label(quantity)
     if str(request.GET.get("manual")).lower() != "true":
         context["auto_close"] = "True"
     return render(request, "api/close_window.html", context)
