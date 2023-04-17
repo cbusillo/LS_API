@@ -270,6 +270,18 @@ def shiny_serial_from_ls(shiny_serial: ShinySerial, ls_serial: LSSerial, start_t
     shiny_serial.update_time = start_time
     shiny_serial.update_from_ls_time = start_time
 
+    if ls_serial.customer_id:
+        try:
+            shiny_serial.customer = ShinyCustomer.objects.get(ls_customer_id=ls_serial.customer_id)
+        except ShinyCustomer.DoesNotExist:
+            shiny_serial.customer = ShinyCustomer.objects.get(ls_customer_id=5896)
+
+    if ls_serial.item_id:
+        try:
+            shiny_serial.item = ShinyItem.objects.get(ls_item_id=ls_serial.item_id)
+        except ShinyItem.DoesNotExist:
+            logging.error("Item %i not found in ShinyItem", ls_serial.item_id)
+
     return shiny_serial, None
 
 
