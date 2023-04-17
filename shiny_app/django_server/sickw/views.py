@@ -8,6 +8,6 @@ class SickwGroup(BaseModel):
     """Class to hold label group data"""
 
 
-def bulk_lookup(request: WSGIRequest):
+def home(request: WSGIRequest):
     """Bulk lookup view"""
-    return render(request, template_name="sickw/bulk_lookup.html")
+    return render(request, template_name="sickw/home.html")

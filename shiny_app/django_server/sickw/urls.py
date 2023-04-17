@@ -6,5 +6,5 @@ from . import views
 app_name = "sickw"
 
 urlpatterns = [
-    path("", views.bulk_lookup, name="bulk_lookup"),
+    path("", views.home, name="bulk_lookup"),
 ]
