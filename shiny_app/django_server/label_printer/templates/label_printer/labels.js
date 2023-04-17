@@ -1,17 +1,16 @@
-document.addEventListener('keydown', function (event) {
+$(document).keydown(function (event) {
     if (event.metaKey && event.keyCode === 80) {
-        document.getElementById('custom_label_print').click();
+        $('#custom_label_print').click();
         event.preventDefault();
     }
 });
-const textArea = document.getElementById('custom-label-text');
 
-document.addEventListener('DOMContentLoaded', function () {
-    const textArea = document.getElementById('custom-label-text');
+$(document).ready(function () {
+    const textArea = $('#custom-label-text');
 
-    if (textArea) {
-        textArea.addEventListener('focus', function () {
-            const self = this;
+    if (textArea.length) {
+        textArea.focus(function () {
+            const self = $(this);
             setTimeout(function () {
                 self.select();
             }, 10);

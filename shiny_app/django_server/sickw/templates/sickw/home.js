@@ -3,15 +3,15 @@ const updateSocket = new WebSocket(
     + window.location.host
     + '/ws/sickw/'
 );
-document.querySelector('#status').value = "no message received yet...\n"
+$('#status').value = "no message received yet...\n"
 updateSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
-    document.querySelector('#status').value = data.message +
+    $('#status').value = data.message +
         '\n' +
-        document.querySelector('#status').value;
+        $('#status').value;
 };
 
-document.querySelector('#status').onclick = function (e) {
+$('#status').onclick = function (e) {
     console.error("Clicked");
     updateSocket.send(JSON.stringify({
         'message': "sending message from JS"

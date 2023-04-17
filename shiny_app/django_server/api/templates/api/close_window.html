@@ -7,15 +7,16 @@
     </head>
     <body>
         <script type="text/javascript">
-            function closeWindow() {
-                window.close();
-            }
-            
-            document.addEventListener("DOMContentLoaded", function() {
-                let closeButton = document.getElementById("close_button");
-                closeButton.addEventListener("click", closeWindow);
+            $(document).ready(function() {
+                function closeWindow() {
+                    window.close();
+                }
+                
+                let closeButton = $("#close_button");
+                closeButton.click(closeWindow);
+                
+                closeWindow();
             });
-            closeWindow();
         </script>
         <a id="close_button" href="#">Close Tab</a>
     </body>

@@ -1,10 +1,10 @@
 <script>
-    let video = document.getElementById('video');
-    let canvas = document.getElementById('canvas');
+    let video = $('#video');
+    let canvas = $('#canvas');
     let ctx = canvas.getContext('2d');
-    let output = document.getElementById('output');
-    const extractedTextElement = document.getElementById('extracted-text');
-    const cameraSelect = document.getElementById('camera-select');
+    let output = $('#output');
+    const extractedTextElement = $('#extracted-text');
+    const cameraSelect = $('#camera-select');
     let currentStream = null;
     let reconnectAttempts = 0;
     let skippedFrames = 0;
@@ -43,7 +43,7 @@
         .then(devices => {
             const cameras = devices.filter(device => device.kind === 'videoinput');
             cameras.forEach(camera => {
-                const option = document.createElement('option');
+                const option = $('#option');
                 option.value = camera.deviceId;
                 option.innerText = camera.label || `Camera ${cameras.indexOf(camera) + 1}`;
                 cameraSelect.appendChild(option);
@@ -128,7 +128,7 @@ function reconnectOnDisconnect(socket) {
 let socket = connectWebSocket();
 
 
-    const rotationSelect = document.getElementById('rotation-select');
+    const rotationSelect = $('#rotation-select');
 
     function applyRotation() {
         const rotation = rotationSelect.value;
@@ -191,6 +191,6 @@ let socket = connectWebSocket();
             }
         }, frameInterval);
     }
-const sendTenFramesBtn = document.getElementById('send-ten-frames-btn');
+const sendTenFramesBtn = $('#send-ten-frames-btn');
 sendTenFramesBtn.addEventListener('click', sendTenFrames);
 </script>

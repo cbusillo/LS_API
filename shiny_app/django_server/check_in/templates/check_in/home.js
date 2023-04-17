@@ -12,7 +12,7 @@ let customerDetailContainer = $('#customer-detail-container');
 let customerPhoneContainer = $('#customer-phone-container');
 let customerEmailContainer = $('#customer-email-container');
 let workorderButtonsContainer = $('#workorder-buttons-container');
-const createWorkorderButton = document.getElementById('create-workorder-button');
+let createWorkorderButton = $('#create-workorder-button');
 
 customerDetailForm.submit(function () {
     let csrfInput = '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">';
