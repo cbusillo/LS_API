@@ -19,7 +19,7 @@ customerDetailForm.submit(function () {
     customerDetailForm.append(csrfInput);
 });
 
-createWorkorderButton.addEventListener('click', async function (event) {
+$(createWorkorderButton).on('click', async function (event) {
     event.preventDefault();
     let customerId = customerOutput.val();
     let submitData; // define the variable here

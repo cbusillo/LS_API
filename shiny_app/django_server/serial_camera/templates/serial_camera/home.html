@@ -3,21 +3,12 @@
     <!-- Add a container for the dropdown and the video streams -->
     <div class="container">
         <!-- Move the dropdown to the top -->
-        <select id="camera-select">
-        </select>
+        <select id="camera-select"></select>
         <select id="rotation-select">
-            <option value="0">
-                0 degrees
-            </option>
-            <option value="90">
-                90 degrees
-            </option>
-            <option value="180">
-                180 degrees
-            </option>
-            <option value="-90">
-                -90 degrees
-            </option>
+            <option value="0">0 degrees</option>
+            <option value="90">90 degrees</option>
+            <option value="180">180 degrees</option>
+            <option value="-90">-90 degrees</option>
         </select>
         <button class="btn btn-primary" id="send-ten-frames-btn">Send 10 Frames</button>
         <div id="extracted-text"></div>
@@ -43,5 +34,5 @@
             gap: 10px;
         }
     </style>
-    {% include "serial_camera/home.js.html" %}
+    <script>{% include "serial_camera/home.js" %}</script>
 {% endblock content %}
