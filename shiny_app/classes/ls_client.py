@@ -103,7 +103,7 @@ class BaseLSEntity(ABC):
     """Base entity class for Lightspeed Objects"""
 
     client = Client()
-    cls_params = {"limit": "100"}
+    cls_params = {"limit": "100", "archived": "true"}
     default_params = {}
 
     def __init__(self) -> None:
