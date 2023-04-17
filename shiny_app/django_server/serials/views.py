@@ -9,3 +9,4 @@ class SerialListView(ListView):
     """View for listing items"""
 
     model = Serial
+    paginate_by = 100

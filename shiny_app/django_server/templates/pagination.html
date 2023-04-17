@@ -1,9 +1,9 @@
 <div class="pagination">
   {% if entities.has_previous %}
-    <a href="?page=1" class="btn btn-xs btn-outline-info mb-4 me-2">&laquo; first</a>
-    <a href="?page={{ entities.previous_page_number }}" class="btn btn-xs btn-outline-info mb-4 me-2">&lsaquo; prev</a>
+    <a href="?page=1" class="btn btn-xs btn-outline-info mb-4 me-2">« first</a>
+    <a href="?page={{ entities.previous_page_number }}"
+       class="btn btn-xs btn-outline-info mb-4 me-2">‹ prev</a>
   {% endif %}
-
   <span class="page-links">
     {% for num in entities.paginator.page_range %}
       {% if num == entities.number %}
@@ -13,9 +13,10 @@
       {% endif %}
     {% endfor %}
   </span>
-
   {% if entities.has_next %}
-    <a href="?page={{ entities.next_page_number }}" class="btn btn-xs btn-outline-info mb-4 ms-2">next &rsaquo;</a>
-    <a href="?page={{ entities.paginator.num_pages }}" class="btn btn-xs btn-outline-info mb-4 ms-2">last &raquo;</a>
+    <a href="?page={{ entities.next_page_number }}"
+       class="btn btn-xs btn-outline-info mb-4 ms-2">next ›</a>
+    <a href="?page={{ entities.paginator.num_pages }}"
+       class="btn btn-xs btn-outline-info mb-4 ms-2">last »</a>
   {% endif %}
 </div>
