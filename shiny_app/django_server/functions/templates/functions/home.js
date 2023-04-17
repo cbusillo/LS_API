@@ -1,7 +1,7 @@
 const updateSocket = new WebSocket(
     'wss://'
     + window.location.host
-    + '/ws/ls_functions/'
+    + '/ws/functions/'
 );
 document.querySelector('#status').value = "no message received yet...\n"
 updateSocket.onmessage = function (e) {

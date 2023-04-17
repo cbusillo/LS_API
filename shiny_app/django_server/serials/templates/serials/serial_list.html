@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <h2>{{ title }}</h2>
+    <ul>
+        {% for serial in object_list %}<li>{{ serial }}</li>{% endfor %}
+    </ul>
+{% endblock content %}

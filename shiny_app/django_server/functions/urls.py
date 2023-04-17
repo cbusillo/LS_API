@@ -3,7 +3,7 @@ from django.urls import path
 
 from . import views
 
-app_name = "ls_functions"
+app_name = "functions"
 
 urlpatterns = [
     path("", views.home, name="home"),

@@ -19,7 +19,8 @@ def partial_customer_form_data(request):
         first_name = form.cleaned_data.get("first_name_input")
         phone_number = form.cleaned_data.get("phone_number_input")
         email_address = form.cleaned_data.get("email_address_input")
-        customer_output_html = form.get_customer_options(last_name, first_name, phone_number, email_address)
+        everything = form.cleaned_data.get("everything_input")
+        customer_output_html = form.get_customer_options(last_name, first_name, phone_number, email_address, everything)
 
         customer_id = request.POST.get("customer_id")
         if customer_id:
@@ -99,7 +100,7 @@ def home(request):
     """Render home page"""
     customers = Customer.objects.all().order_by("-update_time")[:100]
     if customers.count() == 0:
-        return redirect("ls_functions:home")
+        return redirect("functions:home")
     import_customers()
     customer_search = CustomerSearch(customers=customers)
 

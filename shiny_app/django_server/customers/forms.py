@@ -31,13 +31,7 @@ class CustomerSearch(forms.Form):
     last_name_input = forms.CharField(
         label="",
         required=False,
-        widget=forms.TextInput(
-            attrs={
-                "placeholder": "Search Last Name",
-                "autocomplete": "off",
-                "autocorrect": "off",
-            }
-        ),
+        widget=forms.TextInput(attrs={"placeholder": "Search Last Name", "autocomplete": "off", "autocorrect": "off"}),
     )
     first_name_input = forms.CharField(
         label="",
@@ -54,6 +48,12 @@ class CustomerSearch(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={"placeholder": "Search Email Address", "autocomplete": "off", "autocorrect": "off"}),
     )
+    everything_input = forms.CharField(
+        label="",
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "Search Everything", "autocomplete": "off", "autocorrect": "off"}),
+    )
+
     customer_output = forms.ModelChoiceField(
         label="Customers", required=False, queryset=None, widget=forms.Select(attrs={"size": 15}), empty_label=None
     )
@@ -70,7 +70,7 @@ class CustomerSearch(forms.Form):
         self.helper.form_id = "customer_search_form"
         self.helper.attrs = {"autocomplete": "off", "data-url": reverse_lazy("check_in:partial_customer_form_data")}
 
-    def get_customer_options(self, last_name, first_name, phone_number, email_address):
+    def get_customer_options(self, last_name: str, first_name: str, phone_number: str, email_address: str, everything: str):
         """Get customer options for select"""
         customer_filter = (
             Q(last_name__icontains=last_name)

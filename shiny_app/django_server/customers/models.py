@@ -5,8 +5,9 @@ from collections.abc import Iterable
 from django.db import models
 from django.db.models.query import QuerySet
 from django.forms.models import model_to_dict
-from shiny_app.django_server.ls_functions.views import send_message
+from shiny_app.django_server.functions.views import send_message
 from shiny_app.classes.ls_customer import Customer as LSCustomer
+from ..serials.models import Serial
 
 
 class Customer(models.Model):
@@ -29,6 +30,7 @@ class Customer(models.Model):
     phones: QuerySet["Phone"]
     emails: QuerySet["Email"]
     customer: QuerySet["Customer"]
+    serials: QuerySet["Serial"]
 
     def save(self, *args, **kwargs):
         """Save customer"""

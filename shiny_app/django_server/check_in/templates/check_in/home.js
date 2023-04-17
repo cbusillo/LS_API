@@ -5,6 +5,7 @@ var lastNameInput = customerSearchForm.find("#id_last_name_input");
 var firstNameInput = customerSearchForm.find("#id_first_name_input");
 var phoneNumberInput = customerSearchForm.find("#id_phone_number_input");
 var emailAddressInput = customerSearchForm.find("#id_email_address_input");
+var everythingInput = customerSearchForm.find("#id_everything_input");
 var customerOutput = customerSearchForm.find("#id_customer_output");
 const outputField = $('#id_text_output');
 var customerDetailForm = $('#customer-detail-container');
@@ -103,6 +104,9 @@ emailAddressInput.on("input", function () {
     updateCustomerOutput();
     removeInvalidFeedback($(this));
 });
+everythingInput.on("input", function () {
+    updateCustomerOutput();
+});
 
 function removeInvalidFeedback(field) {
     if (customerOutput.val()) {
@@ -145,6 +149,7 @@ function updateCustomerOutput() {
             first_name_input: firstNameInput.val(),
             phone_number_input: phoneNumberInput.val(),
             email_address_input: emailAddressInput.val(),
+            everything_input: everythingInput.val(),
             csrfmiddlewaretoken: csrfToken
         },
         dataType: "json",

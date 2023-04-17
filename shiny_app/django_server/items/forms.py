@@ -1,4 +1,4 @@
-"""Forms to work on inventory app"""
+"""Forms to work on Items app"""
 from django import forms
 
 

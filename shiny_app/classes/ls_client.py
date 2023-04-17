@@ -8,7 +8,7 @@ from urllib.parse import urljoin
 
 import requests
 
-from shiny_app.django_server.ls_functions.views import send_message
+from shiny_app.django_server.functions.views import send_message
 from shiny_app.classes.config import Config
 
 

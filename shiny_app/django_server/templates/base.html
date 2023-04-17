@@ -13,10 +13,22 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
               rel="stylesheet"
               integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
-              crossorigin="anonymous"/>
+              crossorigin="anonymous" />
         <link href="{% static 'shiny.css' %}?1" rel="stylesheet" />
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
         <title>{{ title }}</title>
+        <link rel="apple-touch-icon"
+              sizes="180x180"
+              href="{% static 'favicons/apple-touch-icon.png' %}">
+        <link rel="icon"
+              type="image/png"
+              sizes="32x32"
+              href="{% static 'favicons/favicon-32x32.png' %}">
+        <link rel="icon"
+              type="image/png"
+              sizes="16x16"
+              href="{% static 'favicons/favicon-16x16.png' %}">
+        <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
     </head>
     <body>
         <header class="site-header">
@@ -24,10 +36,11 @@
                 <div class="container-fluid">
                     <a class="nav-link" href="{% url 'label_printer:home' %}">Label Printer</a>
                     <a class="nav-link" href="{% url 'check_in:home' %}">Check in</a>
-                    <a class="nav-link" href="{% url 'ls_functions:home' %}">Lightspeed Functions</a>
-                    <a class="nav-link" href="{% url 'inventory:item_list' %}">Inventory/Items</a>
+                    <a class="nav-link" href="{% url 'functions:home' %}">Functions</a>
+                    <a class="nav-link" href="{% url 'items:item_list' %}">Items</a>
                     <a class="nav-link" href="{% url 'customers:customer_list' %}">Customers</a>
                     <a class="nav-link" href="{% url 'workorders:workorder_list' %}">Workorders</a>
+                    <a class="nav-link" href="{% url 'serials:serial_list' %}">Serials</a>
                     <a class="nav-link" href="{% url 'sickw:bulk_lookup' %}">Sickw</a>
                     <a class="nav-link" href="{% url 'config:config_list' %}">Config</a>
                     <a class="nav-link" href="{% url 'serial_camera:home' %}">Serial Camera</a>

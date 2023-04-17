@@ -24,14 +24,14 @@ def home(request: WSGIRequest, module_function_name: str = ""):
         "shiny_app.modules.light_speed|import_all": "Import All",
         "shiny_app.modules.light_speed|delete_all": "Delete All",
         "shiny_app.modules.scroll|run": "Scroll",
-        "shiny_app.django_server.ls_functions.views|reset_running_functions": "Reset Running Functions",
+        "shiny_app.django_server.functions.views|reset_running_functions": "Reset Running Functions",
     }
     context: dict[str, object] = {}
     context["title"] = "Light Speed Functions"
 
     if module_function_name == "" or running_functions.get(module_function_name, False):
         context["buttons"] = buttons
-        return render(request, "ls_functions/home.html", context)
+        return render(request, "functions/home.html", context)
 
     module_name, function_name = module_function_name.split("|")
 
@@ -41,7 +41,7 @@ def home(request: WSGIRequest, module_function_name: str = ""):
     thread.daemon = True
     running_functions[module_function_name] = True
     thread.start()
-    return redirect("ls_functions:home")
+    return redirect("functions:home")
 
 
 def run_function(function_to_exec, module_function_name):

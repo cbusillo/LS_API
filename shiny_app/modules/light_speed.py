@@ -24,14 +24,14 @@ from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import Workorder as LSWorkorder
 from shiny_app.classes.ls_customer import Customer as LSCustomer
 
-from shiny_app.django_server.inventory.models import Item as ShinyItem
+from shiny_app.django_server.items.models import Item as ShinyItem
 from shiny_app.django_server.customers.models import (
     Customer as ShinyCustomer,
     Phone as ShinyPhone,
     Email as ShinyEmail,
 )
 from shiny_app.django_server.workorders.models import Workorder as ShinyWorkorder
-from shiny_app.django_server.ls_functions.views import send_message
+from shiny_app.django_server.functions.views import send_message
 
 driver = None
 if os.environ.get("RUN_MAIN", None) == "true":

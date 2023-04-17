@@ -10,7 +10,7 @@ from pygments.formatters import TerminalFormatter  # pylint: disable=no-name-in-
 from pygments.lexers import PythonLexer  # pylint: disable=no-name-in-module
 
 if __name__ != "__main__":
-    from shiny_app.django_server.ls_functions.views import send_message
+    from shiny_app.django_server.functions.views import send_message
 
 
 class PrintSource:

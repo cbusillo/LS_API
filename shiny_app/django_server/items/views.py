@@ -25,4 +25,4 @@ class ItemListView(View):
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
 
-        return render(request, "inventory/item_list.html", {"form": form, "page_obj": page_obj})
+        return render(request, "items/item_list.html", {"form": form, "page_obj": page_obj})
