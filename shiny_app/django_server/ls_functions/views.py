@@ -13,7 +13,7 @@ from django.shortcuts import redirect, render
 from shiny_app.django_server.settings import running_functions
 
 
-def ls_functions(request: WSGIRequest, module_function_name: str = ""):
+def home(request: WSGIRequest, module_function_name: str = ""):
     """View for Light Speed Functions"""
     buttons = {
         "shiny_app.django_server.customers.models|format_customer_phone": "Format Customer Phone Numbers",
@@ -31,7 +31,7 @@ def ls_functions(request: WSGIRequest, module_function_name: str = ""):
 
     if module_function_name == "" or running_functions.get(module_function_name, False):
         context["buttons"] = buttons
-        return render(request, "ls_functions/ls_functions.html", context)
+        return render(request, "ls_functions/home.html", context)
 
     module_name, function_name = module_function_name.split("|")
 
