@@ -35,7 +35,7 @@ class Serialized(BaseLSEntity):
             raise TypeError("serial_json must be a dict")
 
         serial_json_transformed = {
-            "serial_id": cls.safe_int(json.get("serialID")),
+            "serial_id": cls.safe_int(json.get("serializedID")),
             "value_1": json.get("colorName"),
             "value_2": json.get("sizeName"),
             "serial_number": json.get("serial"),
