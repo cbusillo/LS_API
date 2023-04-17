@@ -23,6 +23,7 @@ from shiny_app.classes.config import Config
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import Workorder as LSWorkorder
 from shiny_app.classes.ls_customer import Customer as LSCustomer
+from shiny_app.classes.ls_serialized import Serialized as LSSerial
 
 from shiny_app.django_server.items.models import Item as ShinyItem
 from shiny_app.django_server.customers.models import (
@@ -31,6 +32,7 @@ from shiny_app.django_server.customers.models import (
     Email as ShinyEmail,
 )
 from shiny_app.django_server.workorders.models import Workorder as ShinyWorkorder
+from shiny_app.django_server.serials.models import Serial as ShinySerial
 from shiny_app.django_server.functions.views import send_message
 
 driver = None
@@ -122,7 +124,7 @@ def update_item_price():
     output = "Loading items"
     send_message(output)
     logging.info(output)
-    items = LSItem.get_items(categories=Config.DEVICE_CATEGORIES_FOR_PRICE)
+    items = LSItem.get_entities(categories=Config.DEVICE_CATEGORIES_FOR_PRICE)
     for item in items:
         if "iPhone 12 Pro" in item.description:
             pass
@@ -258,6 +260,19 @@ def shiny_item_from_ls(shiny_item: ShinyItem, ls_item: LSItem, start_time: datet
     return shiny_item, None
 
 
+def shiny_serial_from_ls(shiny_serial: ShinySerial, ls_serial: LSSerial, start_time: datetime):
+    """translation layer for LSSerial to ShinySerial"""
+    shiny_serial.ls_serial_id = ls_serial.serial_id
+    shiny_serial.value_1 = ls_serial.value_1
+    shiny_serial.value_2 = ls_serial.value_2
+    shiny_serial.serial_number = ls_serial.serial_number
+    shiny_serial.description = ls_serial.description
+    shiny_serial.update_time = start_time
+    shiny_serial.update_from_ls_time = start_time
+
+    return shiny_serial, None
+
+
 def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustomer, start_time: datetime):
     """translation layer for LSCustomer to ShinyCustomer"""
     shiny_customer.ls_customer_id = ls_customer.customer_id
@@ -295,15 +310,12 @@ def _shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None
         date_filter = shiny_update_from_ls_time(model)
 
     model_name = model.__name__
-    if model_name == "Item":
-        ls_entities = LSItem.get_items(date_filter=date_filter)
-    elif model_name == "Customer":
-        ls_entities = LSCustomer.get_customers(date_filter=date_filter)
-    elif model_name == "Workorder":
-        ls_entities = LSWorkorder.get_workorders(date_filter=date_filter)
-    else:
+
+    model_class = globals().get(f"LS{model_name}")
+    if model_class is None:
         logging.warning("Invalid model type passed to shiny_model_from_ls")
         return
+    ls_entities = model_class.get_entities(date_filter=date_filter)
 
     start_time = timezone.now()
 
@@ -349,11 +361,18 @@ def import_workorders():
         _shiny_model_from_ls(ShinyWorkorder)
 
 
+def import_serials():
+    """temp function to import serials from LS"""
+    with transaction.atomic():
+        _shiny_model_from_ls(ShinySerial)
+
+
 def import_all():
     """Import everything from LS, use to create db"""
     import_items()
     import_customers()
     import_workorders()
+    import_serials()
 
 
 def delete_all():
@@ -363,6 +382,7 @@ def delete_all():
     ShinyEmail.objects.all().delete()
     ShinyPhone.objects.all().delete()
     ShinyCustomer.objects.all().delete()
+    ShinySerial.objects.all().delete()
 
 
 if __name__ == "__main__":

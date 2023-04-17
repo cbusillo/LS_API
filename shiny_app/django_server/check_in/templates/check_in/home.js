@@ -1,29 +1,28 @@
-
-var customerSearchForm = $("#customer_search_form");
+let customerSearchForm = $("#customer_search_form");
 const csrfToken = customerSearchForm.data('csrf-token');
-var lastNameInput = customerSearchForm.find("#id_last_name_input");
-var firstNameInput = customerSearchForm.find("#id_first_name_input");
-var phoneNumberInput = customerSearchForm.find("#id_phone_number_input");
-var emailAddressInput = customerSearchForm.find("#id_email_address_input");
-var everythingInput = customerSearchForm.find("#id_everything_input");
-var customerOutput = customerSearchForm.find("#id_customer_output");
+let lastNameInput = customerSearchForm.find("#id_last_name_input");
+let firstNameInput = customerSearchForm.find("#id_first_name_input");
+let phoneNumberInput = customerSearchForm.find("#id_phone_number_input");
+let emailAddressInput = customerSearchForm.find("#id_email_address_input");
+let everythingInput = customerSearchForm.find("#id_everything_input");
+let customerOutput = customerSearchForm.find("#id_customer_output");
 const outputField = $('#id_text_output');
-var customerDetailForm = $('#customer-detail-container');
-var customerDetailContainer = $('#customer-detail-container');
-var customerPhoneContainer = $('#customer-phone-container');
-var customerEmailContainer = $('#customer-email-container');
-var workorderButtonsContainer = $('#workorder-buttons-container');
+let customerDetailForm = $('#customer-detail-container');
+let customerDetailContainer = $('#customer-detail-container');
+let customerPhoneContainer = $('#customer-phone-container');
+let customerEmailContainer = $('#customer-email-container');
+let workorderButtonsContainer = $('#workorder-buttons-container');
 const createWorkorderButton = document.getElementById('create-workorder-button');
 
 customerDetailForm.submit(function () {
-    var csrfInput = '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">';
+    let csrfInput = '<input type="hidden" name="csrfmiddlewaretoken" value="' + csrfToken + '">';
     customerDetailForm.append(csrfInput);
 });
 
 createWorkorderButton.addEventListener('click', async function (event) {
     event.preventDefault();
-    var customerId = customerOutput.val();
-    var submitData; // define the variable here
+    let customerId = customerOutput.val();
+    let submitData; // define the variable here
 
     if (!customerId) {
         if (!validateCustomerInput()) {
@@ -47,7 +46,7 @@ createWorkorderButton.addEventListener('click', async function (event) {
         dataType: 'json',
         data: submitData, // use the variable here
         success: function (data) {
-            var workorderId = data.workorder_id;
+            let workorderId = data.workorder_id;
             if (workorderId > 0) {
                 openWorkorderInSafari(workorderId);
             }
@@ -61,7 +60,7 @@ createWorkorderButton.addEventListener('click', async function (event) {
 
 customerOutput.change(function () {
     removeInvalidFeedback();
-    var customerId = $(this).val();
+    let customerId = $(this).val();
     if (customerId) {
         $.ajax({
             url: customerSearchForm.data("url"),

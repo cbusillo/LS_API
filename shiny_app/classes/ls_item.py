@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 import re
 import shlex
-from typing import Any, Generator, Optional, Self
+from typing import Any, Optional, Self
 from dataclasses import dataclass, field
 from shiny_app.classes.ls_client import BaseLSEntity
 
@@ -26,6 +26,11 @@ class Item(BaseLSEntity):
             super().__init__()
             self.item_matrix_id = int(size_attributes.get("itemMatrixID"))
             self.attribute2_value = size_attributes.get("attribute2Value") or ""
+
+        @classmethod
+        def from_json(cls, json: dict) -> Self:
+            """Create an ItemMatrix object from a JSON dictionary."""
+            return Item.ItemMatrix(size_attributes=json)
 
         @staticmethod
         def return_sizes(item_matrix_id: Optional[int]) -> list[str]:
@@ -123,66 +128,47 @@ class Item(BaseLSEntity):
             self.__dict__.update(item.__dict__)
 
     @classmethod
-    def from_json(cls, item_json: dict[str, Any]) -> Self:
+    def from_json(cls, json: dict[str, Any]) -> Self:
         """Item object from dict"""
-        if not isinstance(item_json, dict):
+        if not isinstance(json, dict):
             raise TypeError("Item.from_json() requires a dict as input")
 
         default_price = None
-        for price in item_json["Prices"]["ItemPrice"]:
+        for price in json["Prices"]["ItemPrice"]:
             if price["useType"] == "Default":
                 default_price = Decimal(price["amount"])
                 break
-        sizes = Item.ItemMatrix.return_sizes(cls.safe_int(item_json.get("itemMatrixID")))
+        sizes = Item.ItemMatrix.return_sizes(cls.safe_int(json.get("itemMatrixID")))
         sizes_string = ""
         for size in sizes:
             sizes_string += f"{size}|"
         sizes_string = sizes_string[: -1 or None]
 
         item_json_transformed = {
-            "item_id": cls.safe_int(item_json.get("itemID")),
-            "system_sku": item_json.get("systemSku"),
-            "default_cost": Decimal(item_json.get("defaultCost", 0)),
-            "average_cost": Decimal(item_json.get("aveCost", 0)),
-            "tax": item_json.get("tax", "").lower() == "true",
-            "archived": item_json.get("archived", "").lower() == "true",
-            "item_type": item_json.get("itemType"),
-            "serialized": item_json.get("serialized", "").lower() == "true",
-            "description": item_json.get("description", "").strip(),
-            "upc": item_json.get("upc"),
-            "custom_sku": item_json.get("customSku"),
-            "manufacturer_sku": item_json.get("manufacturerSku"),
-            "create_time": cls.string_to_datetime(item_json.get("createTime")),
-            "time_stamp": cls.string_to_datetime(item_json.get("timeStamp")),
-            "category_id": cls.safe_int(item_json.get("categoryID")),
-            "tax_class_id": cls.safe_int(item_json.get("taxClassID")),
-            "item_matrix_id": cls.safe_int(item_json.get("itemMatrixID")),
-            "manufacturer_id": cls.safe_int(item_json.get("manufacturerID")),
-            "default_vendor_id": cls.safe_int(item_json.get("defaultVendorID")),
-            "item_attributes": item_json.get("ItemAttributes"),
+            "item_id": cls.safe_int(json.get("itemID")),
+            "system_sku": json.get("systemSku"),
+            "default_cost": Decimal(json.get("defaultCost", 0)),
+            "average_cost": Decimal(json.get("aveCost", 0)),
+            "tax": json.get("tax", "").lower() == "true",
+            "archived": json.get("archived", "").lower() == "true",
+            "item_type": json.get("itemType"),
+            "serialized": json.get("serialized", "").lower() == "true",
+            "description": json.get("description", "").strip(),
+            "upc": json.get("upc"),
+            "custom_sku": json.get("customSku"),
+            "manufacturer_sku": json.get("manufacturerSku"),
+            "create_time": cls.string_to_datetime(json.get("createTime")),
+            "time_stamp": cls.string_to_datetime(json.get("timeStamp")),
+            "category_id": cls.safe_int(json.get("categoryID")),
+            "tax_class_id": cls.safe_int(json.get("taxClassID")),
+            "item_matrix_id": cls.safe_int(json.get("itemMatrixID")),
+            "manufacturer_id": cls.safe_int(json.get("manufacturerID")),
+            "default_vendor_id": cls.safe_int(json.get("defaultVendorID")),
+            "item_attributes": json.get("ItemAttributes"),
             "price": default_price,
             "sizes": sizes_string,
         }
         return cls(**item_json_transformed)
-
-    @classmethod
-    def get_items(
-        cls, date_filter: Optional[datetime] = None, categories: list[int] | int | None = None
-    ) -> Generator[Self, None, None]:
-        """Run API auth."""
-
-        if categories:
-            if not isinstance(categories, list):
-                categories = [categories]
-        else:
-            categories = [0]
-
-        for category_id in categories:
-            params = cls.default_params
-            if category_id != 0:
-                params = {"categoryID": category_id}
-            for item in cls.get_entities_json(date_filter=date_filter, params=params):
-                yield Item.from_json(item)
 
     @classmethod
     def get_items_by_desciption(cls, descriptions: str | list[str]) -> list[Self]:

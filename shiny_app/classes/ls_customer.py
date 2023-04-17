@@ -1,7 +1,7 @@
 """Class to import customer objects from LS API"""
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Generator, Optional, Self
+from typing import Any, Optional, Self
 
 from shiny_app.classes.ls_client import BaseLSEntity
 
@@ -19,12 +19,22 @@ class Customer(BaseLSEntity):
         number: str
         number_type: str
 
+        @classmethod
+        def from_json(cls, json: dict[str, Any]) -> Self:
+            """Phone object from dict"""
+            return cls(number=json.get("number", ""), number_type=json.get("useType", ""))
+
     @dataclass
     class Email(BaseLSEntity):
         """Email"""
 
         address: str
         address_type: str
+
+        @classmethod
+        def from_json(cls, json: dict[str, Any]) -> Self:
+            """Email object from dict"""
+            return cls(address=json.get("address", ""), address_type=json.get("useType", ""))
 
     customer_id: Optional[int] = None
     first_name: str = ""
@@ -58,12 +68,12 @@ class Customer(BaseLSEntity):
                     self.phones.append(self.Phone.discard_extra_args(**phone))
 
     @classmethod
-    def from_json(cls, customer_json: dict[str, Any]) -> Self:
+    def from_json(cls, json: dict[str, Any]) -> Self:
         """Customer object from dict"""
-        if not isinstance(customer_json, dict):
-            raise ValueError("Customer must be a dict: " + str(customer_json))
+        if not isinstance(json, dict):
+            raise ValueError("Customer must be a dict: " + str(json))
 
-        contact_phones_list_json = customer_json.get("Contact", {}).get("Phones", {})
+        contact_phones_list_json = json.get("Contact", {}).get("Phones", {})
         contact_phones_json = []
         if isinstance(contact_phones_list_json, dict):
             contact_phones_json = contact_phones_list_json.get("ContactPhone", [])
@@ -72,7 +82,7 @@ class Customer(BaseLSEntity):
 
         phones_json = [cls.Phone(phone.get("number"), phone.get("useType")) for phone in contact_phones_json]
 
-        contact_emails_list_json = customer_json.get("Contact", {}).get("Emails", {})
+        contact_emails_list_json = json.get("Contact", {}).get("Emails", {})
         contact_email_json = []
         if isinstance(contact_emails_list_json, dict):
             contact_email_json = contact_emails_list_json.get("ContactEmail", [])
@@ -82,18 +92,18 @@ class Customer(BaseLSEntity):
         emails_json = [cls.Email(email.get("address"), email.get("useType")) for email in contact_email_json]
 
         customer_json_transformed = {
-            "customer_id": cls.safe_int(customer_json.get("customerID")),
-            "first_name": customer_json.get("firstName", "").strip(),
-            "last_name": customer_json.get("lastName", "").strip(),
-            "company": customer_json.get("company", "").strip(),
-            "title": customer_json.get("title", "").strip(),
-            "create_time": cls.string_to_datetime(customer_json.get("createTime")),
-            "time_stamp": cls.string_to_datetime(customer_json.get("timeStamp")),
-            "archived": customer_json.get("archived", "false").lower() == "true",
-            "contact_id": cls.safe_int(customer_json.get("contactID")),
-            "credit_account_id": cls.safe_int(customer_json.get("creditAccountID")),
-            "customer_type_id": cls.safe_int(customer_json.get("customerTypeID")),
-            "tax_category_id": cls.safe_int(customer_json.get("taxCategoryID")),
+            "customer_id": cls.safe_int(json.get("customerID")),
+            "first_name": json.get("firstName", "").strip(),
+            "last_name": json.get("lastName", "").strip(),
+            "company": json.get("company", "").strip(),
+            "title": json.get("title", "").strip(),
+            "create_time": cls.string_to_datetime(json.get("createTime")),
+            "time_stamp": cls.string_to_datetime(json.get("timeStamp")),
+            "archived": json.get("archived", "false").lower() == "true",
+            "contact_id": cls.safe_int(json.get("contactID")),
+            "credit_account_id": cls.safe_int(json.get("creditAccountID")),
+            "customer_type_id": cls.safe_int(json.get("customerTypeID")),
+            "tax_category_id": cls.safe_int(json.get("taxCategoryID")),
             "phones": phones_json,
             "emails": emails_json,
         }
@@ -119,12 +129,6 @@ class Customer(BaseLSEntity):
         }
 
         return self.post_entity_json(post_customer)
-
-    @classmethod
-    def get_customers(cls, date_filter: Optional[datetime] = None) -> Generator[Self, None, None]:
-        """Generator to return all customers from LS API"""
-        for customer in cls.get_entities_json(date_filter=date_filter, params=cls.default_params):
-            yield Customer.from_json(customer)
 
     def update_phones(self) -> None:
         """call API put to update pricing"""

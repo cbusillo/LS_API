@@ -1,6 +1,7 @@
 """Client for Lightspeed API Inherited from requests.Session"""
 import logging
 import time
+from abc import ABC, abstractmethod
 from dataclasses import fields, is_dataclass
 from datetime import datetime
 from typing import Any, Generator, Optional, Self
@@ -74,7 +75,7 @@ class Client(requests.Session):
                 return None
         return request_response  # pyright: reportUnboundVariable=false
 
-    def get_entities(self, url: str, key_name: str, params: Optional[dict] = None) -> Generator[Self, None, None]:
+    def get_entities_from_api(self, url: str, key_name: str, params: Optional[dict] = None) -> Generator[Self, None, None]:
         """Iterate over all items in the API"""
 
         next_url = url
@@ -98,11 +99,12 @@ class Client(requests.Session):
             page += 1
 
 
-class BaseLSEntity:
+class BaseLSEntity(ABC):
     """Base entity class for Lightspeed Objects"""
 
     client = Client()
     cls_params = {"limit": "100"}
+    default_params = {}
 
     def __init__(self) -> None:
         self.fetch_from_api: Optional[bool] = None
@@ -143,7 +145,7 @@ class BaseLSEntity:
             url = f"{key_name}/{entity_id}.json"
         if date_filter:
             params["timeStamp"] = f">,{date_filter}"
-        return cls.client.get_entities(url, key_name=key_name, params=params)
+        return cls.client.get_entities_from_api(url, key_name=key_name, params=params)
 
     def put_entity_json(self, entity_id: int, data: dict[str, Any]) -> None:
         """Update entity"""
@@ -157,6 +159,30 @@ class BaseLSEntity:
         response = self.client.post(url, json=data)
         entity_id = int(response.json()[entity_name][f"{entity_name.lower()}ID"])
         return entity_id
+
+    @classmethod
+    def get_entities(
+        cls, date_filter: Optional[datetime] = None, categories: list[int] | int | None = None
+    ) -> Generator[Self, None, None]:
+        """Run API auth."""
+        if categories:
+            if not isinstance(categories, list):
+                categories = [categories]
+        else:
+            categories = [0]
+
+        for category_id in categories:
+            params = cls.default_params
+            if category_id != 0:
+                params = {"categoryID": category_id}
+            for entity in cls.get_entities_json(date_filter=date_filter, params=params):
+                yield cls.from_json(entity)
+
+    @classmethod
+    @abstractmethod
+    def from_json(cls, json: dict[str, Any]) -> Self:
+        """implement in child class"""
+        raise NotImplementedError("from_json must be implemented in child class")
 
     @classmethod
     def discard_extra_args(cls, *args, **kwargs) -> Self:
