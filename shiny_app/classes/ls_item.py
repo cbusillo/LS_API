@@ -15,6 +15,55 @@ class Item(BaseLSEntity):
     default_params = {"load_relations": '["ItemAttributes","ItemPrices"]'}
 
     @dataclass
+    class ItemMatrix(BaseLSEntity):
+        """Get full list of size attributes from LS table.
+        Use these to import into individual items without a separate API call."""
+
+        size_attributes = []  # type: ignore
+
+        def __init__(self, size_attributes: Any):
+            """Return items from json dict into SizeAttribute object."""
+            super().__init__()
+            self.item_matrix_id = int(size_attributes.get("itemMatrixID"))
+            self.attribute2_value = size_attributes.get("attribute2Value") or ""
+
+        @staticmethod
+        def return_sizes(item_matrix_id: Optional[int]) -> list[str]:
+            """Get sizes for individual item an return in list."""
+            if item_matrix_id is None or item_matrix_id == 0:
+                return []
+            size_list: list[str] = []
+            Item.ItemMatrix.check_size_attributes()
+            for size in Item.ItemMatrix.size_attributes:
+                if size.item_matrix_id == item_matrix_id:
+                    size_list.append(size.attribute2_value)
+            size_list.sort(key=Item.natural_keys)
+            return size_list
+
+        @classmethod
+        def get_size_attributes(cls) -> list["Item.ItemMatrix"]:
+            """Get data from API and return a dict."""
+            item_matrix: list[Item.ItemMatrix] = []
+            params = {"load_relations": '["ItemAttributeSet"]'}
+            size_attributes = cls.get_entities_json(params=params)
+            for matrix in size_attributes:
+                if matrix["ItemAttributeSet"]["attributeName2"]:
+                    for attribute in matrix["attribute2Values"]:
+                        attr_obj = {
+                            "itemMatrixID": matrix["itemMatrixID"],
+                            "attribute2Value": attribute,
+                        }
+                        item_matrix.append(Item.ItemMatrix(attr_obj))
+                        # itemList.append(Item.from_dict(item))
+            return item_matrix
+
+        @classmethod
+        def check_size_attributes(cls):
+            """Check if size attributes have been loaded."""
+            if not cls.size_attributes:
+                cls.size_attributes = Item.ItemMatrix.get_size_attributes()
+
+    @dataclass
     class ItemAttribute:
         """Item Attribute"""
 
@@ -45,6 +94,7 @@ class Item(BaseLSEntity):
     price: Optional[Decimal] = None
     item_attributes: list[ItemAttribute] = field(default_factory=lambda: [])
     is_modified: Optional[bool] = None
+    sizes: Optional[list[ItemMatrix]] = None
 
     @staticmethod
     def atoi(text: str) -> int | str:
@@ -83,6 +133,11 @@ class Item(BaseLSEntity):
             if price["useType"] == "Default":
                 default_price = Decimal(price["amount"])
                 break
+        sizes = Item.ItemMatrix.return_sizes(cls.safe_int(item_json.get("itemMatrixID")))
+        sizes_string = ""
+        for size in sizes:
+            sizes_string += f"{size}|"
+        sizes_string = sizes_string[: -1 or None]
 
         item_json_transformed = {
             "item_id": cls.safe_int(item_json.get("itemID")),
@@ -106,6 +161,7 @@ class Item(BaseLSEntity):
             "default_vendor_id": cls.safe_int(item_json.get("defaultVendorID")),
             "item_attributes": item_json.get("ItemAttributes"),
             "price": default_price,
+            "sizes": sizes_string,
         }
         return cls(**item_json_transformed)
 

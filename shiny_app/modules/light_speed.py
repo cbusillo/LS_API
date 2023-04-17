@@ -10,13 +10,12 @@ from functools import lru_cache
 from urllib.parse import urlparse, parse_qs
 import pytz
 from seleniumbase import Driver
-from selenium import webdriver
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from django.core.exceptions import ValidationError
 from django.db import transaction, models  # pylint: disable=wrong-import-order
 from django.utils import timezone  # pylint: disable=wrong-import-order
 
@@ -41,12 +40,11 @@ if os.environ.get("RUN_MAIN", None) == "true":
 
 
 @lru_cache
-def get_website_prices(browser: webdriver.Safari, url: str):
+def get_website_prices(driver: WebDriver, url: str):
     """decode Apple website price data and return json"""
-    browser.get(url)
-    price = browser.find_element("id", "metrics")
-    json_price = price.text.replace("//", "")
-    browser.minimize_window()
+    driver.get(url)
+    price = driver.find_element(By.ID, "metrics")
+    json_price = price.get_attribute("innerHTML").replace("//", "")
     json_price = json_price.split("[[")[0] + "}}"
     json_price = json_price.replace(',"sectionEngagement":', "")
     json_price = json_price.replace('"}]}}}}', '"}]}}')
@@ -119,7 +117,6 @@ def update_item_price():
 
     # Apple URL to load pricing from
     scrape_url = "https://www.apple.com/shop/buy-{deviceURL}"
-    browser = webdriver.Safari(port=0, executable_path="/usr/bin/safaridriver", quiet=False)
 
     # call LS API to load all items and return a list of Item objects
     output = "Loading items"
@@ -127,14 +124,18 @@ def update_item_price():
     logging.info(output)
     items = LSItem.get_items(categories=Config.DEVICE_CATEGORIES_FOR_PRICE)
     for item in items:
+        if "iPhone 12 Pro" in item.description:
+            pass
         # interate through items to generate pricing and save to LS
         # Generate pricing from devices.json and apple website by item from LS
         # check to see where current item's storage falls numerically in matrix
         size = ""
         size_mult = 0
-        for size_mult, size in enumerate(item.sizes):
-            if size.lower() in item.description.lower():
-                break
+        if item.sizes:
+            sizes = item.sizes.split("|")
+            for size_mult, size in enumerate(sizes):
+                if size.lower() in item.description.lower():
+                    break
 
         for device_name, [
             device_current,
@@ -149,7 +150,7 @@ def update_item_price():
                     device_base_price = device_cell_price
                 # use device.json age to calculate from current
                 # and look for that age multiplier in age.json
-                device_age = datetime.date.today().year - device_year
+                device_age = datetime.today().year - device_year
                 age_mult = 0
                 for age, price in age_price.items():
                     if device_age < int(age):
@@ -158,7 +159,7 @@ def update_item_price():
                 # if device is currently sold (documented in ages.json),
                 # load json from Apple web store and find price. Use URL key from devices.json
                 if device_current:
-                    json_price = get_website_prices(browser, scrape_url.format(deviceURL=device_url))
+                    json_price = get_website_prices(driver, scrape_url.format(deviceURL=device_url))
 
                     # Iterage through web prices and try to find match on current item.
                     # Use deviceBasePrice to subtract from new price.  Detect if cellular
@@ -252,6 +253,7 @@ def shiny_item_from_ls(shiny_item: ShinyItem, ls_item: LSItem, start_time: datet
     shiny_item.item_attributes = None
     shiny_item.update_time = start_time
     shiny_item.update_from_ls_time = start_time
+    shiny_item.sizes = ls_item.sizes
 
     return shiny_item, None
 
@@ -316,19 +318,13 @@ def _shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None
         convert_function = getattr(sys.modules[__name__], f"shiny_{module_name}_from_ls")
         shiny_entity, functions_to_execute_after = convert_function(shiny_entity, ls_entity, start_time)
 
-        try:
-            shiny_entity.save()
-        except ValidationError as error:
-            logging.error("Error saving Shiny %s %s", model_name, error)
+        shiny_entity.save()
 
         logging.debug("Saved Shiny %s %s", model_name, shiny_entity)
 
         if functions_to_execute_after:
             for function_to_execute in functions_to_execute_after:
-                try:
-                    function_to_execute()
-                except ValidationError as error:
-                    logging.error("Error saving Shiny %s %s", model_name, error)
+                function_to_execute()
             logging.debug("Saved Shiny %s's children", model_name)
 
     send_message(f"Finished updating {model_name}s")

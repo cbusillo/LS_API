@@ -31,6 +31,7 @@ class Item(models.Model):
     update_from_ls_time = models.DateTimeField(null=True)
     item_matrix_id = models.IntegerField(null=True)
     item_attributes = models.ForeignKey(ItemAttributes, on_delete=models.CASCADE, null=True)
+    sizes = models.CharField(max_length=200, null=True)
 
     def __str__(self) -> str:
         return f"{self.ls_item_id} - {self.description}"

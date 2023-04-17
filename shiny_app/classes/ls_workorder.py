@@ -2,7 +2,7 @@
 from datetime import datetime
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Any, Generator, Optional, Self, TYPE_CHECKING
+from typing import Any, Generator, Optional, Self
 from shiny_app.classes.ls_client import BaseLSEntity
 
 
