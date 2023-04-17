@@ -150,6 +150,14 @@ class BaseLSEntity:
         url = f"{self.__class__.__name__}/{entity_id}.json"
         self.client.put(url, json=data)
 
+    def post_entity_json(self, data: dict[str, Any]) -> int:
+        """Create entity"""
+        entity_name = self.__class__.__name__
+        url = f"{entity_name}.json"
+        response = self.client.post(url, json=data)
+        entity_id = int(response.json()[entity_name][f"{entity_name.lower()}ID"])
+        return entity_id
+
     @classmethod
     def discard_extra_args(cls, *args, **kwargs) -> Self:
         """Discard extra arguments passed to the constructor for dataclasses"""

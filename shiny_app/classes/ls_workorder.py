@@ -1,7 +1,8 @@
 """Class to import workorder objects from LS API"""
 from datetime import datetime
 from dataclasses import dataclass
-from typing import Any, Generator, Optional, Self
+from decimal import Decimal
+from typing import Any, Generator, Optional, Self, TYPE_CHECKING
 from shiny_app.classes.ls_client import BaseLSEntity
 
 
@@ -9,7 +10,7 @@ from shiny_app.classes.ls_client import BaseLSEntity
 class Workorder(BaseLSEntity):
     """Workorder object from LS"""
 
-    default_params = {"load_relations": '["Serialized", "WorkorderStatus"]'}
+    default_params = {"load_relations": '["Serialized", "WorkorderStatus","WorkorderItems","WorkorderLines"]'}
 
     workorder_id: Optional[int] = None
     time_in: Optional[datetime] = None
@@ -25,6 +26,7 @@ class Workorder(BaseLSEntity):
     sale_line_id: Optional[int] = None
     item_description: Optional[str] = None
     status: Optional[str] = None
+    total: Optional[Decimal] = None
 
     def __init__(self, *args, **kwargs):
         """Workorder object from dict"""

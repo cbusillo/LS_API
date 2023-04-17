@@ -44,6 +44,7 @@ class Item(BaseLSEntity):
     default_vendor_id: Optional[int] = None
     price: Optional[Decimal] = None
     item_attributes: list[ItemAttribute] = field(default_factory=lambda: [])
+    is_modified: Optional[bool] = None
 
     @staticmethod
     def atoi(text: str) -> int | str:

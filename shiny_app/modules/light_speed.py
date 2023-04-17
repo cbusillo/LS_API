@@ -5,11 +5,6 @@ import json
 import logging
 import sys
 import time
-
-if __name__ == "__main__":
-    import django
-
-    django.setup()
 from datetime import datetime
 from functools import lru_cache
 from urllib.parse import urlparse, parse_qs
@@ -25,10 +20,10 @@ from django.core.exceptions import ValidationError
 from django.db import transaction, models  # pylint: disable=wrong-import-order
 from django.utils import timezone  # pylint: disable=wrong-import-order
 
-from shiny_app.classes.ls_customer import Customer as LSCustomer
+from shiny_app.classes.config import Config
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import Workorder as LSWorkorder
-from shiny_app.classes.config import Config
+from shiny_app.classes.ls_customer import Customer as LSCustomer
 
 from shiny_app.django_server.inventory.models import Item as ShinyItem
 from shiny_app.django_server.customers.models import (
@@ -39,10 +34,10 @@ from shiny_app.django_server.customers.models import (
 from shiny_app.django_server.workorders.models import Workorder as ShinyWorkorder
 from shiny_app.django_server.ls_functions.views import send_message
 
-driver: Driver
+driver = None
 if os.environ.get("RUN_MAIN", None) == "true":
     os.system("killall -u cbusillo 'Google Chrome'")
-    driver = Driver(headless2=True, uc=True)
+    driver = Driver(headless2=False, uc=True)
 
 
 @lru_cache
@@ -73,10 +68,10 @@ class JsFunctionAvailable:
             return False
 
 
-def element_to_be_clickable_by_css_selector(css_selector: str) -> WebElement:
+def element_to_be_clickable_by_css_selector(css_selector: str):
     """check if an element is ready to be clicked"""
 
-    def element_to_be_clickable(driver) -> WebElement:
+    def element_to_be_clickable(driver) -> WebElement | None:
         element = driver.find_element(By.CSS_SELECTOR, css_selector)
         if element.is_enabled():
             return element
@@ -85,8 +80,10 @@ def element_to_be_clickable_by_css_selector(css_selector: str) -> WebElement:
     return element_to_be_clickable
 
 
-def create_workorder(customer_id: int) -> int:
+def create_workorder(customer_id: int) -> int | None:
     """Create a workorder in LS using Selenium"""
+    if driver is None:
+        return None
     driver.get("https://us.merchantos.com/?name=workbench.views.beta_workorder&form_name=view&id=undefined&tab=details")
     wait = WebDriverWait(driver, 10)
     if "/login?" in driver.current_url:
@@ -190,16 +187,16 @@ def update_item_price():
                 logging.info(output)
                 send_message(output)
                 # load new price into all three LS item prices in Item object
-                for item_price in item.prices.item_price:
-                    if float(item_price.amount) != float(device_price):
-                        item_price.amount = device_price
-                        item.is_modified = True
+
+                if item.price != device_price:
+                    item.price = device_price
+                    item.is_modified = True
                 # Item fucntion to make API put call and save price
                 if item.is_modified:
                     output = f"Updating {item.description}"
                     send_message(output)
                     logging.info(output)
-                    item.save_item_price()
+                    item.update_item_price()
                 break
 
 

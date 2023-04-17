@@ -20,10 +20,10 @@ class Customer(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     update_from_ls_time = models.DateTimeField(null=True)
-    archived = models.BooleanField()
-    contact_id = models.IntegerField()
+    archived = models.BooleanField(null=True)
+    contact_id = models.IntegerField(null=True)
     credit_account_id = models.IntegerField(blank=True, null=True)
-    customer_type_id = models.IntegerField()
+    customer_type_id = models.IntegerField(null=True)
     tax_category_id = models.IntegerField(blank=True, null=True)
     is_modified = models.BooleanField(default=False)
     phones: QuerySet["Phone"]

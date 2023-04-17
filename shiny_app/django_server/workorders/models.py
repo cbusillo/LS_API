@@ -1,8 +1,10 @@
 """Shiny Workorder class."""
 from django.db import models
-from shiny_app.modules.label_print import print_text
+
 from shiny_app.classes.config import Config
+from shiny_app.modules.label_print import print_text
 from shiny_app.modules.ring_central import send_message_ssh as send_message
+
 from ..customers.models import Customer
 
 
@@ -13,15 +15,15 @@ class Workorder(models.Model):
     time_in = models.DateTimeField(null=True)
     eta_out = models.DateTimeField(null=True)
     note = models.TextField(blank=True, null=True)
-    warranty = models.BooleanField()
-    tax = models.BooleanField()
-    archived = models.BooleanField()
+    warranty = models.BooleanField(null=True)
+    tax = models.BooleanField(null=True)
+    archived = models.BooleanField(null=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     update_from_ls_time = models.DateTimeField(null=True)
     item_description = models.CharField(max_length=100, null=True)
-    # total = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=20)
+    total = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    status = models.CharField(max_length=20, null=True)
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
 
     def __str__(self) -> str:

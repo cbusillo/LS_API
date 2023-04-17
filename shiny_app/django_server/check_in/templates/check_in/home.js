@@ -22,28 +22,37 @@ customerDetailForm.submit(function () {
 createWorkorderButton.addEventListener('click', async function (event) {
     event.preventDefault();
     var customerId = customerOutput.val();
+    var submitData; // define the variable here
 
-    if (customerId) {
-        $.ajax({
-            url: createWorkorderButton.getAttribute('data-url'),
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                customer_id: customerId,
-                csrfmiddlewaretoken: csrfToken
-            },
-            success: function (data) {
-                var workorderId = data.workorder_id;
-                if (workorderId > 0) {
-                    openWorkorderInSafari(workorderId);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.log('Error:', error);
-            }
-        });
+    if (!customerId) {
+        submitData = {
+            form: customerSearchForm.serialize(),
+            csrfmiddlewaretoken: csrfToken
+        };
+    } else {
+        submitData = {
+            customer_id: customerId,
+            csrfmiddlewaretoken: csrfToken
+        };
     }
+
+    $.ajax({
+        url: createWorkorderButton.getAttribute('data-url'),
+        type: 'POST',
+        dataType: 'json',
+        data: submitData, // use the variable here
+        success: function (data) {
+            var workorderId = data.workorder_id;
+            if (workorderId > 0) {
+                openWorkorderInSafari(workorderId);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log('Error:', error);
+        }
+    });
 });
+
 
 customerOutput.change(function () {
     var customerId = $(this).val();
@@ -82,7 +91,7 @@ firstNameInput.on("input", function () {
 phoneNumberInput.on("input", function () {
     updateCustomerOutput();
 });
-emailAddressInput.on("change", function () {
+emailAddressInput.on("input", function () {
     updateCustomerOutput();
 });
 

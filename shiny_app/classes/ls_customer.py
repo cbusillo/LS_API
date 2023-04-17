@@ -1,7 +1,8 @@
 """Class to import customer objects from LS API"""
-from typing import Any, Generator, Self, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
+from typing import Any, Generator, Optional, Self
+
 from shiny_app.classes.ls_client import BaseLSEntity
 
 
@@ -97,6 +98,27 @@ class Customer(BaseLSEntity):
             "emails": emails_json,
         }
         return cls(**customer_json_transformed)
+
+    def create(self) -> int:
+        """Create LS customer and return customer_id"""
+        mobile_number = ""
+        email_address = ""
+        for phone in self.phones:
+            if phone.number_type == "Mobile":
+                mobile_number = phone.number
+                break
+        if isinstance(self.emails, list) and isinstance(self.emails[0], dict):
+            email_address = self.emails[0].get("address")
+        post_customer = {
+            "firstName": self.first_name,
+            "lastName": self.last_name,
+            "Contact": {
+                "Emails": {"ContactEmail": [{"address": email_address, "useType": "Primary"}]},
+                "Phones": {"ContactPhone": [{"number": mobile_number, "useType": "Mobile"}]},
+            },
+        }
+
+        return self.post_entity_json(post_customer)
 
     @classmethod
     def get_customers(cls, date_filter: Optional[datetime] = None) -> Generator[Self, None, None]:
