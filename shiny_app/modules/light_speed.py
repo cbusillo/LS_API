@@ -208,6 +208,9 @@ def update_item_price():
 
 def import_items():
     """temp function to import items from LS"""
+    if ShinyItem.objects.count() == 0:
+        LSItem.shiny_model_from_ls(ShinyItem)
+        ShinyItem.objects.all().delete()
     with transaction.atomic():
         LSItem.shiny_model_from_ls(ShinyItem)
 
