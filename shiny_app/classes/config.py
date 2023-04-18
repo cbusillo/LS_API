@@ -38,15 +38,10 @@ class Config:
 
     SICKW_URL = config_file.get("sickw_url")
 
-    if config_file.get("debug_code").lower() == "false":
-        DEBUG_CODE = False
-    else:
-        DEBUG_CODE = True
+    DEBUG_CODE = config_file.get("debug_code").lower() != "false"
 
-    if config_file.get("debug_logging").lower() == "false":
-        DEBUG_LOGGING = False
-    else:
-        DEBUG_LOGGING = True
+    DEBUG_LOGGING = config_file.get("debug_logging").lower() != "false"
+
 
     GOOGLE_SHEETS_SERIAL_NAME = config_file.get("google_sheets_serial_name")
 
