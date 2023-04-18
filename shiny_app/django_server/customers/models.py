@@ -7,7 +7,6 @@ from django.db.models.query import QuerySet
 from django.forms.models import model_to_dict
 from shiny_app.django_server.functions.views import send_message
 from shiny_app.classes.ls_customer import Customer as LSCustomer
-from ..serials.models import Serial
 
 
 class Customer(models.Model):
@@ -29,8 +28,8 @@ class Customer(models.Model):
     is_modified = models.BooleanField(default=False)
     phones: QuerySet["Phone"]
     emails: QuerySet["Email"]
-    customer: QuerySet["Customer"]
-    serials: QuerySet["Serial"]
+    serials = models.ForeignKey("serials.Serial", on_delete=models.PROTECT, related_name="customers_related", null=True)
+    workorders = models.ForeignKey("workorders.Workorder", on_delete=models.PROTECT, related_name="customers_related", null=True)
 
     def save(self, *args, **kwargs):
         """Save customer"""

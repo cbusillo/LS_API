@@ -3,6 +3,7 @@
 /.vscode
 /build
 /dist
+/downloaded_files
 *temp
 *secret.json
 *egg-info

@@ -5,8 +5,6 @@ from shiny_app.classes.config import Config
 from shiny_app.modules.label_print import print_text
 from shiny_app.modules.ring_central import send_message_ssh as send_message
 
-from ..customers.models import Customer
-
 
 class Workorder(models.Model):
     """Workorder Shiny Object"""
@@ -24,7 +22,7 @@ class Workorder(models.Model):
     item_description = models.CharField(max_length=100, null=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     status = models.CharField(max_length=20, null=True)
-    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    customer = models.ForeignKey("customers.Customer", on_delete=models.PROTECT, related_name="workorders_related")
 
     def __str__(self) -> str:
         return f"{self.customer.full_name} - {self.status} - {self.time_in}"

@@ -72,12 +72,22 @@ class CustomerSearch(forms.Form):
 
     def get_customer_options(self, last_name: str, first_name: str, phone_number: str, email_address: str, everything: str):
         """Get customer options for select"""
-        customer_filter = (
-            Q(last_name__icontains=last_name)
-            & Q(first_name__icontains=first_name)
-            & Q(phones__number__icontains=phone_number)
-            & Q(emails__address__icontains=email_address)
-        )
+        if everything:
+            customer_filter = (
+                Q(last_name__icontains=everything)
+                | Q(first_name__icontains=everything)
+                | Q(phones__number__icontains=everything)
+                | Q(emails__address__icontains=everything)
+                | Q(company__icontains=everything)
+                | Q(serial__serial_number__icontains=everything)
+            )
+        else:
+            customer_filter = (
+                Q(last_name__icontains=last_name)
+                & Q(first_name__icontains=first_name)
+                & Q(phones__number__icontains=phone_number)
+                & Q(emails__address__icontains=email_address)
+            )
         if filter_has_value(customer_filter):
             order_by = "last_name", "first_name"
         else:
