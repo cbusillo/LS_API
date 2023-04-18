@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
 
-from shiny_app.modules.light_speed import import_customers, create_workorder
+from shiny_app.modules.light_speed import import_customers, import_all, create_workorder
 from shiny_app.classes.ls_customer import Customer as LSCustomer
 
 from ..customers.forms import CustomerForm, CustomerSearch, EmailForm, PhoneForm
@@ -101,7 +101,7 @@ def home(request):
     customers = Customer.objects.all().order_by("-update_time")[:100]
     if customers.count() == 0:
         return redirect("functions:home")
-    import_customers()
+    import_all()
     customer_search = CustomerSearch(customers=customers)
 
     context = {"customer_search_form": customer_search}
