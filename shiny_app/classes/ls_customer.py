@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class Customer(BaseLSEntity):
     """Customer object from LS"""
 
-    default_params = {"load_relations": '["Contact"]'}
+    class_params = {"load_relations": '["Contact"]'}
 
     @dataclass
     class Phone(BaseLSEntity):

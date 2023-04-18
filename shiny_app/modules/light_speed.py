@@ -14,8 +14,9 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from django.db import transaction  # pylint: disable=wrong-import-order
+from django.db import transaction
 
+from django.core.management import call_command
 from shiny_app.classes.config import Config
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import (
@@ -27,11 +28,8 @@ from shiny_app.classes.ls_customer import Customer as LSCustomer
 from shiny_app.classes.ls_serial import Serialized as LSSerial
 
 from shiny_app.django_server.items.models import Item as ShinyItem
-from shiny_app.django_server.customers.models import (
-    Customer as ShinyCustomer,
-    Phone as ShinyPhone,
-    Email as ShinyEmail,
-)
+from shiny_app.django_server.customers.models import Customer as ShinyCustomer
+
 from shiny_app.django_server.workorders.models import (
     Workorder as ShinyWorkorder,
     WorkorderItem as ShinyWorkorderItem,
@@ -256,11 +254,4 @@ def import_all():
 
 def delete_all():
     """temp function to delete all items and customers from shiny db"""
-    ShinyWorkorderLine.objects.all().delete()
-    ShinyWorkorderItem.objects.all().delete()
-    ShinyWorkorder.objects.all().delete()
-    ShinySerial.objects.all().delete()
-    ShinyItem.objects.all().delete()
-    ShinyEmail.objects.all().delete()
-    ShinyPhone.objects.all().delete()
-    ShinyCustomer.objects.all().delete()
+    call_command("flush", "--noinput", interactive=False)

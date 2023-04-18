@@ -2,7 +2,7 @@
 import logging
 import time
 import re
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from dataclasses import fields, is_dataclass
 from datetime import datetime
 from typing import Any, Generator, Optional, Self
@@ -104,15 +104,22 @@ class Client(requests.Session):
             page += 1
 
 
-class BaseLSEntity(ABC):
+class BaseLSEntityMeta(type):
+    """Hold class variables for each entity class"""
+
+    def __init__(cls, name, bases, dct):
+        super().__init__(name, bases, dct)
+        cls.class_params = {}
+
+
+class BaseLSEntity(metaclass=BaseLSEntityMeta):
     """Base entity class for Lightspeed Objects"""
 
     client = Client()
-    cls_params = {"limit": "100", "archived": "true"}
+    base_class_params = {"limit": "100", "archived": "true"}
 
     def __init__(self) -> None:
         self.fetch_from_api: Optional[bool] = None
-        self.default_params = {}
 
     @staticmethod
     def string_to_datetime(string_input: str | None) -> datetime | None:
@@ -143,7 +150,8 @@ class BaseLSEntity(ABC):
         """Get one entity"""
         if params is None:
             params = {}
-        params.update(cls.cls_params)
+            params.update(cls.class_params)
+            params.update(cls.base_class_params)
         key_name = cls.__name__
         url = f"{key_name}.json"
         if entity_id:
@@ -178,8 +186,13 @@ class BaseLSEntity(ABC):
 
         for category_id in categories:
             params = {}
+            if cls.base_class_params:
+                params.update(cls.base_class_params)
+            if cls.class_params:
+                params.update(cls.class_params)
             if category_id != 0:
                 params = {"categoryID": category_id}
+
             for entity in cls.get_entities_json(date_filter=date_filter, params=params):
                 yield cls.from_json(entity)
 
