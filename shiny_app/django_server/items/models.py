@@ -1,5 +1,10 @@
 """Shiny Item class."""
+from typing import TYPE_CHECKING
 from django.db import models
+from django.db.models.query import QuerySet
+
+if TYPE_CHECKING:
+    from ..serials.models import Serial
 
 
 class ItemAttributes(models.Model):
@@ -32,7 +37,7 @@ class Item(models.Model):
     item_matrix_id = models.IntegerField(null=True)
     item_attributes = models.ForeignKey(ItemAttributes, on_delete=models.CASCADE, null=True)
     sizes = models.CharField(max_length=200, null=True)
-    serials = models.ForeignKey("serials.Serial", on_delete=models.PROTECT, related_name="items_related", null=True)
+    serials = QuerySet["Serial"]
 
     def __str__(self) -> str:
         return f"{self.ls_item_id} - {self.description}"

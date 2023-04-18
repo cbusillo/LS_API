@@ -1,12 +1,17 @@
 """Shiny Customer class."""
 import logging
 import re
+from typing import TYPE_CHECKING
 from collections.abc import Iterable
 from django.db import models
 from django.db.models.query import QuerySet
 from django.forms.models import model_to_dict
 from shiny_app.django_server.functions.views import send_message
 from shiny_app.classes.ls_customer import Customer as LSCustomer
+
+if TYPE_CHECKING:
+    from ..workorders.models import Workorder
+    from ..serials.models import Serial
 
 
 class Customer(models.Model):
@@ -28,8 +33,8 @@ class Customer(models.Model):
     is_modified = models.BooleanField(default=False)
     phones: QuerySet["Phone"]
     emails: QuerySet["Email"]
-    serials = models.ForeignKey("serials.Serial", on_delete=models.PROTECT, related_name="customers_related", null=True)
-    workorders = models.ForeignKey("workorders.Workorder", on_delete=models.PROTECT, related_name="customers_related", null=True)
+    workorders: QuerySet["Workorder"]
+    serials: QuerySet["Serial"]
 
     def save(self, *args, **kwargs):
         """Save customer"""

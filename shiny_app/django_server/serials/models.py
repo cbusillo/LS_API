@@ -1,5 +1,10 @@
 """Shiny Customer class."""
+from typing import TYPE_CHECKING
 from django.db import models
+
+if TYPE_CHECKING:
+    from ..customers.models import Customer
+    from ..items.models import Item
 
 
 class Serial(models.Model):
@@ -13,5 +18,9 @@ class Serial(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     update_from_ls_time = models.DateTimeField(null=True)
-    item = models.ForeignKey("items.Item", on_delete=models.PROTECT, null=True)
-    customer = models.ForeignKey("customers.Customer", on_delete=models.PROTECT, null=True)
+    item: "Item | models.ForeignKey" = models.ForeignKey(
+        "items.Item", on_delete=models.PROTECT, null=True, related_name="serials_related"
+    )
+    customer: "Customer | models.ForeignKey" = models.ForeignKey(
+        "customers.Customer", on_delete=models.PROTECT, null=True, related_name="serials_related"
+    )
