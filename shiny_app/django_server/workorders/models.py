@@ -6,6 +6,42 @@ from shiny_app.modules.label_print import print_text
 from shiny_app.modules.ring_central import send_message_ssh as send_message
 
 
+class WorkorderItem(models.Model):
+    """WorkorderItem Shiny Object"""
+
+    ls_workorder_item_id = models.IntegerField(null=True)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    unit_quantity = models.IntegerField(null=True)
+    tax = models.BooleanField(null=True)
+    note = models.TextField(blank=True, null=True)
+    workorder = models.ForeignKey("Workorder", on_delete=models.CASCADE, related_name="workorder_items")
+    # sale_line
+    item = models.ForeignKey("items.Item", on_delete=models.PROTECT, related_name="workorder_items")
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    discount_percent = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
+    update_from_ls_time = models.DateTimeField(null=True)
+
+
+class WorkorderLine(models.Model):
+    """WorkorderLine Shiny Object"""
+
+    ls_workorder_line_id = models.IntegerField(null=True)
+    note = models.TextField(blank=True, null=True)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
+    update_from_ls_time = models.DateTimeField(null=True)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    unit_quantity = models.IntegerField(null=True)
+    unit_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    tax = models.BooleanField(null=True)
+    workorder = models.ForeignKey("Workorder", on_delete=models.CASCADE, related_name="workorder_lines")
+    # sale_line_id: int
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    discount_percent = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+
+
 class Workorder(models.Model):
     """Workorder Shiny Object"""
 
@@ -23,6 +59,7 @@ class Workorder(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     status = models.CharField(max_length=20, null=True)
     customer = models.ForeignKey("customers.Customer", on_delete=models.PROTECT, related_name="workorders_related")
+    workorder_items: models.QuerySet[WorkorderItem]
 
     def __str__(self) -> str:
         return f"{self.customer.full_name} - {self.status} - {self.time_in}"

@@ -63,6 +63,7 @@ class Customer(BaseLSEntity):
             customer = self.from_json(customer_json)
             self.__dict__.update(customer.__dict__)
 
+        # only used for saving phone numbers back to lightspeed
         if isinstance(self.phones, list) and all(isinstance(item, dict) for item in self.phones):
             phones_json = self.phones.copy()
             self.phones.clear()

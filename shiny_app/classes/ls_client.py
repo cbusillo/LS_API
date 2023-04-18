@@ -1,6 +1,7 @@
 """Client for Lightspeed API Inherited from requests.Session"""
 import logging
 import time
+import re
 from abc import ABC, abstractmethod
 from dataclasses import fields, is_dataclass
 from datetime import datetime
@@ -209,7 +210,7 @@ class BaseLSEntity(ABC):
         start_time = timezone.now()
 
         for ls_entity in ls_entities:
-            module_name = f"{model.__name__.lower()}"
+            module_name = re.sub(r"(?<!^)(?=[A-Z])", "_", model.__name__).lower()
             key_args = {f"ls_{module_name}_id": getattr(ls_entity, f"{module_name}_id")}
             try:
                 shiny_entity = model.objects.get(**key_args)

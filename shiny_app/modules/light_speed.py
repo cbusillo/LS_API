@@ -18,7 +18,11 @@ from django.db import transaction  # pylint: disable=wrong-import-order
 
 from shiny_app.classes.config import Config
 from shiny_app.classes.ls_item import Item as LSItem
-from shiny_app.classes.ls_workorder import Workorder as LSWorkorder
+from shiny_app.classes.ls_workorder import (
+    Workorder as LSWorkorder,
+    WorkorderItem as LSWorkorderItem,
+    WorkorderLine as LSWorkorderLine,
+)
 from shiny_app.classes.ls_customer import Customer as LSCustomer
 from shiny_app.classes.ls_serial import Serialized as LSSerial
 
@@ -28,7 +32,11 @@ from shiny_app.django_server.customers.models import (
     Phone as ShinyPhone,
     Email as ShinyEmail,
 )
-from shiny_app.django_server.workorders.models import Workorder as ShinyWorkorder
+from shiny_app.django_server.workorders.models import (
+    Workorder as ShinyWorkorder,
+    WorkorderItem as ShinyWorkorderItem,
+    WorkorderLine as ShinyWorkorderLine,
+)
 from shiny_app.django_server.serials.models import Serial as ShinySerial
 from shiny_app.django_server.functions.views import send_message
 
@@ -225,18 +233,34 @@ def import_serials():
         LSSerial.shiny_model_from_ls(ShinySerial)
 
 
+def import_workorder_items():
+    """temp function to import workorder items from LS"""
+    with transaction.atomic():
+        LSWorkorderItem.shiny_model_from_ls(ShinyWorkorderItem)
+
+
+def import_workorder_lines():
+    """temp function to import workorder lines from LS"""
+    with transaction.atomic():
+        LSWorkorderLine.shiny_model_from_ls(ShinyWorkorderLine)
+
+
 def import_all():
     """Import everything from LS, use to create db"""
     import_items()
     import_customers()
     import_workorders()
+    import_workorder_items()
+    import_workorder_lines()
     import_serials()
 
 
 def delete_all():
     """temp function to delete all items and customers from shiny db"""
-    ShinySerial.objects.all().delete()
+    ShinyWorkorderLine.objects.all().delete()
+    ShinyWorkorderItem.objects.all().delete()
     ShinyWorkorder.objects.all().delete()
+    ShinySerial.objects.all().delete()
     ShinyItem.objects.all().delete()
     ShinyEmail.objects.all().delete()
     ShinyPhone.objects.all().delete()
