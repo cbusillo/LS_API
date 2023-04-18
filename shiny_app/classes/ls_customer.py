@@ -40,9 +40,9 @@ class Customer(BaseLSEntity):
             return cls(address=json.get("address", ""), address_type=json.get("useType", ""))
 
     customer_id: Optional[int] = None
-    first_name: str = ""
-    last_name: str = ""
-    title: str = ""
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    title: Optional[str] = None
     company: Optional[str] = None
     create_time: Optional[datetime] = None
     time_stamp: Optional[datetime] = None

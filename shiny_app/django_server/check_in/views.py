@@ -101,7 +101,7 @@ def home(request):
     customers = Customer.objects.all().order_by("-update_time")[:100]
     if customers.count() == 0:
         return redirect("functions:home")
-    import_all()
+    import_customers()
     customer_search = CustomerSearch(customers=customers)
 
     context = {"customer_search_form": customer_search}

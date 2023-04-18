@@ -7,24 +7,6 @@ from phonenumber_field.formfields import PhoneNumberField
 from .models import Customer, Phone, Email
 
 
-class CustomerSearchList(forms.Form):
-    """Form for searching customers"""
-
-    first_name = forms.CharField(
-        label="First Name",
-        max_length=255,
-        required=False,
-        widget=forms.TextInput(attrs={"placeholder": "Search by Name..."}),
-    )
-
-    last_name = forms.CharField(
-        label="Last Name",
-        max_length=255,
-        required=False,
-        widget=forms.TextInput(attrs={"placeholder": "Search by Name..."}),
-    )
-
-
 class CustomerSearch(forms.Form):
     """Form for check_in app."""
 
@@ -72,6 +54,7 @@ class CustomerSearch(forms.Form):
 
     def get_customer_options(self, last_name: str, first_name: str, phone_number: str, email_address: str, everything: str):
         """Get customer options for select"""
+        customer_filter = Q()
         if everything:
             customer_filter = (
                 Q(last_name__icontains=everything)
@@ -82,12 +65,15 @@ class CustomerSearch(forms.Form):
                 | Q(serial__serial_number__icontains=everything)
             )
         else:
-            customer_filter = (
-                Q(last_name__icontains=last_name)
-                & Q(first_name__icontains=first_name)
-                & Q(phones__number__icontains=phone_number)
-                & Q(emails__address__icontains=email_address)
-            )
+            if last_name:
+                customer_filter &= Q(last_name__icontains=last_name)
+            if first_name:
+                customer_filter &= Q(first_name__icontains=first_name)
+            if phone_number:
+                customer_filter &= Q(phones__number__icontains=phone_number)
+            if email_address:
+                customer_filter &= Q(emails__address__icontains=email_address)
+
         if filter_has_value(customer_filter):
             order_by = "last_name", "first_name"
         else:
@@ -98,12 +84,15 @@ class CustomerSearch(forms.Form):
 
     def get_customer_list(self, first_name, last_name, phone_number, email_address):
         """Get customer list for display"""
-        customer_filter = (
-            Q(last_name__icontains=last_name)
-            & Q(first_name__icontains=first_name)
-            & Q(phones__number__icontains=phone_number)
-            & Q(emails__address__icontains=email_address)
-        )
+        customer_filter = Q()
+        if last_name:
+            customer_filter &= Q(last_name__icontains=last_name)
+        if first_name:
+            customer_filter &= Q(first_name__icontains=first_name)
+        if phone_number:
+            customer_filter &= Q(phones__number__icontains=phone_number)
+        if email_address:
+            customer_filter &= Q(emails__address__icontains=email_address)
         order_by = "last_name", "first_name"
         customers = Customer.objects.filter(customer_filter).distinct().order_by(*order_by)
         return customers

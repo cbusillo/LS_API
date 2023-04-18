@@ -16,10 +16,10 @@ class CustomerListView(View):
         form = CustomerSearch(request.GET)
 
         if form.is_valid():
-            first_name = form.cleaned_data.get("first_name_input")
-            last_name = form.cleaned_data.get("last_name_input")
-            phone_number = form.cleaned_data.get("phone_number_input")
-            email_address = form.cleaned_data.get("email_address_input")
+            first_name = form.cleaned_data.get("first_name_input", None)
+            last_name = form.cleaned_data.get("last_name_input", None)
+            phone_number = form.cleaned_data.get("phone_number_input", None)
+            email_address = form.cleaned_data.get("email_address_input", None)
             customers = form.get_customer_list(first_name, last_name, phone_number, email_address)
         else:
             customers = Customer.objects.all()

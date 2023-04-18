@@ -18,8 +18,8 @@ class Customer(models.Model):
     """Customer object from LS"""
 
     ls_customer_id = models.IntegerField(null=True)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100, null=True)
+    last_name = models.CharField(max_length=100, null=True)
     title = models.CharField(max_length=10, blank=True, null=True)
     company = models.CharField(max_length=100, blank=True, null=True)
     create_time = models.DateTimeField(auto_now_add=True)
@@ -38,8 +38,10 @@ class Customer(models.Model):
 
     def save(self, *args, **kwargs):
         """Save customer"""
-        self.first_name = self.first_name.strip()
-        self.last_name = self.last_name.strip()
+        if self.first_name:
+            self.first_name = self.first_name.strip()
+        if self.last_name:
+            self.last_name = self.last_name.strip()
         if self.title:
             self.title = self.title.strip()
         if self.company:

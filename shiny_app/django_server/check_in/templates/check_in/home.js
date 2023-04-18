@@ -41,7 +41,7 @@ $(createWorkorderButton).on('click', async function (event) {
     }
 
     $.ajax({
-        url: createWorkorderButton.getAttribute('data-url'),
+        url: createWorkorderButton.data('url'),
         type: 'POST',
         dataType: 'json',
         data: submitData, // use the variable here
@@ -174,6 +174,7 @@ function validateCustomerInput() {
     const lastName = lastNameInput.val().trim();
     const phoneNumber = phoneNumberInput.val().trim();
     const emailAddress = emailAddressInput.val().trim();
+    let valid = true;
 
     if (firstName === '') {
         firstNameInput.addClass('is-invalid');
