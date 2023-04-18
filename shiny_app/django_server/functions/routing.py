@@ -1,4 +1,4 @@
-"""Urls for ls_function app"""
+"""Urls for function app"""
 from django.urls import path
 
 from . import consumers
