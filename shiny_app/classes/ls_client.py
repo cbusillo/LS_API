@@ -109,10 +109,10 @@ class BaseLSEntity(ABC):
 
     client = Client()
     cls_params = {"limit": "100", "archived": "true"}
-    default_params = {}
 
     def __init__(self) -> None:
         self.fetch_from_api: Optional[bool] = None
+        self.default_params = {}
 
     @staticmethod
     def string_to_datetime(string_input: str | None) -> datetime | None:
@@ -177,7 +177,7 @@ class BaseLSEntity(ABC):
             categories = [0]
 
         for category_id in categories:
-            params = cls.default_params
+            params = {}
             if category_id != 0:
                 params = {"categoryID": category_id}
             for entity in cls.get_entities_json(date_filter=date_filter, params=params):

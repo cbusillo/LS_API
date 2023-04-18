@@ -222,7 +222,6 @@ def import_customers():
 
 def import_workorders():
     """temp function to import workorders from LS"""
-    import_customers()
     with transaction.atomic():
         LSWorkorder.shiny_model_from_ls(ShinyWorkorder)
 
