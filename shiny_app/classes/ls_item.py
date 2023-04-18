@@ -3,9 +3,12 @@ from datetime import datetime
 from decimal import Decimal
 import re
 import shlex
-from typing import Any, Optional, Self
+from typing import Any, Optional, Self, TYPE_CHECKING
 from dataclasses import dataclass, field
 from shiny_app.classes.ls_client import BaseLSEntity
+
+if TYPE_CHECKING:
+    from shiny_app.django_server.items.models import Item as ShinyItem
 
 
 @dataclass
@@ -99,7 +102,7 @@ class Item(BaseLSEntity):
     price: Optional[Decimal] = None
     item_attributes: list[ItemAttribute] = field(default_factory=lambda: [])
     is_modified: Optional[bool] = None
-    sizes: Optional[list[ItemMatrix]] = None
+    sizes: Optional[str] = None
 
     @staticmethod
     def atoi(text: str) -> int | str:
@@ -212,3 +215,24 @@ class Item(BaseLSEntity):
             }
         }
         self.put_entity_json(self.item_id, put_item)
+
+    def shiny_item_from_ls(self, shiny_item: "ShinyItem", start_time: datetime):
+        """translation layer for LSItem to ShinyItem"""
+        shiny_item.ls_item_id = self.item_id
+        shiny_item.default_cost = self.default_cost or None
+        shiny_item.average_cost = self.average_cost or None
+        shiny_item.tax = self.tax
+        shiny_item.archived = self.archived
+        shiny_item.item_type = self.item_type
+        shiny_item.serialized = self.serialized
+        shiny_item.description = self.description.strip().replace("  ", " ")
+        shiny_item.upc = self.upc
+        shiny_item.custom_sku = self.custom_sku
+        shiny_item.manufacturer_sku = self.manufacturer_sku
+        shiny_item.item_matrix_id = self.item_matrix_id
+        shiny_item.item_attributes = None
+        shiny_item.update_time = start_time
+        shiny_item.update_from_ls_time = start_time
+        shiny_item.sizes = self.sizes
+
+        return shiny_item, None

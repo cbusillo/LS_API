@@ -3,12 +3,10 @@
 import os
 import json
 import logging
-import sys
 import time
 from datetime import datetime
 from functools import lru_cache
 from urllib.parse import urlparse, parse_qs
-import pytz
 from seleniumbase import Driver
 from selenium.common.exceptions import JavascriptException
 from selenium.webdriver.common.by import By
@@ -16,14 +14,13 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from django.db import transaction, models  # pylint: disable=wrong-import-order
-from django.utils import timezone  # pylint: disable=wrong-import-order
+from django.db import transaction  # pylint: disable=wrong-import-order
 
 from shiny_app.classes.config import Config
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import Workorder as LSWorkorder
 from shiny_app.classes.ls_customer import Customer as LSCustomer
-from shiny_app.classes.ls_serialized import Serialized as LSSerial
+from shiny_app.classes.ls_serial import Serialized as LSSerial
 
 from shiny_app.django_server.items.models import Item as ShinyItem
 from shiny_app.django_server.customers.models import (
@@ -203,180 +200,29 @@ def update_item_price():
                 break
 
 
-def shiny_update_from_ls_time(model: type[models.Model]):
-    """Convert LS date string to datetime"""
-    local_tz = pytz.timezone("America/New_York")
-    default_time = datetime(2000, 1, 1, 0, 0, 0, 0, tzinfo=local_tz)
-    try:
-        latest_ls_update_time = model.objects.filter(update_from_ls_time__isnull=False).latest("update_from_ls_time")
-    except model.DoesNotExist:
-        return default_time
-    if hasattr(latest_ls_update_time, "update_from_ls_time"):
-        return latest_ls_update_time.update_from_ls_time  # pyright: reportGeneralTypeIssues=false
-    return default_time
-
-
-def shiny_workorder_from_ls(shiny_workorder: ShinyWorkorder, ls_workorder: LSWorkorder, start_time: datetime):
-    """Convert LS Workorder to Shiny Workorder"""
-    shiny_workorder.ls_workorder_id = ls_workorder.workorder_id
-    shiny_workorder.time_in = ls_workorder.time_in
-    shiny_workorder.eta_out = ls_workorder.eta_out
-    shiny_workorder.note = ls_workorder.note
-    shiny_workorder.warranty = ls_workorder.warranty
-    shiny_workorder.tax = ls_workorder.tax
-    shiny_workorder.archived = ls_workorder.archived
-    shiny_workorder.update_time = start_time
-    shiny_workorder.update_from_ls_time = start_time
-    # shiny_workorder.total = ls_workorder.total
-    shiny_workorder.item_description = ls_workorder.item_description
-    shiny_workorder.status = ls_workorder.status
-    try:
-        shiny_workorder.customer = ShinyCustomer.objects.get(ls_customer_id=ls_workorder.customer_id)
-    except ShinyCustomer.DoesNotExist:
-        shiny_workorder.customer = ShinyCustomer.objects.get(ls_customer_id=5896)
-
-    return shiny_workorder, None
-
-
-def shiny_item_from_ls(shiny_item: ShinyItem, ls_item: LSItem, start_time: datetime):
-    """translation layer for LSItem to ShinyItem"""
-    shiny_item.ls_item_id = ls_item.item_id
-    shiny_item.default_cost = ls_item.default_cost or None
-    shiny_item.average_cost = ls_item.average_cost or None
-    shiny_item.tax = ls_item.tax
-    shiny_item.archived = ls_item.archived
-    shiny_item.item_type = ls_item.item_type
-    shiny_item.serialized = ls_item.serialized
-    shiny_item.description = ls_item.description.strip().replace("  ", " ")
-    shiny_item.upc = ls_item.upc
-    shiny_item.custom_sku = ls_item.custom_sku
-    shiny_item.manufacturer_sku = ls_item.manufacturer_sku
-    shiny_item.item_matrix_id = ls_item.item_matrix_id
-    shiny_item.item_attributes = None
-    shiny_item.update_time = start_time
-    shiny_item.update_from_ls_time = start_time
-    shiny_item.sizes = ls_item.sizes
-
-    return shiny_item, None
-
-
-def shiny_serial_from_ls(shiny_serial: ShinySerial, ls_serial: LSSerial, start_time: datetime):
-    """translation layer for LSSerial to ShinySerial"""
-    shiny_serial.ls_serial_id = ls_serial.serial_id
-    shiny_serial.value_1 = ls_serial.value_1
-    shiny_serial.value_2 = ls_serial.value_2
-    shiny_serial.serial_number = ls_serial.serial_number
-    shiny_serial.description = ls_serial.description
-    shiny_serial.update_time = start_time
-    shiny_serial.update_from_ls_time = start_time
-
-    if ls_serial.customer_id:
-        try:
-            shiny_serial.customer = ShinyCustomer.objects.get(ls_customer_id=ls_serial.customer_id)
-        except ShinyCustomer.DoesNotExist:
-            shiny_serial.customer = ShinyCustomer.objects.get(ls_customer_id=5896)
-
-    if ls_serial.item_id:
-        try:
-            shiny_serial.item = ShinyItem.objects.get(ls_item_id=ls_serial.item_id)
-        except ShinyItem.DoesNotExist:
-            logging.error("Item %i not found in ShinyItem", ls_serial.item_id)
-
-    return shiny_serial, None
-
-
-def shiny_customer_from_ls(shiny_customer: ShinyCustomer, ls_customer: LSCustomer, start_time: datetime):
-    """translation layer for LSCustomer to ShinyCustomer"""
-    shiny_customer.ls_customer_id = ls_customer.customer_id
-    shiny_customer.first_name = ls_customer.first_name
-    shiny_customer.last_name = ls_customer.last_name
-    shiny_customer.title = ls_customer.title
-    shiny_customer.company = ls_customer.company
-    shiny_customer.update_time = start_time
-    shiny_customer.update_from_ls_time = start_time
-    shiny_customer.archived = ls_customer.archived
-    shiny_customer.contact_id = ls_customer.contact_id
-    shiny_customer.credit_account_id = ls_customer.credit_account_id
-    shiny_customer.customer_type_id = ls_customer.customer_type_id
-    shiny_customer.tax_category_id = ls_customer.tax_category_id
-    functions_to_execute_after = []
-
-    for phone in ls_customer.phones:
-        if not ShinyPhone.objects.filter(number=phone.number, number_type=phone.number_type, customer=shiny_customer).exists():
-            functions_to_execute_after.append(
-                ShinyPhone(number=phone.number, number_type=phone.number_type, customer=shiny_customer).save
-            )
-
-    for email in ls_customer.emails:
-        if not ShinyEmail.objects.filter(address=email.address, address_type=email.address_type, customer=shiny_customer).exists():
-            functions_to_execute_after.append(
-                ShinyEmail(address=email.address, address_type=email.address_type, customer=shiny_customer).save
-            )
-
-    return shiny_customer, functions_to_execute_after
-
-
-def _shiny_model_from_ls(model: type[models.Model], date_filter: datetime | None = None):
-    """Get LS items since date_filter and iterate through them"""
-    if date_filter is None:
-        date_filter = shiny_update_from_ls_time(model)
-
-    model_name = model.__name__
-
-    model_class = globals().get(f"LS{model_name}")
-    if model_class is None:
-        logging.warning("Invalid model type passed to shiny_model_from_ls")
-        return
-    ls_entities = model_class.get_entities(date_filter=date_filter)
-
-    start_time = timezone.now()
-
-    for ls_entity in ls_entities:
-        module_name = f"{model.__name__.lower()}"
-        key_args = {f"ls_{module_name}_id": getattr(ls_entity, f"{module_name}_id")}
-        try:
-            shiny_entity = model.objects.get(**key_args)
-        except model.DoesNotExist:
-            shiny_entity = model(**key_args)
-
-        convert_function = getattr(sys.modules[__name__], f"shiny_{module_name}_from_ls")
-        shiny_entity, functions_to_execute_after = convert_function(shiny_entity, ls_entity, start_time)
-
-        shiny_entity.save()
-
-        logging.debug("Saved Shiny %s %s", model_name, shiny_entity)
-
-        if functions_to_execute_after:
-            for function_to_execute in functions_to_execute_after:
-                function_to_execute()
-            logging.debug("Saved Shiny %s's children", model_name)
-
-    send_message(f"Finished updating {model_name}s")
-
-
 def import_items():
     """temp function to import items from LS"""
     with transaction.atomic():
-        _shiny_model_from_ls(ShinyItem)
+        LSItem.shiny_model_from_ls(ShinyItem)
 
 
 def import_customers():
     """temp function to import customers from LS"""
     with transaction.atomic():
-        _shiny_model_from_ls(ShinyCustomer)
+        LSCustomer.shiny_model_from_ls(ShinyCustomer)
 
 
 def import_workorders():
     """temp function to import workorders from LS"""
     import_customers()
     with transaction.atomic():
-        _shiny_model_from_ls(ShinyWorkorder)
+        LSWorkorder.shiny_model_from_ls(ShinyWorkorder)
 
 
 def import_serials():
     """temp function to import serials from LS"""
     with transaction.atomic():
-        _shiny_model_from_ls(ShinySerial)
+        LSSerial.shiny_model_from_ls(ShinySerial)
 
 
 def import_all():
@@ -389,25 +235,9 @@ def import_all():
 
 def delete_all():
     """temp function to delete all items and customers from shiny db"""
+    ShinySerial.objects.all().delete()
     ShinyWorkorder.objects.all().delete()
     ShinyItem.objects.all().delete()
     ShinyEmail.objects.all().delete()
     ShinyPhone.objects.all().delete()
     ShinyCustomer.objects.all().delete()
-    ShinySerial.objects.all().delete()
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    DELETE_ALL = False
-    if DELETE_ALL:
-        delete_all()
-
-    # import_all()
-    test_customer = LSCustomer()
-    test_customer.first_name = "test"
-    test_customer.last_name = "test"
-    test_customer.phones = LSCustomer.Phone(**{"number": "1234566789", "number_type": "mobile"})
-    test_customer.emails = LSCustomer.Email(**{"address": "test@test.com", "address_type": "Primary"})
-
-    print(test_customer)

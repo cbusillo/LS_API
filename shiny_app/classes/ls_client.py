@@ -8,6 +8,10 @@ from typing import Any, Generator, Optional, Self
 from urllib.parse import urljoin
 
 import requests
+import pytz
+
+from django.db import models
+from django.utils import timezone  # pylint: disable=wrong-import-order
 
 from shiny_app.django_server.functions.views import send_message
 from shiny_app.classes.config import Config
@@ -192,3 +196,49 @@ class BaseLSEntity(ABC):
         allowed_kwargs = {key: value for key, value in kwargs.items() if key in [field.name for field in fields(cls)]}
 
         return cls(**allowed_kwargs)
+
+    @classmethod
+    def shiny_model_from_ls(cls, model: type[models.Model], date_filter: datetime | None = None):
+        """Get LS items since date_filter and iterate through them"""
+
+        if date_filter is None:
+            date_filter = cls.shiny_update_from_ls_time(model)
+
+        ls_entities = cls.get_entities(date_filter=date_filter)
+
+        start_time = timezone.now()
+
+        for ls_entity in ls_entities:
+            module_name = f"{model.__name__.lower()}"
+            key_args = {f"ls_{module_name}_id": getattr(ls_entity, f"{module_name}_id")}
+            try:
+                shiny_entity = model.objects.get(**key_args)
+            except model.DoesNotExist:
+                shiny_entity = model(**key_args)
+
+            convert_function = getattr(cls, f"shiny_{module_name}_from_ls")
+            shiny_entity, functions_to_execute_after = convert_function(ls_entity, shiny_entity, start_time)
+
+            shiny_entity.save()
+
+            logging.debug("Saved Shiny %s %s", cls.__name__, shiny_entity)
+
+            if functions_to_execute_after:
+                for function_to_execute in functions_to_execute_after:
+                    function_to_execute()
+                logging.debug("Saved Shiny %s's children", cls.__name__)
+
+        send_message(f"Finished updating {cls.__name__}s")
+
+    @classmethod
+    def shiny_update_from_ls_time(cls, model: type[models.Model]):
+        """Convert LS date string to datetime"""
+        local_tz = pytz.timezone("America/New_York")
+        default_time = datetime(2000, 1, 1, 0, 0, 0, 0, tzinfo=local_tz)
+        try:
+            latest_ls_update_time = model.objects.filter(update_from_ls_time__isnull=False).latest("update_from_ls_time")
+        except model.DoesNotExist:
+            return default_time
+        if hasattr(latest_ls_update_time, "update_from_ls_time"):
+            return latest_ls_update_time.update_from_ls_time  # pyright: reportGeneralTypeIssues=false
+        return default_time

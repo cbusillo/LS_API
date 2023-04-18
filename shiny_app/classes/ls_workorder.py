@@ -2,8 +2,11 @@
 from datetime import datetime
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Any, Optional, Self
+from typing import Any, Optional, Self, TYPE_CHECKING
 from shiny_app.classes.ls_client import BaseLSEntity
+
+if TYPE_CHECKING:
+    from shiny_app.django_server.workorders.models import Workorder as ShinyWorkorder
 
 
 @dataclass
@@ -62,3 +65,27 @@ class Workorder(BaseLSEntity):
             "status": json.get("WorkorderStatus", {}).get("name"),
         }
         return cls(**workorder_json_transformed)
+
+    def shiny_workorder_from_ls(self, shiny_workorder: "ShinyWorkorder", start_time: datetime):
+        """Convert LS Workorder to Shiny Workorder"""
+        # pylint: disable=import-outside-toplevel
+        from shiny_app.django_server.customers.models import Customer as ShinyCustomer
+
+        shiny_workorder.ls_workorder_id = self.workorder_id
+        shiny_workorder.time_in = self.time_in
+        shiny_workorder.eta_out = self.eta_out
+        shiny_workorder.note = self.note
+        shiny_workorder.warranty = self.warranty
+        shiny_workorder.tax = self.tax
+        shiny_workorder.archived = self.archived
+        shiny_workorder.update_time = start_time
+        shiny_workorder.update_from_ls_time = start_time
+        # shiny_workorder.total = ls_workorder.total
+        shiny_workorder.item_description = self.item_description
+        shiny_workorder.status = self.status
+        try:
+            shiny_workorder.customer = ShinyCustomer.objects.get(ls_customer_id=self.customer_id)
+        except ShinyCustomer.DoesNotExist:
+            shiny_workorder.customer = ShinyCustomer.objects.get(ls_customer_id=5896)
+
+        return shiny_workorder, None

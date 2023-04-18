@@ -1,9 +1,12 @@
 """Class to import customer objects from LS API"""
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Optional, Self
+from typing import Any, Optional, Self, TYPE_CHECKING
 
 from shiny_app.classes.ls_client import BaseLSEntity
+
+if TYPE_CHECKING:
+    from shiny_app.django_server.customers.models import Customer as ShinyCustomer
 
 
 @dataclass
@@ -159,3 +162,41 @@ class Customer(BaseLSEntity):
             }
         }
         self.put_entity_json(self.customer_id, put_customer)
+
+    def shiny_customer_from_ls(self, shiny_customer: "ShinyCustomer", start_time: datetime):
+        """translation layer for LSCustomer to ShinyCustomer"""
+        # pylint: disable=import-outside-toplevel
+        from shiny_app.django_server.customers.models import (
+            Phone as ShinyPhone,
+            Email as ShinyEmail,
+        )
+
+        shiny_customer.ls_customer_id = self.customer_id
+        shiny_customer.first_name = self.first_name
+        shiny_customer.last_name = self.last_name
+        shiny_customer.title = self.title
+        shiny_customer.company = self.company
+        shiny_customer.update_time = start_time
+        shiny_customer.update_from_ls_time = start_time
+        shiny_customer.archived = self.archived
+        shiny_customer.contact_id = self.contact_id
+        shiny_customer.credit_account_id = self.credit_account_id
+        shiny_customer.customer_type_id = self.customer_type_id
+        shiny_customer.tax_category_id = self.tax_category_id
+        functions_to_execute_after = []
+
+        for phone in self.phones:
+            if not ShinyPhone.objects.filter(number=phone.number, number_type=phone.number_type, customer=shiny_customer).exists():
+                functions_to_execute_after.append(
+                    ShinyPhone(number=phone.number, number_type=phone.number_type, customer=shiny_customer).save
+                )
+
+        for email in self.emails:
+            if not ShinyEmail.objects.filter(
+                address=email.address, address_type=email.address_type, customer=shiny_customer
+            ).exists():
+                functions_to_execute_after.append(
+                    ShinyEmail(address=email.address, address_type=email.address_type, customer=shiny_customer).save
+                )
+
+        return shiny_customer, functions_to_execute_after
