@@ -82,9 +82,9 @@ class Workorder(BaseLSEntity):
         shiny_workorder.warranty = self.warranty
         shiny_workorder.tax = self.tax
         shiny_workorder.archived = self.archived
+        shiny_workorder.create_time = self.time_stamp or start_time
         shiny_workorder.update_time = start_time
         shiny_workorder.update_from_ls_time = start_time
-        # shiny_workorder.total = ls_workorder.total
         shiny_workorder.item_description = self.item_description
         shiny_workorder.status = self.status
         try:
@@ -156,6 +156,7 @@ class WorkorderItem(BaseLSEntity):
         shiny_workorder_item.unit_quantity = self.unit_quantity
         shiny_workorder_item.tax = self.tax
         shiny_workorder_item.note = self.note
+        shiny_workorder_item.create_time = self.time_stamp or start_time
         shiny_workorder_item.update_time = start_time
         shiny_workorder_item.update_from_ls_time = start_time
         shiny_workorder_item.discount_amount = self.discount_amount
@@ -224,6 +225,7 @@ class WorkorderLine(BaseLSEntity):
 
         shiny_workorder_line.ls_workorder_line_id = self.workorder_line_id
         shiny_workorder_line.note = self.note
+        shiny_workorder_line.create_time = self.time_stamp or start_time
         shiny_workorder_line.update_time = start_time
         shiny_workorder_line.update_from_ls_time = start_time
         shiny_workorder_line.unit_price = self.unit_price

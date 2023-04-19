@@ -62,6 +62,7 @@ class Serialized(BaseLSEntity):
         shiny_serial.value_2 = self.value_2
         shiny_serial.serial_number = self.serial_number
         shiny_serial.description = self.description
+        shiny_serial.create_time = self.time_stamp or start_time
         shiny_serial.update_time = start_time
         shiny_serial.update_from_ls_time = start_time
 

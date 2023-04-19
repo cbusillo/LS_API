@@ -177,6 +177,7 @@ class Customer(BaseLSEntity):
         shiny_customer.last_name = self.last_name
         shiny_customer.title = self.title
         shiny_customer.company = self.company
+        shiny_customer.create_time = self.time_stamp or start_time
         shiny_customer.update_time = start_time
         shiny_customer.update_from_ls_time = start_time
         shiny_customer.archived = self.archived
