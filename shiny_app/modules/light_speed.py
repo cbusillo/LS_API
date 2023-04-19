@@ -4,6 +4,7 @@ import os
 import json
 import logging
 import time
+from typing import Optional
 from pathlib import Path
 from datetime import datetime
 from functools import lru_cache
@@ -254,16 +255,18 @@ def import_all():
     import_serials()
 
 
-def delete_all():
+def delete_all(delete_cache: Optional[bool] = False):
     """temp function to delete all items and customers from shiny db"""
     # call_command("flush", "--noinput", interactive=False)
     for _ in range(10):
         flush_without_auth()
-    for file in Path(Config.CONFIG_SECRET_DIR / "cache").iterdir():
-        file.unlink()
+    if delete_cache:
+        for file in Path(Config.CONFIG_SECRET_DIR / "cache").iterdir():
+            file.unlink()
     Client.use_cache = True
     import_all()
     Client.use_cache = False
+    import_all()
 
 
 def flush_without_auth():

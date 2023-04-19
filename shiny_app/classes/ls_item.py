@@ -23,6 +23,7 @@ class Item(BaseLSEntity):
         Use these to import into individual items without a separate API call."""
 
         size_attributes = []  # type: ignore
+        class_params = {"load_relations": '["ItemAttributeSet"]'}
 
         def __init__(self, size_attributes: Any):
             """Return items from json dict into SizeAttribute object."""

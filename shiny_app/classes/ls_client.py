@@ -110,6 +110,7 @@ class Client(requests.Session):
             data = None
             if self.use_cache:
                 data = _load_from_cache(page)
+                self._response = None
             if data is None:
                 self._response = self.get(next_url, params=params)
                 if not isinstance(self._response, requests.models.Response):
@@ -125,8 +126,8 @@ class Client(requests.Session):
 
             for entry in data:
                 yield entry
-
-            next_url = self._response.json()["@attributes"]["next"]
+            if self._response:
+                next_url = self._response.json()["@attributes"]["next"]
             page += 1
 
 
@@ -176,8 +177,8 @@ class BaseLSEntity(metaclass=BaseLSEntityMeta):
         """Get one entity"""
         if params is None:
             params = {}
-            params.update(cls.class_params)
-            params.update(cls.base_class_params)
+        params.update(cls.class_params)
+        params.update(cls.base_class_params)
         key_name = cls.__name__
         url = f"{key_name}.json"
         if entity_id:
