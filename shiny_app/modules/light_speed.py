@@ -4,6 +4,7 @@ import os
 import json
 import logging
 import time
+from pathlib import Path
 from datetime import datetime
 from functools import lru_cache
 from urllib.parse import urlparse, parse_qs
@@ -17,6 +18,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from django.db import transaction, models
 from django.apps import apps
 from shiny_app.classes.config import Config
+from shiny_app.classes.ls_client import Client
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import (
     Workorder as LSWorkorder,
@@ -207,9 +209,7 @@ def update_item_price():
 
 def import_items():
     """temp function to import items from LS"""
-    if ShinyItem.objects.count() == 0:
-        LSItem.shiny_model_from_ls(ShinyItem)
-        ShinyItem.objects.all().delete()
+    LSItem.ItemMatrix.check_size_attributes()
     with transaction.atomic():
         LSItem.shiny_model_from_ls(ShinyItem)
 
@@ -259,6 +259,11 @@ def delete_all():
     # call_command("flush", "--noinput", interactive=False)
     for _ in range(10):
         flush_without_auth()
+    for file in Path(Config.CONFIG_SECRET_DIR / "cache").iterdir():
+        file.unlink()
+    Client.use_cache = True
+    import_all()
+    Client.use_cache = False
 
 
 def flush_without_auth():

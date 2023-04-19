@@ -1,25 +1,29 @@
 """Client for Lightspeed API Inherited from requests.Session"""
 import logging
-import time
+import json
 import re
+import time
 from abc import abstractmethod
 from dataclasses import fields, is_dataclass
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Generator, Optional, Self
 from urllib.parse import urljoin
 
-import requests
 import pytz
-
+import requests
 from django.db import models
 from django.utils import timezone  # pylint: disable=wrong-import-order
 
-from shiny_app.django_server.functions.views import send_message
 from shiny_app.classes.config import Config
+from shiny_app.django_server.functions.views import send_message
 
 
 class Client(requests.Session):
     """Client class for Lightspeed API Inherited from requests.Session"""
+
+    CACHE_DIR = Config.CONFIG_SECRET_DIR / "cache"
+    use_cache = False
 
     def __init__(self) -> None:
         super().__init__()
@@ -81,23 +85,45 @@ class Client(requests.Session):
         return request_response  # pyright: reportUnboundVariable=false
 
     def get_entities_from_api(self, url: str, key_name: str, params: Optional[dict] = None) -> Generator[Self, None, None]:
-        """Iterate over all items in the API"""
+        """Iterate over all items in the API with caching"""
+
+        def _cache_key(page: int) -> str:
+            return f"{key_name}_page{page}.cache"
+
+        def _load_from_cache(page: int) -> Optional[dict]:
+            cache_file = self.CACHE_DIR / _cache_key(page)
+            if not cache_file.is_file():
+                return None
+            with open(cache_file, "r", encoding="utf-8") as file:
+                return json.load(file)
+
+        def _save_to_cache(page: int, data: dict) -> None:
+            Path.mkdir(self.CACHE_DIR, exist_ok=True, parents=True)
+            cache_file = self.CACHE_DIR / _cache_key(page)
+            with open(cache_file, "w", encoding="utf-8") as file:
+                json.dump(data, file)
 
         next_url = url
         page = 0
         while next_url != "":
             send_message(f"Getting page {page} of {key_name}")
-            self._response = self.get(next_url, params=params)
-            if not isinstance(self._response, requests.models.Response):
-                return
-            entries = self._response.json().get(key_name)
-            if not entries:
-                return
-            if not isinstance(entries, list):
-                yield entries
+            data = None
+            if self.use_cache:
+                data = _load_from_cache(page)
+            if data is None:
+                self._response = self.get(next_url, params=params)
+                if not isinstance(self._response, requests.models.Response):
+                    return
+                data = self._response.json().get(key_name)
+                if not data or not self.use_cache:
+                    return
+                _save_to_cache(page, data)
+
+            if not isinstance(data, list):
+                yield data
                 return
 
-            for entry in entries:
+            for entry in data:
                 yield entry
 
             next_url = self._response.json()["@attributes"]["next"]
