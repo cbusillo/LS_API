@@ -223,6 +223,7 @@ class Item(BaseLSEntity):
         shiny_item.default_cost = self.default_cost or None
         shiny_item.average_cost = self.average_cost or None
         shiny_item.tax = self.tax
+        shiny_item.price = self.price
         shiny_item.archived = self.archived
         shiny_item.item_type = self.item_type
         shiny_item.serialized = self.serialized

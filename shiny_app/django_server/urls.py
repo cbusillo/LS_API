@@ -15,6 +15,7 @@ Including another URLconf
 """
 import logging
 
+from django.contrib import admin
 from django.conf import settings
 from django.urls import include, path
 from django.views.generic import RedirectView
@@ -23,6 +24,7 @@ from pwa import urls as pwa_urls
 urlpatterns = [
     path("", include(pwa_urls)),
     path("", RedirectView.as_view(url="label_printer/")),
+    path("admin/", admin.site.urls),
 ]
 
 for app in settings.SHINY_INSTALLED_APPS:

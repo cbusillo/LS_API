@@ -1,4 +1,5 @@
 """Shiny Workorder class."""
+from decimal import Decimal
 from django.db import models
 
 from shiny_app.classes.config import Config
@@ -22,6 +23,9 @@ class WorkorderItem(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     update_from_ls_time = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return f"{self.item.description} ({self.unit_price} x {self.unit_quantity})"
 
 
 class WorkorderLine(models.Model):
@@ -56,13 +60,31 @@ class Workorder(models.Model):
     update_time = models.DateTimeField(auto_now=True)
     update_from_ls_time = models.DateTimeField(null=True)
     item_description = models.CharField(max_length=100, null=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     status = models.CharField(max_length=20, null=True)
     customer = models.ForeignKey("customers.Customer", on_delete=models.PROTECT, related_name="workorders_related")
     workorder_items: models.QuerySet[WorkorderItem]
+    workorder_lines: models.QuerySet[WorkorderLine]
 
     def __str__(self) -> str:
         return f"{self.customer.full_name} - {self.status} - {self.time_in}"
+
+    def total(self):
+        """Generate total on workorder for items and lines"""
+        total = 0
+
+        for workorder_item in self.workorder_items.all():
+            item_total = (workorder_item.unit_price or 0) * (workorder_item.unit_quantity or 0)
+            item_discount = workorder_item.discount_amount or ((workorder_item.discount_percent or 0) / Decimal(100)) * item_total
+            item_total -= item_discount
+            total += item_total
+
+        for workorder_line in self.workorder_lines.all():
+            line_total = (workorder_line.unit_price or 0) * (workorder_line.unit_quantity or 0)
+            line_discount = workorder_line.discount_amount or ((workorder_line.discount_percent or 0) / Decimal(100)) * line_total
+            line_total -= line_discount
+            total += line_total
+
+        return total
 
     def print_label(self, quantity: int = 1) -> None:
         """Print a label for this workorder."""
