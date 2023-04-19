@@ -23,9 +23,9 @@ class Customer(BaseLSEntity):
         number_type: str
 
         @classmethod
-        def from_json(cls, json: dict[str, Any]) -> Self:
+        def from_json(cls, data_json: dict[str, Any]) -> Self:
             """Phone object from dict"""
-            return cls(number=json.get("number", ""), number_type=json.get("useType", ""))
+            return cls(number=data_json.get("number", ""), number_type=data_json.get("useType", ""))
 
     @dataclass
     class Email(BaseLSEntity):
@@ -35,9 +35,9 @@ class Customer(BaseLSEntity):
         address_type: str
 
         @classmethod
-        def from_json(cls, json: dict[str, Any]) -> Self:
+        def from_json(cls, data_json: dict[str, Any]) -> Self:
             """Email object from dict"""
-            return cls(address=json.get("address", ""), address_type=json.get("useType", ""))
+            return cls(address=data_json.get("address", ""), address_type=data_json.get("useType", ""))
 
     customer_id: Optional[int] = None
     first_name: Optional[str] = None
@@ -72,12 +72,12 @@ class Customer(BaseLSEntity):
                     self.phones.append(self.Phone.discard_extra_args(**phone))
 
     @classmethod
-    def from_json(cls, json: dict[str, Any]) -> Self:
+    def from_json(cls, data_json: dict[str, Any]) -> Self:
         """Customer object from dict"""
-        if not isinstance(json, dict):
-            raise ValueError("Customer must be a dict: " + str(json))
+        if not isinstance(data_json, dict):
+            raise ValueError("Customer must be a dict: " + str(data_json))
 
-        contact_phones_list_json = json.get("Contact", {}).get("Phones", {})
+        contact_phones_list_json = data_json.get("Contact", {}).get("Phones", {})
         contact_phones_json = []
         if isinstance(contact_phones_list_json, dict):
             contact_phones_json = contact_phones_list_json.get("ContactPhone", [])
@@ -86,7 +86,7 @@ class Customer(BaseLSEntity):
 
         phones_json = [cls.Phone(phone.get("number"), phone.get("useType")) for phone in contact_phones_json]
 
-        contact_emails_list_json = json.get("Contact", {}).get("Emails", {})
+        contact_emails_list_json = data_json.get("Contact", {}).get("Emails", {})
         contact_email_json = []
         if isinstance(contact_emails_list_json, dict):
             contact_email_json = contact_emails_list_json.get("ContactEmail", [])
@@ -96,18 +96,18 @@ class Customer(BaseLSEntity):
         emails_json = [cls.Email(email.get("address"), email.get("useType")) for email in contact_email_json]
 
         customer_json_transformed = {
-            "customer_id": cls.safe_int(json.get("customerID")),
-            "first_name": json.get("firstName", "").strip(),
-            "last_name": json.get("lastName", "").strip(),
-            "company": json.get("company", "").strip(),
-            "title": json.get("title", "").strip(),
-            "create_time": cls.string_to_datetime(json.get("createTime")),
-            "time_stamp": cls.string_to_datetime(json.get("timeStamp")),
-            "archived": json.get("archived", "false").lower() == "true",
-            "contact_id": cls.safe_int(json.get("contactID")),
-            "credit_account_id": cls.safe_int(json.get("creditAccountID")),
-            "customer_type_id": cls.safe_int(json.get("customerTypeID")),
-            "tax_category_id": cls.safe_int(json.get("taxCategoryID")),
+            "customer_id": cls.safe_int(data_json.get("customerID")),
+            "first_name": data_json.get("firstName", "").strip(),
+            "last_name": data_json.get("lastName", "").strip(),
+            "company": data_json.get("company", "").strip(),
+            "title": data_json.get("title", "").strip(),
+            "create_time": cls.string_to_datetime(data_json.get("createTime")),
+            "time_stamp": cls.string_to_datetime(data_json.get("timeStamp")),
+            "archived": data_json.get("archived", "false").lower() == "true",
+            "contact_id": cls.safe_int(data_json.get("contactID")),
+            "credit_account_id": cls.safe_int(data_json.get("creditAccountID")),
+            "customer_type_id": cls.safe_int(data_json.get("customerTypeID")),
+            "tax_category_id": cls.safe_int(data_json.get("taxCategoryID")),
             "phones": phones_json,
             "emails": emails_json,
         }

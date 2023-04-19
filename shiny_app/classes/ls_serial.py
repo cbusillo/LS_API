@@ -34,19 +34,19 @@ class Serialized(BaseLSEntity):
             self.__dict__.update(serial.__dict__)
 
     @classmethod
-    def from_json(cls, json: dict[str, Any]) -> Self:
-        if not isinstance(json, dict):
+    def from_json(cls, data_json: dict[str, Any]) -> Self:
+        if not isinstance(data_json, dict):
             raise TypeError("serial_json must be a dict")
 
         serial_json_transformed = {
-            "serial_id": cls.safe_int(json.get("serializedID")),
-            "value_1": json.get("colorName"),
-            "value_2": json.get("sizeName"),
-            "serial_number": json.get("serial"),
-            "description": json.get("description"),
-            "item_id": cls.safe_int(json.get("itemID")),
-            "customer_id": cls.safe_int(json.get("customerID")),
-            "time_stamp": cls.string_to_datetime(json.get("timeStamp")),
+            "serial_id": cls.safe_int(data_json.get("serializedID")),
+            "value_1": data_json.get("colorName"),
+            "value_2": data_json.get("sizeName"),
+            "serial_number": data_json.get("serial"),
+            "description": data_json.get("description"),
+            "item_id": cls.safe_int(data_json.get("itemID")),
+            "customer_id": cls.safe_int(data_json.get("customerID")),
+            "time_stamp": cls.string_to_datetime(data_json.get("timeStamp")),
         }
 
         return cls(**serial_json_transformed)

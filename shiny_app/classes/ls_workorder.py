@@ -46,27 +46,27 @@ class Workorder(BaseLSEntity):
             self.__dict__.update(workorder.__dict__)
 
     @classmethod
-    def from_json(cls, json: dict[str, Any]) -> Self:
+    def from_json(cls, data_json: dict[str, Any]) -> Self:
         """Workorder object from dict"""
 
-        if not isinstance(json, dict):
-            raise ValueError("Workorder must be a dict: " + str(json))
+        if not isinstance(data_json, dict):
+            raise ValueError("Workorder must be a dict: " + str(data_json))
 
         workorder_json_transformed = {
-            "workorder_id": cls.safe_int(json.get("workorderID")),
-            "time_in": cls.string_to_datetime(json.get("time_in")),
-            "eta_out": cls.string_to_datetime(json.get("eta_out")),
-            "note": json.get("note"),
-            "warranty": json.get("warranty", "").lower() == "true",
-            "tax": json.get("tax", "").lower() == "true",
-            "archived": json.get("archived", "").lower() == "true",
-            "time_stamp": cls.string_to_datetime(json.get("timeStamp")),
-            "customer_id": cls.safe_int(json.get("customerID")),
-            "serialized_id": cls.safe_int(json.get("serializedID")),
-            "sale_id": cls.safe_int(json.get("saleID")),
-            "sale_line_id": cls.safe_int(json.get("saleLineID")),
-            "item_description": json.get("Serialized", {}).get("description", "").strip(),
-            "status": json.get("WorkorderStatus", {}).get("name"),
+            "workorder_id": cls.safe_int(data_json.get("workorderID")),
+            "time_in": cls.string_to_datetime(data_json.get("time_in")),
+            "eta_out": cls.string_to_datetime(data_json.get("eta_out")),
+            "note": data_json.get("note"),
+            "warranty": data_json.get("warranty", "").lower() == "true",
+            "tax": data_json.get("tax", "").lower() == "true",
+            "archived": data_json.get("archived", "").lower() == "true",
+            "time_stamp": cls.string_to_datetime(data_json.get("timeStamp")),
+            "customer_id": cls.safe_int(data_json.get("customerID")),
+            "serialized_id": cls.safe_int(data_json.get("serializedID")),
+            "sale_id": cls.safe_int(data_json.get("saleID")),
+            "sale_line_id": cls.safe_int(data_json.get("saleLineID")),
+            "item_description": data_json.get("Serialized", {}).get("description", "").strip(),
+            "status": data_json.get("WorkorderStatus", {}).get("name"),
         }
         return cls(**workorder_json_transformed)
 
@@ -124,24 +124,24 @@ class WorkorderItem(BaseLSEntity):
             self.__dict__.update(workorder_item.__dict__)
 
     @classmethod
-    def from_json(cls, json: dict[str, Any]) -> Self:
+    def from_json(cls, data_json: dict[str, Any]) -> Self:
         """WorkorderItem object from dict"""
 
-        if not isinstance(json, dict):
-            raise ValueError("WorkorderItem must be a dict: " + str(json))
+        if not isinstance(data_json, dict):
+            raise ValueError("WorkorderItem must be a dict: " + str(data_json))
 
         workorder_item_json_transformed = {
-            "workorder_item_id": cls.safe_int(json.get("workorderItemID")),
-            "unit_price": Decimal(json.get("unitPrice", 0)),
-            "unit_quantity": cls.safe_int(json.get("unitQuantity")),
-            "tax": json.get("tax", "").lower() == "true",
-            "note": json.get("note"),
-            "workorder_id": cls.safe_int(json.get("workorderID")),
-            "sale_line_id": cls.safe_int(json.get("saleLineID")),
-            "item_id": cls.safe_int(json.get("itemID")),
-            "discount_amount": Decimal(json.get("Discount", {}).get("amount", 0)),
-            "discount_percent": Decimal(json.get("Discount", {}).get("percent", 0)),
-            "time_stamp": cls.string_to_datetime(json.get("timeStamp")),
+            "workorder_item_id": cls.safe_int(data_json.get("workorderItemID")),
+            "unit_price": Decimal(data_json.get("unitPrice", 0)),
+            "unit_quantity": cls.safe_int(data_json.get("unitQuantity")),
+            "tax": data_json.get("tax", "").lower() == "true",
+            "note": data_json.get("note"),
+            "workorder_id": cls.safe_int(data_json.get("workorderID")),
+            "sale_line_id": cls.safe_int(data_json.get("saleLineID")),
+            "item_id": cls.safe_int(data_json.get("itemID")),
+            "discount_amount": Decimal(data_json.get("Discount", {}).get("amount", 0)),
+            "discount_percent": Decimal(data_json.get("Discount", {}).get("percent", 0)),
+            "time_stamp": cls.string_to_datetime(data_json.get("timeStamp")),
         }
         return cls(**workorder_item_json_transformed)
 
@@ -197,24 +197,24 @@ class WorkorderLine(BaseLSEntity):
             self.__dict__.update(workorder_line.__dict__)
 
     @classmethod
-    def from_json(cls, json: dict[str, Any]) -> Self:
+    def from_json(cls, data_json: dict[str, Any]) -> Self:
         """WorkorderLine object from dict"""
 
-        if not isinstance(json, dict):
-            raise ValueError("WorkorderLine must be a dict: " + str(json))
+        if not isinstance(data_json, dict):
+            raise ValueError("WorkorderLine must be a dict: " + str(data_json))
 
         workorder_line_json_transformed = {
-            "workorder_line_id": cls.safe_int(json.get("workorderLineID")),
-            "note": json.get("note"),
-            "time_stamp": cls.string_to_datetime(json.get("timeStamp")),
-            "unit_price": Decimal(json.get("unitPriceOverride", 0)),
-            "unit_quantity": cls.safe_int(json.get("unitQuantity")),
-            "unit_cost": Decimal(json.get("unitCost", 0)),
-            "tax": json.get("tax", "").lower() == "true",
-            "workorder_id": cls.safe_int(json.get("workorderID")),
+            "workorder_line_id": cls.safe_int(data_json.get("workorderLineID")),
+            "note": data_json.get("note"),
+            "time_stamp": cls.string_to_datetime(data_json.get("timeStamp")),
+            "unit_price": Decimal(data_json.get("unitPriceOverride", 0)),
+            "unit_quantity": cls.safe_int(data_json.get("unitQuantity")),
+            "unit_cost": Decimal(data_json.get("unitCost", 0)),
+            "tax": data_json.get("tax", "").lower() == "true",
+            "workorder_id": cls.safe_int(data_json.get("workorderID")),
             # "sale_line_id": cls.safe_int(json.get("saleLineID")),
-            "discount_amount": Decimal(json.get("Discount", {}).get("discountAmount", 0)),
-            "discount_percent": Decimal(json.get("Discount", {}).get("discountPercent", 0)),
+            "discount_amount": Decimal(data_json.get("Discount", {}).get("discountAmount", 0)),
+            "discount_percent": Decimal(data_json.get("Discount", {}).get("discountPercent", 0)),
         }
         return cls(**workorder_line_json_transformed)
 

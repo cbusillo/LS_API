@@ -260,12 +260,6 @@ def delete_all(delete_cache: Optional[bool] = False):
     # call_command("flush", "--noinput", interactive=False)
     for _ in range(10):
         flush_without_auth()
-    if delete_cache:
-        for file in Path(Config.CONFIG_SECRET_DIR / "cache").iterdir():
-            file.unlink()
-    Client.use_cache = True
-    import_all()
-    Client.use_cache = False
     import_all()
 
 

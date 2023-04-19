@@ -32,9 +32,9 @@ class Item(BaseLSEntity):
             self.attribute2_value = size_attributes.get("attribute2Value") or ""
 
         @classmethod
-        def from_json(cls, json: dict) -> Self:
+        def from_json(cls, data_json: dict) -> Self:
             """Create an ItemMatrix object from a JSON dictionary."""
-            return Item.ItemMatrix(size_attributes=json)
+            return Item.ItemMatrix(size_attributes=data_json)
 
         @staticmethod
         def return_sizes(item_matrix_id: Optional[int]) -> list[str]:
@@ -132,43 +132,43 @@ class Item(BaseLSEntity):
             self.__dict__.update(item.__dict__)
 
     @classmethod
-    def from_json(cls, json: dict[str, Any]) -> Self:
+    def from_json(cls, data_json: dict[str, Any]) -> Self:
         """Item object from dict"""
-        if not isinstance(json, dict):
+        if not isinstance(data_json, dict):
             raise TypeError("Item.from_json() requires a dict as input")
 
         default_price = None
-        for price in json["Prices"]["ItemPrice"]:
+        for price in data_json["Prices"]["ItemPrice"]:
             if price["useType"] == "Default":
                 default_price = Decimal(price["amount"])
                 break
-        sizes = Item.ItemMatrix.return_sizes(cls.safe_int(json.get("itemMatrixID")))
+        sizes = Item.ItemMatrix.return_sizes(cls.safe_int(data_json.get("itemMatrixID")))
         sizes_string = ""
         for size in sizes:
             sizes_string += f"{size}|"
         sizes_string = sizes_string[: -1 or None]
 
         item_json_transformed = {
-            "item_id": cls.safe_int(json.get("itemID")),
-            "system_sku": json.get("systemSku"),
-            "default_cost": Decimal(json.get("defaultCost", 0)),
-            "average_cost": Decimal(json.get("aveCost", 0)),
-            "tax": json.get("tax", "").lower() == "true",
-            "archived": json.get("archived", "").lower() == "true",
-            "item_type": json.get("itemType"),
-            "serialized": json.get("serialized", "").lower() == "true",
-            "description": json.get("description", "").strip(),
-            "upc": json.get("upc"),
-            "custom_sku": json.get("customSku"),
-            "manufacturer_sku": json.get("manufacturerSku"),
-            "create_time": cls.string_to_datetime(json.get("createTime")),
-            "time_stamp": cls.string_to_datetime(json.get("timeStamp")),
-            "category_id": cls.safe_int(json.get("categoryID")),
-            "tax_class_id": cls.safe_int(json.get("taxClassID")),
-            "item_matrix_id": cls.safe_int(json.get("itemMatrixID")),
-            "manufacturer_id": cls.safe_int(json.get("manufacturerID")),
-            "default_vendor_id": cls.safe_int(json.get("defaultVendorID")),
-            "item_attributes": json.get("ItemAttributes"),
+            "item_id": cls.safe_int(data_json.get("itemID")),
+            "system_sku": data_json.get("systemSku"),
+            "default_cost": Decimal(data_json.get("defaultCost", 0)),
+            "average_cost": Decimal(data_json.get("aveCost", 0)),
+            "tax": data_json.get("tax", "").lower() == "true",
+            "archived": data_json.get("archived", "").lower() == "true",
+            "item_type": data_json.get("itemType"),
+            "serialized": data_json.get("serialized", "").lower() == "true",
+            "description": data_json.get("description", "").strip(),
+            "upc": data_json.get("upc"),
+            "custom_sku": data_json.get("customSku"),
+            "manufacturer_sku": data_json.get("manufacturerSku"),
+            "create_time": cls.string_to_datetime(data_json.get("createTime")),
+            "time_stamp": cls.string_to_datetime(data_json.get("timeStamp")),
+            "category_id": cls.safe_int(data_json.get("categoryID")),
+            "tax_class_id": cls.safe_int(data_json.get("taxClassID")),
+            "item_matrix_id": cls.safe_int(data_json.get("itemMatrixID")),
+            "manufacturer_id": cls.safe_int(data_json.get("manufacturerID")),
+            "default_vendor_id": cls.safe_int(data_json.get("defaultVendorID")),
+            "item_attributes": data_json.get("ItemAttributes"),
             "price": default_price,
             "sizes": sizes_string,
         }
