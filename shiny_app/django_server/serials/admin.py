@@ -1,4 +1,4 @@
-# serials/admin.py
+"""Serial admin."""
 from django.contrib import admin
 from django.db import models
 from django.forms import Textarea
@@ -7,6 +7,7 @@ from ..customers.models import Customer
 from ..items.models import Item
 
 
+@admin.register(Serial)
 class SerialAdmin(admin.ModelAdmin):
     list_display = ("id", "value_1", "value_2", "serial_number", "description", "customer", "item")
     search_fields = (
@@ -23,6 +24,3 @@ class SerialAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.TextField: {"widget": Textarea(attrs={"rows": 2, "cols": 40})},
     }
-
-
-admin.site.register(Serial, SerialAdmin)

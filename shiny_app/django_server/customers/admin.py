@@ -36,6 +36,7 @@ class SerialInline(admin.TabularInline):
     }
 
 
+@admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
     inlines = [EmailInline, PhoneInline, WorkorderInline, SerialInline]
     list_display = (
@@ -47,10 +48,14 @@ class CustomerAdmin(admin.ModelAdmin):
         "update_time",
         "archived",
     )
+    list_editable = ("first_name", "last_name")
     search_fields = (
         "first_name",
         "last_name",
         "company",
+        "emails__address",
+        "phones__number",
+        "serials_related__serial_number",
     )
     readonly_fields = (
         "id",
@@ -66,8 +71,3 @@ class CustomerAdmin(admin.ModelAdmin):
         return obj.mobile_number
 
     mobile_number.short_description = "Mobile Number"
-
-
-admin.site.register(Customer, CustomerAdmin)
-# admin.site.register(Workorder, WorkorderAdmin)
-# admin.site.register(Serial, SerialAdmin)
