@@ -62,7 +62,7 @@ class CustomerSearch(forms.Form):
                 | Q(phones__number__icontains=everything)
                 | Q(emails__address__icontains=everything)
                 | Q(company__icontains=everything)
-                | Q(serial__serial_number__icontains=everything)
+                | Q(serials_related__serial_number__icontains=everything)
             )
         else:
             if last_name:
