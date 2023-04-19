@@ -35,7 +35,7 @@ def ring_central_send_message(request: WSGIRequest):
         context["title"] = "No mobile number"
         return render(request, "api/error.html", context)
     message_number = int(request.GET.get("message", 0))
-    workorder.send_rc_message(message_number, mobile_number)
+    workorder.send_rc_message(message_number, ip_address)
 
     if str(request.GET.get("manual")).lower() != "true":
         context["auto_close"] = "True"
