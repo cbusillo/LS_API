@@ -14,9 +14,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from django.db import transaction
-
-from django.core.management import call_command
+from django.db import transaction, models
+from django.apps import apps
 from shiny_app.classes.config import Config
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import (
@@ -257,4 +256,21 @@ def import_all():
 
 def delete_all():
     """temp function to delete all items and customers from shiny db"""
-    call_command("flush", "--noinput", interactive=False)
+    # call_command("flush", "--noinput", interactive=False)
+    for _ in range(10):
+        flush_without_auth()
+
+
+def flush_without_auth():
+    # Get all the models
+    app_models = apps.get_models()
+
+    # Filter out the models from the 'auth' app
+    filtered_models = [model for model in app_models if model._meta.app_label != "auth"]
+
+    # Delete all the data from the filtered models
+    for model in filtered_models:
+        try:
+            model.objects.all().delete()
+        except models.deletion.ProtectedError:
+            print("trying to delete protected model")
