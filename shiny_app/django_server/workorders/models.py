@@ -1,4 +1,5 @@
 """Shiny Workorder class."""
+import locale
 from decimal import Decimal
 from django.db import models
 
@@ -68,6 +69,7 @@ class Workorder(models.Model):
     def __str__(self) -> str:
         return f"{self.customer.full_name} - {self.status} - {self.time_in}"
 
+    @property
     def total(self):
         """Generate total on workorder for items and lines"""
         total = 0
@@ -117,8 +119,9 @@ class Workorder(models.Model):
         message = message.format(
             name=self.customer.first_name,
             product=item_description,
-            # total=locale.currency(workorder.total),
+            total=locale.currency(self.total),
         )
+        print(self)
         mobile_number = self.customer.mobile_number
         if mobile_number:
             send_message(mobile_number, message, ip_address)

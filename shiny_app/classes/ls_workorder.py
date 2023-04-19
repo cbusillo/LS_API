@@ -206,7 +206,7 @@ class WorkorderLine(BaseLSEntity):
             "workorder_line_id": cls.safe_int(json.get("workorderLineID")),
             "note": json.get("note"),
             "time_stamp": cls.string_to_datetime(json.get("timeStamp")),
-            "unit_price": Decimal(json.get("unitPrice", 0)),
+            "unit_price": Decimal(json.get("unitPriceOverride", 0)),
             "unit_quantity": cls.safe_int(json.get("unitQuantity")),
             "unit_cost": Decimal(json.get("unitCost", 0)),
             "tax": json.get("tax", "").lower() == "true",
