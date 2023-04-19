@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class Workorder(BaseLSEntity):
     """Workorder object from LS"""
 
-    default_params = {"load_relations": '["Serialized", "WorkorderStatus","WorkorderItems","WorkorderLines"]'}
+    class_params = {"load_relations": '["Serialized", "WorkorderStatus","WorkorderItems","WorkorderLines"]'}
 
     workorder_id: Optional[int] = None
     time_in: Optional[datetime] = None
@@ -99,7 +99,7 @@ class Workorder(BaseLSEntity):
 class WorkorderItem(BaseLSEntity):
     """WorkorderItem"""
 
-    default_params = {"load_relations": '["Discount"]'}
+    class_params = {"load_relations": '["Discount"]'}
 
     workorder_item_id: int
     unit_price: Decimal
@@ -171,7 +171,7 @@ class WorkorderItem(BaseLSEntity):
 class WorkorderLine(BaseLSEntity):
     """WorkorderLine"""
 
-    default_params = {"load_relations": '["Discount"]'}
+    class_params = {"load_relations": '["Discount"]'}
 
     workorder_line_id: int
     note: str

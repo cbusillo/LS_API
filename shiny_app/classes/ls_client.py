@@ -109,7 +109,7 @@ class BaseLSEntityMeta(type):
 
     def __init__(cls, name, bases, dct):
         super().__init__(name, bases, dct)
-        cls.class_params = {}
+        cls.class_params: dict[str, Any]
 
 
 class BaseLSEntity(metaclass=BaseLSEntityMeta):

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 class Serialized(BaseLSEntity):
     """Serial class from LS"""
 
-    default_params = {}
+    class_params = {}
 
     serial_id: Optional[int] = None
     value_1: Optional[str] = None

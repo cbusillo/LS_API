@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class Item(BaseLSEntity):
     """Item class from LS"""
 
-    default_params = {"load_relations": '["ItemAttributes","ItemPrices"]'}
+    class_params = {"load_relations": '["ItemAttributes","ItemPrices"]'}
 
     @dataclass
     class ItemMatrix(BaseLSEntity):
@@ -182,7 +182,8 @@ class Item(BaseLSEntity):
         description = ""
         for word in descriptions:
             description += f"description=~,%{word}%|"
-        params = cls.default_params
+        params = cls.base_class_params
+        params.update(cls.class_params)
         params["or"] = description
         for item in cls.get_entities_json(params=params):
             item_list.append(Item.from_json(item))
