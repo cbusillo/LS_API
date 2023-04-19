@@ -262,13 +262,11 @@ def delete_all():
 
 
 def flush_without_auth():
-    # Get all the models
+    """Flush the database without deleting the auth models"""
     app_models = apps.get_models()
 
-    # Filter out the models from the 'auth' app
     filtered_models = [model for model in app_models if model._meta.app_label != "auth"]
 
-    # Delete all the data from the filtered models
     for model in filtered_models:
         try:
             model.objects.all().delete()
