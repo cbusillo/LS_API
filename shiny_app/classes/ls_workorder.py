@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class Workorder(BaseLSEntity):
     """Workorder object from LS"""
 
-    class_params = {"load_relations": '["Serialized", "WorkorderStatus","WorkorderItems","WorkorderLines"]'}
+    class_params = {"load_relations": '["Serialized", "WorkorderStatus"]'}
 
     workorder_id: Optional[int] = None
     time_in: Optional[datetime] = None

@@ -269,14 +269,7 @@ def delete_all(delete_cache: Optional[bool] = False):
     with open(Config.CONFIG_SECRET_DIR / "cache" / "update_time", "w", encoding="utf-8") as file:
         file.write(datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
 
-    import cProfile
-
-    profiler = cProfile.Profile()
-    profiler.enable()
     import_all()
-    profiler.disable()
-    profiler.print_stats(sort="cumtime")
-
     Client.use_cache = False
     import_all()
 
