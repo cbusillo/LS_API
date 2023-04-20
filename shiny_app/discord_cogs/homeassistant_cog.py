@@ -21,9 +21,12 @@ class HomeAssistantCog(commands.Cog):
 
     @app_commands.command(name="vacuum")  # type: ignore
     @app_commands.choices(choices=get_functions(ha.Vacuum))
-    @app_commands.checks.has_role("Shiny")
     async def vacuum(self, context: discord.Interaction, choices: str):
         """Vacuum commands"""
+        if not isinstance(context.message, discord.Message) or not isinstance(context.message.author, discord.Member):
+            return
+        if choices != "status" and "Shiny" not in context.message.author.roles:
+            return
         roomba = ha.Vacuum()
         status = getattr(roomba, choices)()
         await context.response.send_message(f"Vacuum is {status or choices}")
