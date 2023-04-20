@@ -54,8 +54,8 @@ class Workorder(BaseLSEntity):
 
         workorder_json_transformed = {
             "workorder_id": cls.safe_int(data_json.get("workorderID")),
-            "time_in": cls.string_to_datetime(data_json.get("time_in")),
-            "eta_out": cls.string_to_datetime(data_json.get("eta_out")),
+            "time_in": cls.string_to_datetime(data_json.get("timeIn")),
+            "eta_out": cls.string_to_datetime(data_json.get("etaOut")),
             "note": data_json.get("note"),
             "warranty": data_json.get("warranty", "").lower() == "true",
             "tax": data_json.get("tax", "").lower() == "true",

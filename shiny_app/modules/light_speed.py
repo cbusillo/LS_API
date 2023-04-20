@@ -253,7 +253,7 @@ def import_all():
     import_serials()
 
 
-def delete_all(delete_cache: Optional[bool] = False):
+def delete_all():
     """temp function to delete all items and customers from shiny db"""
     # call_command("flush", "--noinput", interactive=False)
     for _ in range(10):
