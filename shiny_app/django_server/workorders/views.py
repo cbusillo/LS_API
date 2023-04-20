@@ -1,4 +1,5 @@
 """Views for workorders app"""
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.views import View
@@ -6,7 +7,7 @@ from django.views import View
 from .models import Workorder
 
 
-class WorkorderListView(View):
+class WorkorderListView(LoginRequiredMixin, View):
     """View for listing items"""
 
     def get(self, request):

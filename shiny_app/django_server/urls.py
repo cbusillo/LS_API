@@ -25,6 +25,7 @@ urlpatterns = [
     path("", include(pwa_urls)),
     path("", RedirectView.as_view(url="label_printer/")),
     path("admin/", admin.site.urls),
+    path("accounts/", include("django.contrib.auth.urls")),
 ]
 
 for app in settings.SHINY_INSTALLED_APPS:
