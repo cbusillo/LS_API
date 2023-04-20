@@ -4,6 +4,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import shiny_app.classes.homeassistant as ha
+from .setup_cog import SetupCog
 
 
 class HomeAssistantCog(commands.Cog):
@@ -21,19 +22,16 @@ class HomeAssistantCog(commands.Cog):
 
     @app_commands.command(name="vacuum")  # type: ignore
     @app_commands.choices(choices=get_functions(ha.Vacuum))
+    @SetupCog.has_role("Shiny")
     async def vacuum(self, context: discord.Interaction, choices: str):
         """Vacuum commands"""
-        if not isinstance(context.message, discord.Message) or not isinstance(context.message.author, discord.Member):
-            return
-        if choices != "status" and "Shiny" not in context.message.author.roles:
-            return
         roomba = ha.Vacuum()
         status = getattr(roomba, choices)()
         await context.response.send_message(f"Vacuum is {status or choices}")
 
     @app_commands.command(name="alarm")  # type: ignore
     @app_commands.choices(choices=get_functions(ha.Alarm))
-    @app_commands.checks.has_role("Shiny")
+    @SetupCog.has_role("Shiny")
     async def alarm(self, context: discord.Interaction, choices: str):
         """Alarm commands"""
         alarm = ha.Alarm()
@@ -42,7 +40,7 @@ class HomeAssistantCog(commands.Cog):
 
     @app_commands.command(name="taylor_swiftly")  # type: ignore
     @app_commands.choices(choices=get_functions(ha.TaylorSwiftly()))
-    @app_commands.checks.has_role("Shiny")
+    @SetupCog.has_role("Shiny")
     async def tesla(self, context: discord.Interaction, choices: str):
         """Tesla commands"""
         taylor = ha.TaylorSwiftly()
