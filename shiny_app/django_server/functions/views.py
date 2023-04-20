@@ -2,6 +2,7 @@
 import logging
 from importlib import import_module
 from threading import Thread
+from datetime import datetime
 
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -60,6 +61,7 @@ def send_message(message: str) -> None:
     channel_layer = get_channel_layer()
     if not isinstance(channel_layer, RedisChannelLayer):
         return
+    message = f"{datetime.now().strftime('%H:%M:%S')} - {message}"
     async_to_sync(channel_layer.group_send)("updates", {"type": "status", "message": message})
     logging.info("updates channel message: %s", message)
 
