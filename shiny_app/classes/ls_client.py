@@ -115,11 +115,14 @@ class Client(requests.Session):
                 data = _load_from_cache(page)
             if data is None:
                 response = self.get(next_url, params=params)
-                if not isinstance(response, requests.models.Response) or not self.use_cache:
+                if not isinstance(response, requests.models.Response):
                     return
                 data = response.json()
-                _save_to_cache(page, data)
+                if self.use_cache:
+                    _save_to_cache(page, data)
             entities = data.get(key_name)
+            if entities is None:
+                return
             if not isinstance(entities, list):
                 yield entities
                 return
