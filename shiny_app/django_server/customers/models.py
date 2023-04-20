@@ -20,7 +20,7 @@ class Customer(models.Model):
     ls_customer_id = models.IntegerField(null=True)
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
-    title = models.CharField(max_length=10, blank=True, null=True)
+    title = models.CharField(max_length=30, blank=True, null=True)
     company = models.CharField(max_length=100, blank=True, null=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)

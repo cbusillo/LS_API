@@ -5,7 +5,6 @@ then
     echo "Initializing migrations"
     find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
     find . -path "*/migrations/*.pyc" -delete
-    rm ~/.shiny/db.sqlite3
 fi
 if [ $# -gt 0 ]
 then

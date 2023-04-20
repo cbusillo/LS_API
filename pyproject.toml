@@ -30,6 +30,7 @@ pytesseract = "^0.3.10"
 opencv-python = "^4.7.0.72"
 pytz = "^2023.3"
 django-admin-multi-select-filter = "^1.0.0"
+psycopg2 = "^2.9.6"
 
 [tool.poetry.group.dev.dependencies]
 types-paramiko = "^3.0.0.6"

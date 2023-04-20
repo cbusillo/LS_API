@@ -5,6 +5,7 @@ import json
 import logging
 import time
 from typing import Optional
+from pathlib import Path
 from datetime import datetime
 from functools import lru_cache
 from urllib.parse import urlparse, parse_qs
@@ -18,6 +19,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from django.db import transaction, models
 from django.apps import apps
 from shiny_app.classes.config import Config
+from shiny_app.classes.ls_client import Client
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import (
     Workorder as LSWorkorder,
@@ -253,11 +255,29 @@ def import_all():
     import_serials()
 
 
-def delete_all():
+def delete_all(delete_cache: Optional[bool] = False):
     """temp function to delete all items and customers from shiny db"""
     # call_command("flush", "--noinput", interactive=False)
     for _ in range(10):
         flush_without_auth()
+    if delete_cache:
+        for file in Path(Config.CONFIG_SECRET_DIR / "cache").iterdir():
+            file.unlink()
+
+    Client.use_cache = True
+    Path(Config.CONFIG_SECRET_DIR / "cache").mkdir(parents=True, exist_ok=True)
+    with open(Config.CONFIG_SECRET_DIR / "cache" / "update_time", "w", encoding="utf-8") as file:
+        file.write(datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
+
+    import cProfile
+
+    profiler = cProfile.Profile()
+    profiler.enable()
+    import_all()
+    profiler.disable()
+    profiler.print_stats(sort="cumtime")
+
+    Client.use_cache = False
     import_all()
 
 

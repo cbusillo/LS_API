@@ -61,7 +61,7 @@ class Workorder(models.Model):
     update_time = models.DateTimeField(auto_now=True)
     update_from_ls_time = models.DateTimeField(null=True)
     item_description = models.CharField(max_length=100, null=True)
-    status = models.CharField(max_length=20, null=True)
+    status = models.CharField(max_length=50, null=True)
     customer = models.ForeignKey("customers.Customer", on_delete=models.PROTECT, related_name="workorders_related")
     workorder_items: models.QuerySet[WorkorderItem]
     workorder_lines: models.QuerySet[WorkorderLine]

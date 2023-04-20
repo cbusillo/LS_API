@@ -29,7 +29,7 @@ class Item(models.Model):
     serialized = models.BooleanField(null=True)
     description = models.CharField(max_length=255)
     model_year = models.IntegerField(null=True)
-    upc = models.CharField(max_length=12, blank=True, null=True)
+    upc = models.CharField(max_length=20, blank=True, null=True)
     custom_sku = models.CharField(max_length=20, blank=True, null=True)
     manufacturer_sku = models.CharField(max_length=20, null=True)
     create_time = models.DateTimeField(auto_now_add=True)
@@ -37,7 +37,7 @@ class Item(models.Model):
     update_from_ls_time = models.DateTimeField(null=True)
     item_matrix_id = models.IntegerField(null=True)
     item_attributes = models.ForeignKey(ItemAttributes, on_delete=models.CASCADE, null=True)
-    sizes = models.CharField(max_length=200, null=True)
+    sizes = models.TextField(max_length=300, null=True)
     serials = QuerySet["Serial"]
 
     def __str__(self) -> str:

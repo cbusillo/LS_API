@@ -13,7 +13,7 @@ class Serial(models.Model):
     ls_serial_id = models.IntegerField(null=True)
     value_1 = models.CharField(max_length=255, null=True)
     value_2 = models.CharField(max_length=255, null=True)
-    serial_number = models.CharField(max_length=20, null=True)
+    serial_number = models.CharField(max_length=50, null=True)
     description = models.CharField(max_length=255, null=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)

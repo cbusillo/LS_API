@@ -94,8 +94,10 @@ CHANNEL_LAYERS = {
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": Path.home().resolve() / ".shiny" / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": Config.SHINY_DB_NAME,
+        "USER": Config.SHINY_DB_NAME,
+        # "NAME": Path.home().resolve() / ".shiny" / "db.sqlite3",
     }
 }
 

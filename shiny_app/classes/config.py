@@ -42,7 +42,6 @@ class Config:
 
     DEBUG_LOGGING = config_file.get("debug_logging").lower() != "false"
 
-
     GOOGLE_SHEETS_SERIAL_NAME = config_file.get("google_sheets_serial_name")
 
     GOOGLE_SHEETS_SERIAL_PRINT = config_file.get("google_sheets_serial_print").lower() == "true"
@@ -55,7 +54,6 @@ class Config:
     TRELLO_LIST_DEFAULT = "61697d01d1c4463bc0fa066c"
 
     """Secret section"""
-    DB_ACCESS = secret_file.get("sql_access")
     ACCESS_TOKEN = secret_file.get("ls_api_access")
     SICKW_API_KEY = secret_file.get("sickw_api_key")
     DISCORD_TOKEN = secret_file.get("discord_token")
@@ -66,6 +64,7 @@ class Config:
     DJANGO_SECRET_KEY = secret_file.get("django_secret_key")
     LS_LOGIN_EMAIL = secret_file.get("ls_login_email")
     LS_LOGIN_PASSWORD = secret_file.get("ls_login_password")
+    SHINY_DB_NAME = secret_file.get("shiny_db_name")
 
     HOMEASSISTANT_API = {
         store_key: {config_key: config_value for config_key, config_value in store_value.items()}

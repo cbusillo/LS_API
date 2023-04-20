@@ -1,10 +1,12 @@
 """Client for Lightspeed API Inherited from requests.Session"""
 import logging
+import json
 import re
 import time
 from abc import abstractmethod
 from dataclasses import fields, is_dataclass
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Generator, Optional, Self
 from urllib.parse import urljoin
 
@@ -19,6 +21,9 @@ from shiny_app.django_server.functions.views import send_message
 
 class Client(requests.Session):
     """Client class for Lightspeed API Inherited from requests.Session"""
+
+    CACHE_DIR = Config.CONFIG_SECRET_DIR / "cache"
+    use_cache = False
 
     def __init__(self) -> None:
         super().__init__()
@@ -81,26 +86,45 @@ class Client(requests.Session):
     def get_entities_from_api(self, url: str, key_name: str, params: Optional[dict] = None) -> Generator[Self, None, None]:
         """Iterate over all items in the API with caching"""
 
+        def _cache_key(page: int) -> str:
+            return f"{key_name}_page{page}.cache"
+
+        def _load_from_cache(page: int) -> Optional[dict]:
+            cache_file = self.CACHE_DIR / _cache_key(page)
+            if not cache_file.is_file():
+                return None
+            with open(cache_file, "r", encoding="utf-8") as file:
+                return json.load(file)
+
+        def _save_to_cache(page: int, data: dict) -> None:
+            Path.mkdir(self.CACHE_DIR, exist_ok=True, parents=True)
+            cache_file = self.CACHE_DIR / _cache_key(page)
+            with open(cache_file, "w", encoding="utf-8") as file:
+                json.dump(data, file)
+
         next_url = url
         page = 0
         while next_url != "":
-            send_message(f"Getting page {page} of {key_name}")
-
-            response = self.get(next_url, params=params)
-            if not isinstance(response, requests.models.Response):
-                return
-
-            entities = response.json().get(key_name)
-            if not entities:
-                return
-
+            if page % 10 == 0:
+                send_message(f"Getting page {page} of {key_name}")
+            data = None
+            if self.use_cache:
+                data = _load_from_cache(page)
+            if data is None:
+                response = self.get(next_url, params=params)
+                if not isinstance(response, requests.models.Response) or not self.use_cache:
+                    return
+                data = response.json()
+                _save_to_cache(page, data)
+            entities = data.get(key_name)
             if not isinstance(entities, list):
                 yield entities
                 return
 
             for entity in entities:
                 yield entity
-            next_url = response.json()["@attributes"]["next"]
+            if data:
+                next_url = data["@attributes"]["next"]
             page += 1
 
 
@@ -219,8 +243,10 @@ class BaseLSEntity(metaclass=BaseLSEntityMeta):
             date_filter = cls.shiny_update_from_ls_time(model)
 
         ls_entities = cls.get_entities(date_filter=date_filter)
-
         start_time = timezone.now()
+        if cls.client.use_cache:
+            with open(Config.CONFIG_SECRET_DIR / "cache" / "update_time", "r", encoding="utf-8") as file:
+                start_time = datetime.strptime(file.read(), "%d-%b-%Y (%H:%M:%S.%f)")
 
         for ls_entity in ls_entities:
             module_name = re.sub(r"(?<!^)(?=[A-Z])", "_", model.__name__).lower()
