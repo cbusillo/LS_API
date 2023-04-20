@@ -78,4 +78,4 @@ class Serialized(BaseLSEntity):
             except ShinyItem.DoesNotExist:
                 logging.error("Item %i not found in ShinyItem", self.item_id)
 
-        return shiny_serial, None
+        return None

@@ -239,4 +239,4 @@ class Item(BaseLSEntity):
         shiny_item.update_from_ls_time = start_time
         shiny_item.sizes = self.sizes
 
-        return shiny_item, None
+        return None

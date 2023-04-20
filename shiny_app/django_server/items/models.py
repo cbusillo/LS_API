@@ -19,7 +19,7 @@ class ItemAttributes(models.Model):
 class Item(models.Model):
     """Item model."""
 
-    ls_item_id = models.IntegerField(null=True)
+    ls_item_id = models.IntegerField(null=True, db_index=True)
     default_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     average_cost = models.DecimalField(max_digits=12, decimal_places=4, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
@@ -34,7 +34,7 @@ class Item(models.Model):
     manufacturer_sku = models.CharField(max_length=20, null=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
-    update_from_ls_time = models.DateTimeField(null=True)
+    update_from_ls_time = models.DateTimeField(null=True, db_index=True)
     item_matrix_id = models.IntegerField(null=True)
     item_attributes = models.ForeignKey(ItemAttributes, on_delete=models.CASCADE, null=True)
     sizes = models.TextField(max_length=300, null=True)

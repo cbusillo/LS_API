@@ -92,7 +92,7 @@ class Workorder(BaseLSEntity):
         except ShinyCustomer.DoesNotExist:
             shiny_workorder.customer = ShinyCustomer.objects.get(ls_customer_id=5896)
 
-        return shiny_workorder, None
+        return None
 
 
 @dataclass
@@ -165,7 +165,7 @@ class WorkorderItem(BaseLSEntity):
         # shiny_workorder_item.sale_line_id = self.sale_line_id
         shiny_workorder_item.workorder = ShinyWorkorder.objects.get(ls_workorder_id=self.workorder_id)
 
-        return shiny_workorder_item, None
+        return None
 
 
 @dataclass
@@ -236,4 +236,4 @@ class WorkorderLine(BaseLSEntity):
         shiny_workorder_line.discount_percent = self.discount_percent
         shiny_workorder_line.workorder = ShinyWorkorder.objects.get(ls_workorder_id=self.workorder_id)
 
-        return shiny_workorder_line, None
+        return None

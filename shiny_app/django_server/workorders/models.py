@@ -11,7 +11,7 @@ from shiny_app.modules.ring_central import send_message_ssh as send_message
 class WorkorderItem(models.Model):
     """WorkorderItem Shiny Object"""
 
-    ls_workorder_item_id = models.IntegerField(null=True)
+    ls_workorder_item_id = models.IntegerField(null=True, db_index=True)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     unit_quantity = models.IntegerField(null=True)
     tax = models.BooleanField(null=True)
@@ -23,7 +23,7 @@ class WorkorderItem(models.Model):
     discount_percent = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
-    update_from_ls_time = models.DateTimeField(null=True)
+    update_from_ls_time = models.DateTimeField(null=True, db_index=True)
 
     def __str__(self):
         return f"{self.item.description} ({self.unit_price} x {self.unit_quantity})"
@@ -32,11 +32,11 @@ class WorkorderItem(models.Model):
 class WorkorderLine(models.Model):
     """WorkorderLine Shiny Object"""
 
-    ls_workorder_line_id = models.IntegerField(null=True)
+    ls_workorder_line_id = models.IntegerField(null=True, db_index=True)
     note = models.TextField(blank=True, null=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
-    update_from_ls_time = models.DateTimeField(null=True)
+    update_from_ls_time = models.DateTimeField(null=True, db_index=True)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     unit_quantity = models.IntegerField(null=True)
     unit_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True)

@@ -17,14 +17,14 @@ if TYPE_CHECKING:
 class Customer(models.Model):
     """Customer object from LS"""
 
-    ls_customer_id = models.IntegerField(null=True)
+    ls_customer_id = models.IntegerField(null=True, db_index=True)
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
     title = models.CharField(max_length=30, blank=True, null=True)
     company = models.CharField(max_length=100, blank=True, null=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
-    update_from_ls_time = models.DateTimeField(null=True)
+    update_from_ls_time = models.DateTimeField(null=True, db_index=True)
     archived = models.BooleanField(null=True)
     contact_id = models.IntegerField(null=True)
     credit_account_id = models.IntegerField(blank=True, null=True)

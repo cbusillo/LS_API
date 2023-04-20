@@ -201,4 +201,4 @@ class Customer(BaseLSEntity):
                     ShinyEmail(address=email.address, address_type=email.address_type, customer=shiny_customer).save
                 )
 
-        return shiny_customer, functions_to_execute_after
+        return functions_to_execute_after

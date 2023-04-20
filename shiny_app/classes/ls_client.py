@@ -3,6 +3,7 @@ import logging
 import json
 import re
 import time
+from multiprocessing.dummy import Pool as ThreadPool
 from abc import abstractmethod
 from dataclasses import fields, is_dataclass
 from datetime import datetime
@@ -105,7 +106,9 @@ class Client(requests.Session):
         next_url = url
         page = 0
         while next_url != "":
-            if page % 10 == 0:
+            page_mod = 100 if self.use_cache else 10
+
+            if page % page_mod == 0:
                 send_message(f"Getting page {page} of {key_name}")
             data = None
             if self.use_cache:
@@ -239,25 +242,18 @@ class BaseLSEntity(metaclass=BaseLSEntityMeta):
     def shiny_model_from_ls(cls, model: type[models.Model], date_filter: datetime | None = None):
         """Get LS items since date_filter and iterate through them"""
 
-        if date_filter is None:
-            date_filter = cls.shiny_update_from_ls_time(model)
-
-        ls_entities = cls.get_entities(date_filter=date_filter)
-        start_time = timezone.now()
-        if cls.client.use_cache:
-            with open(Config.CONFIG_SECRET_DIR / "cache" / "update_time", "r", encoding="utf-8") as file:
-                start_time = datetime.strptime(file.read(), "%d-%b-%Y (%H:%M:%S.%f)")
-
-        for ls_entity in ls_entities:
+        def process_entity(ls_entity):
             module_name = re.sub(r"(?<!^)(?=[A-Z])", "_", model.__name__).lower()
             key_args = {f"ls_{module_name}_id": getattr(ls_entity, f"{module_name}_id")}
             try:
+                if cls.client.use_cache:
+                    raise model.DoesNotExist
                 shiny_entity = model.objects.get(**key_args)
             except model.DoesNotExist:
                 shiny_entity = model(**key_args)
 
             convert_function = getattr(cls, f"shiny_{module_name}_from_ls")
-            shiny_entity, functions_to_execute_after = convert_function(ls_entity, shiny_entity, start_time)
+            functions_to_execute_after = convert_function(ls_entity, shiny_entity, start_time)
 
             shiny_entity.save()
 
@@ -267,6 +263,21 @@ class BaseLSEntity(metaclass=BaseLSEntityMeta):
                 for function_to_execute in functions_to_execute_after:
                     function_to_execute()
                 logging.debug("Saved Shiny %s's children", cls.__name__)
+
+        if date_filter is None:
+            date_filter = cls.shiny_update_from_ls_time(model)
+
+        ls_entities = list(cls.get_entities(date_filter=date_filter))
+        start_time = timezone.now()
+        if cls.client.use_cache:
+            with open(Config.CONFIG_SECRET_DIR / "cache" / "update_time", "r", encoding="utf-8") as file:
+                start_time = datetime.strptime(file.read(), "%d-%b-%Y (%H:%M:%S.%f)")
+
+        # Use 4 threads for parallel processing
+        pool = ThreadPool(10)
+        pool.map(process_entity, ls_entities)
+        pool.close()
+        pool.join()
 
         send_message(f"Finished updating {cls.__name__}s")
 

@@ -43,7 +43,7 @@ from shiny_app.django_server.functions.views import send_message
 driver = None
 if os.environ.get("RUN_MAIN", None) == "true":
     os.system("killall -u cbusillo 'Google Chrome'")
-    driver = Driver(headless2=False, uc=True)
+    driver = Driver(headless2=True, uc=True)
 
 
 @lru_cache
