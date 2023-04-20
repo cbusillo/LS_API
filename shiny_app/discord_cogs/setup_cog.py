@@ -1,5 +1,6 @@
 """Sync cogs to discord to enable /commands"""
 import asyncio
+import functools
 import subprocess
 import platform
 import discord
@@ -17,6 +18,21 @@ class SetupCog(commands.Cog):
         self.bot = bot
         self.enable_commands = True
         super().__init__()
+
+    @staticmethod
+    def has_role(required_role: str):
+        def decorator_check_status(coro):
+            @functools.wraps(coro)
+            async def wrapper(self, context: discord.Interaction, choices: str, *args, **kwargs):
+                if not isinstance(context.user, discord.Member):
+                    return
+                if any(role.name == required_role for role in context.user.roles) or choices == "status":
+                    return await coro(self, context, choices, *args, **kwargs)
+                await context.response.send_message(f"Sorry, not allowed. Feel free to apply to the {required_role} Team")
+
+            return wrapper
+
+        return decorator_check_status
 
     @commands.Cog.listener("on_message")
     async def listener_on_message(self, message: discord.Message):
