@@ -1,12 +1,10 @@
 """Client for Lightspeed API Inherited from requests.Session"""
 import logging
-import json
 import re
 import time
 from abc import abstractmethod
 from dataclasses import fields, is_dataclass
 from datetime import datetime
-from pathlib import Path
 from typing import Any, Generator, Optional, Self
 from urllib.parse import urljoin
 

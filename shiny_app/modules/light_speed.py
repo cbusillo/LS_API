@@ -5,7 +5,6 @@ import json
 import logging
 import time
 from typing import Optional
-from pathlib import Path
 from datetime import datetime
 from functools import lru_cache
 from urllib.parse import urlparse, parse_qs
@@ -19,7 +18,6 @@ from selenium.webdriver.remote.webelement import WebElement
 from django.db import transaction, models
 from django.apps import apps
 from shiny_app.classes.config import Config
-from shiny_app.classes.ls_client import Client
 from shiny_app.classes.ls_item import Item as LSItem
 from shiny_app.classes.ls_workorder import (
     Workorder as LSWorkorder,
