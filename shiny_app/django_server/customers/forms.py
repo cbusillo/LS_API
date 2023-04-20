@@ -64,15 +64,15 @@ class CustomerSearch(forms.Form):
                 | Q(company__icontains=everything)
                 | Q(serials_related__serial_number__icontains=everything)
             )
-        else:
-            if last_name:
-                customer_filter &= Q(last_name__icontains=last_name)
-            if first_name:
-                customer_filter &= Q(first_name__icontains=first_name)
-            if phone_number:
-                customer_filter &= Q(phones__number__icontains=phone_number)
-            if email_address:
-                customer_filter &= Q(emails__address__icontains=email_address)
+
+        if last_name:
+            customer_filter &= Q(last_name__icontains=last_name)
+        if first_name:
+            customer_filter &= Q(first_name__icontains=first_name)
+        if phone_number:
+            customer_filter &= Q(phones__number__icontains=phone_number)
+        if email_address:
+            customer_filter &= Q(emails__address__icontains=email_address)
 
         if filter_has_value(customer_filter):
             order_by = "last_name", "first_name"
