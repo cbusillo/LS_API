@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
     <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
         <meta name="description" content="Close this page" />
         <meta name="keywords" content="close, tab, window" />
         <title>Close</title>
     </head>
     <body>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                function closeWindow() {
-                    window.close();
-                }
-                
-                let closeButton = $("#close_button");
-                closeButton.click(closeWindow);
-                
-                closeWindow();
+    <a id="close-window" href="#">Close Window</a>
+
+    <script>
+        $(document).ready(function() {
+            $('#close-window').click(function() {
+                window.close();
             });
-        </script>
-        <a id="close_button" href="#">Close Tab</a>
+
+            $('#close-window').click(); // programmatically trigger a click on the link
+        });
+    </script>
     </body>
 </html>
