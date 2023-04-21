@@ -7,16 +7,15 @@
         <title>Close</title>
     </head>
     <body>
-    <a id="close-window" href="#">Close Window</a>
+        <a id="close-window" href="#">Close Window</a>
+        <script>
+            $(document).ready(function() {
+                $('#close-window').click(function() {
+                    window.close();
+                });
 
-    <script>
-        $(document).ready(function() {
-            $('#close-window').click(function() {
-                window.close();
+                $('#close-window').click(); // programmatically trigger a click on the link
             });
-
-            $('#close-window').click(); // programmatically trigger a click on the link
-        });
-    </script>
+        </script>
     </body>
 </html>
