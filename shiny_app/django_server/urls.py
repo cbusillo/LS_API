@@ -24,7 +24,7 @@ from pwa import urls as pwa_urls
 urlpatterns = [
     path("", include(pwa_urls)),
     path("", RedirectView.as_view(url="label_printer/"), name="home"),
-    path("admin/", admin.site.urls),
+    path("admin/", admin.site.urls, name="admin"),
     path("accounts/", include("django.contrib.auth.urls")),
 ]
 
