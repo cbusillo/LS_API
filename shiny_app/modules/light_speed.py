@@ -265,9 +265,10 @@ def delete_all(delete_cache: Optional[bool] = False):
             file.unlink()
 
     Client.use_cache = True
-    Path(Config.CONFIG_SECRET_DIR / "cache").mkdir(parents=True, exist_ok=True)
-    with open(Config.CONFIG_SECRET_DIR / "cache" / "update_time", "w", encoding="utf-8") as file:
-        file.write(datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
+    if not (Config.CONFIG_SECRET_DIR / "cache").exists():
+        (Config.CONFIG_SECRET_DIR / "cache").mkdir(parents=True, exist_ok=True)
+        with open(Config.CONFIG_SECRET_DIR / "cache" / "update_time", "w", encoding="utf-8") as file:
+            file.write(datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"))
 
     import_all()
     Client.use_cache = False

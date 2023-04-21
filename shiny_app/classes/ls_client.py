@@ -277,7 +277,7 @@ class BaseLSEntity(metaclass=BaseLSEntityMeta):
                 start_time = datetime.strptime(file.read(), "%d-%b-%Y (%H:%M:%S.%f)")
 
         # Use 4 threads for parallel processing
-        pool = ThreadPool(10)
+        pool = ThreadPool(4)
         pool.map(process_entity, ls_entities)
         pool.close()
         pool.join()
