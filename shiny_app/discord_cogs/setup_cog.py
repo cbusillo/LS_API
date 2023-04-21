@@ -21,6 +21,8 @@ class SetupCog(commands.Cog):
 
     @staticmethod
     def has_role(required_role: str):
+        """Check if user has role, allow choice of status"""
+
         def decorator_check_status(coro):
             @functools.wraps(coro)
             async def wrapper(self, context: discord.Interaction, choices: str, *args, **kwargs):
