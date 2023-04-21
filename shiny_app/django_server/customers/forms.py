@@ -78,7 +78,7 @@ class CustomerSearch(forms.Form):
             order_by = "last_name", "first_name"
         else:
             order_by = ("-update_time",)
-        customers = Customer.objects.filter(customer_filter).distinct().order_by(*order_by)[:100]
+        customers = Customer.objects.filter(customer_filter).filter(archived=False).distinct().order_by(*order_by)[:100]
         self.fields["customer_output"].queryset = customers
         return str(self["customer_output"].as_widget())
 
@@ -94,7 +94,7 @@ class CustomerSearch(forms.Form):
         if email_address:
             customer_filter &= Q(emails__address__icontains=email_address)
         order_by = "last_name", "first_name"
-        customers = Customer.objects.filter(customer_filter).distinct().order_by(*order_by)
+        customers = Customer.objects.filter(customer_filter).filter(archived=False).distinct().order_by(*order_by)
         return customers
 
 
