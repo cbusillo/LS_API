@@ -13,7 +13,7 @@ discord = "^2.1.0"
 py-trello = "^0.19.0"
 openai = "^0.27.0"
 simple-zpl2 = "^0.3.0"
-homeassistant-api = "^4.1.0"
+homeassistant-api = "^4.1.1.post1"
 tabula-py = "^2.7.0"
 rich = "^13.3.2"
 django = "^4.1.7"
@@ -32,6 +32,8 @@ pytz = "^2023.3"
 django-admin-multi-select-filter = "^1.0.0"
 psycopg2 = "^2.9.6"
 djlint = "^1.23.3"
+django-ajax-datatable = "^4.4.5"
+
 
 [tool.poetry.group.dev.dependencies]
 types-paramiko = "^3.0.0.6"
