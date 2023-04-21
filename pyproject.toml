@@ -31,6 +31,7 @@ opencv-python = "^4.7.0.72"
 pytz = "^2023.3"
 django-admin-multi-select-filter = "^1.0.0"
 psycopg2 = "^2.9.6"
+djlint = "^1.23.3"
 
 [tool.poetry.group.dev.dependencies]
 types-paramiko = "^3.0.0.6"
@@ -38,7 +39,6 @@ django-stubs = "^1.16.0"
 types-requests = "^2.28.11.17"
 pylint-django = "^2.5.3"
 black = "^23.3.0"
-djlint = "^1.19.16"
 ipykernel = "^6.22.0"
 
 [build-system]
