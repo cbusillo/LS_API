@@ -11,7 +11,7 @@ from shiny_app.modules.ring_central import send_message_ssh as send_message
 class WorkorderItem(models.Model):
     """WorkorderItem Shiny Object"""
 
-    ls_workorder_item_id = models.IntegerField(null=True, db_index=True)
+    ls_workorder_item_id = models.IntegerField(null=True, db_index=True, unique=True)
     unit_price = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     unit_quantity = models.IntegerField(null=True)
     tax = models.BooleanField(null=True)
@@ -32,7 +32,7 @@ class WorkorderItem(models.Model):
 class WorkorderLine(models.Model):
     """WorkorderLine Shiny Object"""
 
-    ls_workorder_line_id = models.IntegerField(null=True, db_index=True)
+    ls_workorder_line_id = models.IntegerField(null=True, db_index=True, unique=True)
     note = models.TextField(blank=True, null=True)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
@@ -50,7 +50,7 @@ class WorkorderLine(models.Model):
 class Workorder(models.Model):
     """Workorder Shiny Object"""
 
-    ls_workorder_id = models.IntegerField(null=True)
+    ls_workorder_id = models.IntegerField(null=True, db_index=True, unique=True)
     time_in = models.DateTimeField(null=True)
     eta_out = models.DateTimeField(null=True)
     note = models.TextField(blank=True, null=True)

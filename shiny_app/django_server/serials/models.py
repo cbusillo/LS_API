@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 class Serial(models.Model):
     """Customer object from LS"""
 
-    ls_serial_id = models.IntegerField(null=True, db_index=True)
+    ls_serial_id = models.IntegerField(null=True, db_index=True, unique=True)
     value_1 = models.CharField(max_length=255, null=True)
     value_2 = models.CharField(max_length=255, null=True)
     serial_number = models.CharField(max_length=50, null=True)

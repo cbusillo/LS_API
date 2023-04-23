@@ -19,7 +19,7 @@ class ItemAttributes(models.Model):
 class Item(models.Model):
     """Item model."""
 
-    ls_item_id = models.IntegerField(null=True, db_index=True)
+    ls_item_id = models.IntegerField(null=True, db_index=True, unique=True)
     default_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     average_cost = models.DecimalField(max_digits=12, decimal_places=4, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True)

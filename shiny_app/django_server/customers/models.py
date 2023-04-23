@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class Customer(models.Model):
     """Customer object from LS"""
 
-    ls_customer_id = models.IntegerField(null=True, db_index=True)
+    ls_customer_id = models.IntegerField(null=True, db_index=True, unique=True)
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
     title = models.CharField(max_length=30, blank=True, null=True)
