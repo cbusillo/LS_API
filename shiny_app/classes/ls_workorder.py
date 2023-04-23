@@ -130,6 +130,9 @@ class WorkorderItem(BaseLSEntity):
         if not isinstance(data_json, dict):
             raise ValueError("WorkorderItem must be a dict: " + str(data_json))
 
+        if data_json.get("workorderID") == "23982":
+            pass
+
         workorder_item_json_transformed = {
             "workorder_item_id": cls.safe_int(data_json.get("workorderItemID")),
             "unit_price": Decimal(data_json.get("unitPrice", 0)),
@@ -139,8 +142,8 @@ class WorkorderItem(BaseLSEntity):
             "workorder_id": cls.safe_int(data_json.get("workorderID")),
             "sale_line_id": cls.safe_int(data_json.get("saleLineID")),
             "item_id": cls.safe_int(data_json.get("itemID")),
-            "discount_amount": Decimal(data_json.get("Discount", {}).get("amount", 0)),
-            "discount_percent": Decimal(data_json.get("Discount", {}).get("percent", 0)),
+            "discount_amount": Decimal(data_json.get("Discount", {}).get("discountAmount", 0)),
+            "discount_percent": Decimal(data_json.get("Discount", {}).get("discountPercent", 0)),
             "time_stamp": cls.string_to_datetime(data_json.get("timeStamp")),
         }
         return cls(**workorder_item_json_transformed)
