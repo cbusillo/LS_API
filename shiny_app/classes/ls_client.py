@@ -106,7 +106,7 @@ class Client(requests.Session):
         next_url = url
         page = 0
         while next_url != "":
-            page_mod = 100 if self.use_cache else 10
+            page_mod = 10 if self.use_cache else 1
 
             if page % page_mod == 0:
                 send_message(f"Getting page {page} of {key_name}")
