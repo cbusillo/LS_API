@@ -76,14 +76,18 @@ class Workorder(models.Model):
 
         for workorder_item in self.workorder_items.all():
             item_total = (workorder_item.unit_price or 0) * (workorder_item.unit_quantity or 0)
-            item_discount = workorder_item.discount_amount or ((workorder_item.discount_percent or 0) / Decimal(100)) * item_total
+            item_discount = workorder_item.discount_amount or ((workorder_item.discount_percent or 0)) * item_total
             item_total -= item_discount
+            if workorder_item.tax:
+                item_total *= Decimal(1) + (Config.TAX_RATE / Decimal(100))
             total += item_total
 
         for workorder_line in self.workorder_lines.all():
             line_total = (workorder_line.unit_price or 0) * (workorder_line.unit_quantity or 0)
-            line_discount = workorder_line.discount_amount or ((workorder_line.discount_percent or 0) / Decimal(100)) * line_total
+            line_discount = workorder_line.discount_amount or ((workorder_line.discount_percent or 0)) * line_total
             line_total -= line_discount
+            if workorder_line.tax:
+                line_total *= Decimal(1) + (Config.TAX_RATE / Decimal(100))
             total += line_total
 
         return total
