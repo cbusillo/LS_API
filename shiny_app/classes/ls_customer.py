@@ -187,6 +187,15 @@ class Customer(BaseLSEntity):
         shiny_customer.tax_category_id = self.tax_category_id
         functions_to_execute_after = []
 
+        if shiny_customer.pk:
+            for phone in shiny_customer.phones.all():
+                if not any(ls_phone.number == phone.number for ls_phone in self.phones):
+                    phone.delete()
+
+            for email in shiny_customer.emails.all():
+                if not any(ls_email.address == email.address for ls_email in self.emails):
+                    email.delete()
+
         for phone in self.phones:
             if not ShinyPhone.objects.filter(number=phone.number, number_type=phone.number_type, customer=shiny_customer).exists():
                 functions_to_execute_after.append(
