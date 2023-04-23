@@ -23,6 +23,8 @@ class Config:
     FRONT_PRINTER_IP = config_file.get("front_printer_ip")
     BACK_PRINTER_IP = config_file.get("back_printer_ip")
 
+    TAX_RATE = 6
+
     LS_ACCOUNT_ID = config_file.get("ls_account_id")
     LS_URLS = config_file.get("ls_urls")
     for urls in LS_URLS:
