@@ -189,11 +189,15 @@ class Customer(BaseLSEntity):
 
         if shiny_customer.pk:
             for phone in shiny_customer.phones.all():
-                if not any(ls_phone.number == phone.number for ls_phone in self.phones):
+                if not any(
+                    ls_phone.number == phone.number and ls_phone.number_type == phone.number_type for ls_phone in self.phones
+                ):
                     phone.delete()
 
             for email in shiny_customer.emails.all():
-                if not any(ls_email.address == email.address for ls_email in self.emails):
+                if not any(
+                    ls_email.address == email.address and ls_email.address_type == email.address_type for ls_email in self.emails
+                ):
                     email.delete()
 
         for phone in self.phones:
