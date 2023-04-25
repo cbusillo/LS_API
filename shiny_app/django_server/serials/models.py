@@ -18,9 +18,7 @@ class Serial(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     update_from_ls_time = models.DateTimeField(null=True, db_index=True)
-    item: "Item | models.ForeignKey" = models.ForeignKey(
-        "items.Item", on_delete=models.PROTECT, null=True, related_name="serials_related"
-    )
+    item: "Item | models.ForeignKey" = models.ForeignKey("items.Item", on_delete=models.PROTECT, null=True, related_name="serials")
     customer: "Customer | models.ForeignKey" = models.ForeignKey(
-        "customers.Customer", on_delete=models.PROTECT, null=True, related_name="serials_related"
+        "customers.Customer", on_delete=models.PROTECT, null=True, related_name="serials"
     )

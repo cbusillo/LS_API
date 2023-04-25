@@ -8,8 +8,9 @@ $(document).ready(function () {
             // extra_options (example)
             processing: false,
             autoWidth: false,
-            full_row_select: true,
+            full_row_select: false,
             scrollX: false,
+
             initComplete: function () {
                 const createWorkorderColumnIndex = $('table thead tr th').length - 1;
 
@@ -20,8 +21,9 @@ $(document).ready(function () {
         // ...
     },);
 
-    $('body').on('click', '.create-workorder-btn', function () {
-        console.log("Button clicked"); // Debugging
+
+    $('body').on('click', '.create-workorder-btn', function (event) {
+        event.stopPropagation();
         const customerId = $(this).data('customer-id');
         const url = $(this).data('url');
 

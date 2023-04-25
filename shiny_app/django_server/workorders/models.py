@@ -45,6 +45,7 @@ class WorkorderLine(models.Model):
     # sale_line_id: int
     discount_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     discount_percent = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    item = models.ForeignKey("items.Item", on_delete=models.PROTECT, related_name="workorder_lines", null=True)
 
 
 class Workorder(models.Model):
@@ -62,7 +63,7 @@ class Workorder(models.Model):
     update_from_ls_time = models.DateTimeField(null=True)
     item_description = models.CharField(max_length=100, null=True)
     status = models.CharField(max_length=50, null=True)
-    customer = models.ForeignKey("customers.Customer", on_delete=models.PROTECT, related_name="workorders_related")
+    customer = models.ForeignKey("customers.Customer", on_delete=models.PROTECT, related_name="workorders")
     workorder_items: models.QuerySet[WorkorderItem]
     workorder_lines: models.QuerySet[WorkorderLine]
 

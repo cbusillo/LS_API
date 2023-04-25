@@ -4,8 +4,6 @@ from django.forms import Textarea
 from .models import Customer, Email, Phone
 from ..workorders.models import Workorder
 from ..serials.models import Serial
-from ..serials.admin import SerialAdmin
-from ..workorders.admin import WorkorderAdmin
 
 
 class EmailInline(admin.TabularInline):
@@ -55,7 +53,7 @@ class CustomerAdmin(admin.ModelAdmin):
         "company",
         "emails__address",
         "phones__number",
-        "serials_related__serial_number",
+        "serials__serial_number",
     )
     readonly_fields = (
         "id",

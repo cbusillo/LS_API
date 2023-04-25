@@ -45,9 +45,9 @@ driver = None
 if os.environ.get("RUN_MAIN", None) == "true":
     os.system("killall -u cbusillo 'Google Chrome'")
     if "imagingserver" in platform.node().lower():
-        driver = Driver(headless2=True, uc=True)
+        driver = Driver(headless=True, uc=True)
     else:
-        driver = Driver(headless=False, uc=True)
+        driver = Driver(headless=True, uc=True)
 
 
 @lru_cache

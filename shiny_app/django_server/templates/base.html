@@ -8,7 +8,6 @@
                 <a class="navbar-brand" href="#">.</a>
             </nav>
         {% endif %}
-
         {% progressive_web_app_meta %}
         <!-- Required meta tags -->
         <meta charset="utf-8" />
@@ -36,18 +35,20 @@
               href="{% static 'favicons/favicon-16x16.png' %}">
         <link rel="manifest" href="{% static 'favicons/site.webmanifest' %}">
         {% block extrastyle %}
-
             <link href="{% static 'ajax_datatable/css/style.css' %}" rel="stylesheet" />
-            <link href="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css" />
-
+            <link rel="stylesheet"
+                  href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+            <link rel="stylesheet"
+                  type="text/css"
+                  href="https://cdn.datatables.net/select/1.6.2/css/select.dataTables.css" />
         {% endblock extrastyle %}
-
         {% block extrajs %}
-
-
-            <script type="text/javascript" src="{% static 'ajax_datatable/js/utils.js' %}"></script>
-            <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
-
+            <script type="text/javascript"
+                    src="{% static 'ajax_datatable/js/utils.js' %}"></script>
+            <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+            <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.js"></script>
+            <script type="text/javascript"
+                    src="https://cdn.datatables.net/select/1.6.2/js/dataTables.select.min.js"></script>
         {% endblock extrajs %}
     </head>
     <body>
@@ -57,12 +58,7 @@
                     <a class="nav-link" href="{% url 'label_printer:home' %}">Label Printer</a>
                     <a class="nav-link" href="{% url 'check_in:home' %}">Check in</a>
                     <a class="nav-link" href="{% url 'functions:home' %}">Functions</a>
-                    <a class="nav-link" href="{% url 'items:item_list' %}">Items</a>
-                    <a class="nav-link" href="{% url 'customers:customer_list' %}">Customers</a>
-                    <a class="nav-link" href="{% url 'workorders:workorder_list' %}">Workorders</a>
-                    <a class="nav-link" href="{% url 'serials:serial_list' %}">Serials</a>
                     <a class="nav-link" href="{% url 'sickw:bulk_lookup' %}">Sickw</a>
-                    <a class="nav-link" href="{% url 'config:config_list' %}">Config</a>
                     <a class="nav-link" href="{% url 'serial_camera:home' %}">Serial Camera</a>
                     <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
                 </div>

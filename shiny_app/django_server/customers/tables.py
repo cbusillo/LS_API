@@ -1,5 +1,6 @@
 from ajax_datatable.views import AjaxDatatableView
 from django.urls import reverse
+
 from .models import Customer
 
 
@@ -17,7 +18,7 @@ class CustomerTable(AjaxDatatableView):
         {"name": "number", "m2m_foreign_field": "phones__number", "title": "Phone Numbers", "visible": True, "searchable": True},
         {
             "name": "serial_number",
-            "m2m_foreign_field": "serials_related__serial_number",
+            "m2m_foreign_field": "serials__serial_number",
             "title": "Serial",
             "visible": False,
             "searchable": True,
@@ -34,11 +35,15 @@ class CustomerTable(AjaxDatatableView):
         },
     ]
 
-    def get_initial_queryset(self, request):
+    def get_initial_queryset(self, request=None):
         queryset = self.model.objects.filter(archived=False)
 
         queryset = queryset.distinct()
         return queryset
+
+    # def render_row_details(self, pk, request=None):
+    #     workorders = [workorder for workorder in self.model.objects.get(pk=pk).workorders.all()]
+    #     return render_to_string("ajax_datatable/customers/render_row_details.html", {"workorders": workorders})
 
     def customize_row(self, row, obj):
         create_workorder_url = reverse("workorders:create_workorder")

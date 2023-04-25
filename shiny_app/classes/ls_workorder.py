@@ -188,6 +188,7 @@ class WorkorderLine(BaseLSEntity):
     # sale_line_id: int
     discount_amount: Decimal
     discount_percent: Decimal
+    item_id: int
 
     def __init__(self, *args, **kwargs):
         """WorkorderLine object from dict"""
@@ -218,6 +219,7 @@ class WorkorderLine(BaseLSEntity):
             # "sale_line_id": cls.safe_int(json.get("saleLineID")),
             "discount_amount": Decimal(data_json.get("Discount", {}).get("discountAmount", 0)),
             "discount_percent": Decimal(data_json.get("Discount", {}).get("discountPercent", 0)),
+            "item_id": cls.safe_int(data_json.get("itemID")),
         }
         return cls(**workorder_line_json_transformed)
 
@@ -225,6 +227,7 @@ class WorkorderLine(BaseLSEntity):
         """Convert LS WorkorderLine to Shiny WorkorderLine"""
         # pylint: disable=import-outside-toplevel
         from shiny_app.django_server.workorders.models import Workorder as ShinyWorkorder
+        from shiny_app.django_server.items.models import Item as ShinyItem
 
         shiny_workorder_line.ls_workorder_line_id = self.workorder_line_id
         shiny_workorder_line.note = self.note
@@ -238,5 +241,8 @@ class WorkorderLine(BaseLSEntity):
         shiny_workorder_line.discount_amount = self.discount_amount
         shiny_workorder_line.discount_percent = self.discount_percent
         shiny_workorder_line.workorder = ShinyWorkorder.objects.get(ls_workorder_id=self.workorder_id)
+        item = ShinyItem.objects.get(ls_item_id=self.item_id)
+        if isinstance(item, ShinyItem):
+            shiny_workorder_line.item = item
 
         return None

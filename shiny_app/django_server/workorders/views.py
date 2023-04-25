@@ -1,30 +1,14 @@
 """Views for workorders app"""
 from urllib.parse import parse_qs
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator
-from django.shortcuts import render
-from django.views import View
+
+
 from django.http import JsonResponse
 
-from .models import Workorder
-from ..customers.models import Customer
+
 from shiny_app.classes.ls_customer import Customer as LSCustomer
-from shiny_app.modules.light_speed import import_customers, create_workorder
+from shiny_app.modules.light_speed import create_workorder, import_customers
 
-
-class WorkorderListView(LoginRequiredMixin, View):
-    """View for listing items"""
-
-    def get(self, request):
-        """Create form on GET request and list items"""
-
-        workorder = Workorder.objects.all()
-
-        paginator = Paginator(workorder, 25)  # Show 25 items per page.
-        page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-
-        return render(request, "workorders/workorder_list.html", {"page_obj": page_obj})
+from ..customers.models import Customer
 
 
 def create_workorder_view(request):
