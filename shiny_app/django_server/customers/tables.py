@@ -1,0 +1,48 @@
+from ajax_datatable.views import AjaxDatatableView
+from django.urls import reverse
+from .models import Customer
+
+
+class CustomerTable(AjaxDatatableView):
+    model = Customer
+    initial_order = [["update_time", "desc"]]
+    length_menu = [[10, 20, 50, 100, -1], [10, 20, 50, 100, "all"]]
+    show_column_filters = True
+    column_defs = [
+        AjaxDatatableView.render_row_tools_column_def(),
+        {"name": "id", "visible": False, "searchable": False},
+        {"name": "last_name", "visible": True},
+        {"name": "first_name", "visible": True},
+        # {"name": "mobile_number", "title": "Cell", "visible": True, "searchable": False},
+        {"name": "number", "m2m_foreign_field": "phones__number", "title": "Phone Numbers", "visible": True, "searchable": True},
+        {
+            "name": "serial_number",
+            "m2m_foreign_field": "serials_related__serial_number",
+            "title": "Serial",
+            "visible": False,
+            "searchable": True,
+        },
+        {"name": "address", "m2m_foreign_field": "emails__address", "title": "Email Addresses", "visible": True, "searchable": True},
+        {"name": "update_time", "visible": False, "searchable": False, "orderable": True},
+        {
+            "name": "create_workorder_button",
+            "title": "Workorder",
+            "placeholder": True,
+            "visible": True,
+            "searchable": False,
+            "orderable": False,
+        },
+    ]
+
+    def get_initial_queryset(self, request):
+        queryset = self.model.objects.filter(archived=False)
+
+        queryset = queryset.distinct()
+        return queryset
+
+    def customize_row(self, row, obj):
+        create_workorder_url = reverse("workorders:create_workorder")
+        row[
+            "create_workorder_button"
+        ] = f'<button class="btn btn-secondary btn-xs create-workorder-btn" data-customer-id="{obj.id}" data-url="{create_workorder_url}">New</button>'
+        return row

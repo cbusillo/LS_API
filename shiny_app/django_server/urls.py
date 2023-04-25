@@ -30,5 +30,5 @@ urlpatterns = [
 
 for app in settings.SHINY_INSTALLED_APPS:
     app_name = app.split(".")[-1]
-    urlpatterns.append(path(app_name + "/", include(app + ".urls", namespace=app_name)))
+    urlpatterns.append(path(app_name + "/", include((app + ".urls", app_name), namespace=app_name)))
     logging.info("app: %s", app)

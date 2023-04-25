@@ -1,35 +1,8 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-md-5">
-                <!-- Adjust column size as needed -->
-                Search:
-                <form method="post"
-                      autocomplete="off"
-                      id="customer_search_form"
-                      data-url="{% url 'check_in:partial_customer_form_data' %}"
-                      data-csrf-token="{{ csrf_token }}"
-                      data-customers="{{ customers }}">
-                    {{ customer_search_form|crispy }}
-                </form>
-            </div>
-            <div class="col-md-7">
-                <div id="customer-detail-container" class="row"></div>
-                <div id="customer-phone-container" class="row"></div>
-                <div id="customer-email-container" class="row"></div>
-                <div id="workorder-buttons-container" class="row d-none">
-                    <div class="col-md-12">
-                        <button data-url="{% url 'check_in:create_workorder' %}"
-                                id="create-workorder-button"
-                                class="btn btn-primary">
-                            Create Work Order
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script>{% include "check_in/home.js" %}</script>
+    {% include "customers/customer_datatable.html" %}
+    <script>
+        {% include "check_in/home.js" %}
+    </script>
 {% endblock content %}

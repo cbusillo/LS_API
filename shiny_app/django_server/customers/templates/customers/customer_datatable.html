@@ -1,0 +1,15 @@
+{% load static %}
+
+<table id="customer_datatable" width="100%" class="table table-dark table-striped table-bordered dt-responsive compact nowrap">
+    <thead>
+        <tr id="header-row">
+            <!-- The table headers will be generated automatically -->
+        </tr>
+    </thead>
+</table>
+
+<button class="btn btn-secondary btn-xs create-workorder-btn" style="display:none;" data-csrf_token="{{ csrf_token }}" data-url="{% url 'workorders:workorder_list' %}">New</button>
+
+<script language="javascript">
+{% include "customers/customer_datatable.js" %}
+</script>

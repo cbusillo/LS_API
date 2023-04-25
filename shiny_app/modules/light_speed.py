@@ -4,6 +4,7 @@ import os
 import json
 import logging
 import time
+import platform
 from typing import Optional
 from pathlib import Path
 from datetime import datetime
@@ -43,7 +44,10 @@ from shiny_app.django_server.functions.views import send_message
 driver = None
 if os.environ.get("RUN_MAIN", None) == "true":
     os.system("killall -u cbusillo 'Google Chrome'")
-    driver = Driver(headless2=True, uc=True)
+    if "imagingserver" in platform.node().lower():
+        driver = Driver(headless2=True, uc=True)
+    else:
+        driver = Driver(headless=False, uc=True)
 
 
 @lru_cache
@@ -101,7 +105,7 @@ def create_workorder(customer_id: int) -> int | None:
 
         login_button.click()
     wait.until(JsFunctionAvailable("merchantos.quick_customer.attachCustomer"))
-    time.sleep(0.5)
+    time.sleep(1.5)
 
     driver.execute_script(f"window.merchantos.quick_customer.attachCustomer({customer_id})")
     wait.until(lambda driver: "&id=undefined&" not in driver.current_url)
