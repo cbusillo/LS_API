@@ -7,10 +7,11 @@
                         <div class="card">
                             <div class="card-body">
                                 <p class="card-title">{{ workorder.time_in }}</p>
-                                <div class="border-bottom pb-2 mb-2">
-                                    <p class="text-muted">Workorder Note:</p>
-                                    <h6 class="mb-2">{{ workorder.note }}</h6>
-                                </div>
+                                {% if workorder.note %}
+                                    <div class="border-bottom pb-2 mb-2">
+                                        <h6 class="mb-2">{{ workorder.note }}</h6>
+                                    </div>
+                                {% endif %}
                                 {% for workorder_item in workorder.workorder_items.all %}
                                     <div class="border-bottom pb-2 mb-2">
                                         <p class="card-text text-muted">
