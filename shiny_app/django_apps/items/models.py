@@ -4,16 +4,7 @@ from django.db import models
 from django.db.models.query import QuerySet
 
 if TYPE_CHECKING:
-    from ..serials.models import Serial
-
-
-class ItemAttributes(models.Model):
-    """Represents the attributes of an item."""
-
-    attribute1 = models.CharField(max_length=255, blank=True)
-    attribute2 = models.CharField(max_length=255, blank=True)
-    attribute3 = models.CharField(max_length=255, blank=True)
-    item_attribute_id = models.IntegerField()
+    from ..customers.models import Customer
 
 
 class Item(models.Model):
@@ -36,9 +27,25 @@ class Item(models.Model):
     update_time = models.DateTimeField(auto_now=True)
     update_from_ls_time = models.DateTimeField(null=True, db_index=True)
     item_matrix_id = models.IntegerField(null=True)
-    item_attributes = models.ForeignKey(ItemAttributes, on_delete=models.CASCADE, null=True)
     sizes = models.TextField(max_length=300, null=True)
     serials = QuerySet["Serial"]
 
     def __str__(self) -> str:
         return f"{self.ls_item_id} - {self.description}"
+
+
+class Serial(models.Model):
+    """Customer object from LS"""
+
+    ls_serial_id = models.IntegerField(null=True, db_index=True, unique=True)
+    value_1 = models.CharField(max_length=255, null=True)
+    value_2 = models.CharField(max_length=255, null=True)
+    serial_number = models.CharField(max_length=50, null=True)
+    description = models.CharField(max_length=255, null=True)
+    create_time = models.DateTimeField(auto_now_add=True)
+    update_time = models.DateTimeField(auto_now=True)
+    update_from_ls_time = models.DateTimeField(null=True, db_index=True)
+    item: "Item | models.ForeignKey" = models.ForeignKey("items.Item", on_delete=models.PROTECT, null=True, related_name="serials")
+    customer: "Customer | models.ForeignKey" = models.ForeignKey(
+        "customers.Customer", on_delete=models.PROTECT, null=True, related_name="serials"
+    )

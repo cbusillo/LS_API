@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from shiny_app.classes.ls_client import BaseLSEntity
 
 if TYPE_CHECKING:
-    from shiny_app.django_apps.serials.models import Serial as ShinySerial
+    from shiny_app.django_apps.items.models import Serial as ShinySerial
 
 
 @dataclass

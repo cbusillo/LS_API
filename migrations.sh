@@ -15,10 +15,10 @@ then
         then
             continue
         fi
-        python run_django.py makemigrations `basename $directory`
+        python manage_django.py makemigrations `basename $directory`
     done
 fi
 
-python run_django.py makemigrations
-python run_django.py migrate
+python manage_django.py makemigrations
+python manage_django.py migrate
 

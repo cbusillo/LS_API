@@ -3,7 +3,7 @@ from django.db import models
 from django.forms import Textarea
 from .models import Customer, Email, Phone
 from ..workorders.models import Workorder
-from ..serials.models import Serial
+from ..items.models import Serial
 
 
 class EmailInline(admin.TabularInline):

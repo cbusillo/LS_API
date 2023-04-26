@@ -38,7 +38,7 @@ from shiny_app.django_apps.workorders.models import (
     WorkorderItem as ShinyWorkorderItem,
     WorkorderLine as ShinyWorkorderLine,
 )
-from shiny_app.django_apps.serials.models import Serial as ShinySerial
+from shiny_app.django_apps.items.models import Serial as ShinySerial
 from shiny_app.django_apps.functions.views import send_message
 
 driver = None

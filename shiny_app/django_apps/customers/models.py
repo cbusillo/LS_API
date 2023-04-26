@@ -11,7 +11,7 @@ from shiny_app.classes.ls_customer import Customer as LSCustomer
 
 if TYPE_CHECKING:
     from ..workorders.models import Workorder
-    from ..serials.models import Serial
+    from ..items.models import Serial
 
 
 class Customer(models.Model):
