@@ -30,16 +30,16 @@ from shiny_app.classes.ls_workorder import (
 from shiny_app.classes.ls_customer import Customer as LSCustomer
 from shiny_app.classes.ls_serial import Serialized as LSSerial
 
-from shiny_app.django_server.items.models import Item as ShinyItem
-from shiny_app.django_server.customers.models import Customer as ShinyCustomer
+from shiny_app.django_apps.items.models import Item as ShinyItem
+from shiny_app.django_apps.customers.models import Customer as ShinyCustomer
 
-from shiny_app.django_server.workorders.models import (
+from shiny_app.django_apps.workorders.models import (
     Workorder as ShinyWorkorder,
     WorkorderItem as ShinyWorkorderItem,
     WorkorderLine as ShinyWorkorderLine,
 )
-from shiny_app.django_server.serials.models import Serial as ShinySerial
-from shiny_app.django_server.functions.views import send_message
+from shiny_app.django_apps.serials.models import Serial as ShinySerial
+from shiny_app.django_apps.functions.views import send_message
 
 driver = None
 if os.environ.get("RUN_MAIN", None) == "true":

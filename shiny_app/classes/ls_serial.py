@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from shiny_app.classes.ls_client import BaseLSEntity
 
 if TYPE_CHECKING:
-    from shiny_app.django_server.serials.models import Serial as ShinySerial
+    from shiny_app.django_apps.serials.models import Serial as ShinySerial
 
 
 @dataclass
@@ -54,8 +54,8 @@ class Serialized(BaseLSEntity):
     def shiny_serial_from_ls(self, shiny_serial: "ShinySerial", start_time: datetime):
         """translation layer for LSSerial to ShinySerial"""
         # pylint: disable=import-outside-toplevel
-        from shiny_app.django_server.customers.models import Customer as ShinyCustomer
-        from shiny_app.django_server.items.models import Item as ShinyItem
+        from shiny_app.django_apps.customers.models import Customer as ShinyCustomer
+        from shiny_app.django_apps.items.models import Item as ShinyItem
 
         shiny_serial.ls_serial_id = self.serial_id
         shiny_serial.value_1 = self.value_1

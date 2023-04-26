@@ -17,7 +17,7 @@ from shiny_app.django_server.settings import running_functions
 def home(request: WSGIRequest, module_function_name: str = ""):
     """View for Light Speed Functions"""
     buttons = {
-        "shiny_app.django_server.customers.models|format_customer_phone": "Format Customer Phone Numbers",
+        "shiny_app.django_apps.customers.models|format_customer_phone": "Format Customer Phone Numbers",
         "shiny_app.modules.light_speed|update_item_price": "Update iPhone/iPad Prices",
         "shiny_app.modules.light_speed|import_items": "Import Items",
         "shiny_app.modules.light_speed|import_customers": "Import Customers",
@@ -25,7 +25,7 @@ def home(request: WSGIRequest, module_function_name: str = ""):
         "shiny_app.modules.light_speed|import_all": "Import All",
         "shiny_app.modules.light_speed|delete_all": "Delete All",
         "shiny_app.modules.scroll|run": "Scroll",
-        "shiny_app.django_server.functions.views|reset_running_functions": "Reset Running Functions",
+        "shiny_app.django_apps.functions.views|reset_running_functions": "Reset Running Functions",
     }
     context: dict[str, object] = {}
     context["title"] = "Light Speed Functions"

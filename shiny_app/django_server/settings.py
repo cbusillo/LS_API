@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent
+APPS_DIR = BASE_DIR.parent / "django_apps"
 
 
 # Quick-start development settings - unsuitable for production
@@ -31,9 +32,7 @@ ALLOWED_HOSTS = ["*"]
 
 # Application definition
 SHINY_INSTALLED_APPS = [
-    "shiny_app.django_server." + path.name
-    for path in Path(BASE_DIR).glob("./*")
-    if path.is_dir() and path.name not in ["__pycache__", "templates", "static"]
+    "shiny_app.django_apps." + path.name for path in Path(APPS_DIR).glob("./*") if path.is_dir() and path.name not in ["__pycache__"]
 ]
 
 INSTALLED_APPS = [

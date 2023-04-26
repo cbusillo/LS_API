@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from shiny_app.classes.ls_client import BaseLSEntity
 
 if TYPE_CHECKING:
-    from shiny_app.django_server.items.models import Item as ShinyItem
+    from shiny_app.django_apps.items.models import Item as ShinyItem
 
 
 @dataclass

@@ -9,9 +9,9 @@ fi
 if [ $# -gt 0 ]
 then
     echo "adding migrations"
-    for directory in ./shiny_app/django_server/*/
+    for directory in ./shiny_app/django_apps/*/
     do
-        if [[ $directory == *"__pycache__"* || $directory == *"templates"* || $directory == *"static"* ]]
+        if [[ $directory == *"__pycache__"* ]]
         then
             continue
         fi

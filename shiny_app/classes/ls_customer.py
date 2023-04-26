@@ -6,7 +6,7 @@ from typing import Any, Optional, Self, TYPE_CHECKING
 from shiny_app.classes.ls_client import BaseLSEntity
 
 if TYPE_CHECKING:
-    from shiny_app.django_server.customers.models import Customer as ShinyCustomer
+    from shiny_app.django_apps.customers.models import Customer as ShinyCustomer
 
 
 @dataclass
@@ -167,7 +167,7 @@ class Customer(BaseLSEntity):
     def shiny_customer_from_ls(self, shiny_customer: "ShinyCustomer", start_time: datetime):
         """translation layer for LSCustomer to ShinyCustomer"""
         # pylint: disable=import-outside-toplevel
-        from shiny_app.django_server.customers.models import (
+        from shiny_app.django_apps.customers.models import (
             Phone as ShinyPhone,
             Email as ShinyEmail,
         )

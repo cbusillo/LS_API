@@ -17,7 +17,7 @@ from django.db import models
 from django.utils import timezone  # pylint: disable=wrong-import-order
 
 from shiny_app.classes.config import Config
-from shiny_app.django_server.functions.views import send_message
+from shiny_app.django_apps.functions.views import send_message
 
 
 class Client(requests.Session):

@@ -6,7 +6,7 @@ from collections.abc import Iterable
 from django.db import models
 from django.db.models.query import QuerySet
 from django.forms.models import model_to_dict
-from shiny_app.django_server.functions.views import send_message
+from shiny_app.django_apps.functions.views import send_message
 from shiny_app.classes.ls_customer import Customer as LSCustomer
 
 if TYPE_CHECKING:

@@ -6,7 +6,7 @@ from typing import Any, Optional, Self, TYPE_CHECKING
 from shiny_app.classes.ls_client import BaseLSEntity
 
 if TYPE_CHECKING:
-    from shiny_app.django_server.workorders.models import (
+    from shiny_app.django_apps.workorders.models import (
         Workorder as ShinyWorkorder,
         WorkorderItem as ShinyWorkorderItem,
         WorkorderLine as ShinyWorkorderLine,
@@ -73,7 +73,7 @@ class Workorder(BaseLSEntity):
     def shiny_workorder_from_ls(self, shiny_workorder: "ShinyWorkorder", start_time: datetime):
         """Convert LS Workorder to Shiny Workorder"""
         # pylint: disable=import-outside-toplevel
-        from shiny_app.django_server.customers.models import Customer as ShinyCustomer
+        from shiny_app.django_apps.customers.models import Customer as ShinyCustomer
 
         shiny_workorder.ls_workorder_id = self.workorder_id
         shiny_workorder.time_in = self.time_in
@@ -151,8 +151,8 @@ class WorkorderItem(BaseLSEntity):
     def shiny_workorder_item_from_ls(self, shiny_workorder_item: "ShinyWorkorderItem", start_time: datetime):
         """Convert LS WorkorderItem to Shiny WorkorderItem"""
         # pylint: disable=import-outside-toplevel
-        from shiny_app.django_server.workorders.models import Workorder as ShinyWorkorder
-        from shiny_app.django_server.items.models import Item as ShinyItem
+        from shiny_app.django_apps.workorders.models import Workorder as ShinyWorkorder
+        from shiny_app.django_apps.items.models import Item as ShinyItem
 
         shiny_workorder_item.ls_workorder_item_id = self.workorder_item_id
         shiny_workorder_item.unit_price = self.unit_price
@@ -226,8 +226,8 @@ class WorkorderLine(BaseLSEntity):
     def shiny_workorder_line_from_ls(self, shiny_workorder_line: "ShinyWorkorderLine", start_time: datetime):
         """Convert LS WorkorderLine to Shiny WorkorderLine"""
         # pylint: disable=import-outside-toplevel
-        from shiny_app.django_server.workorders.models import Workorder as ShinyWorkorder
-        from shiny_app.django_server.items.models import Item as ShinyItem
+        from shiny_app.django_apps.workorders.models import Workorder as ShinyWorkorder
+        from shiny_app.django_apps.items.models import Item as ShinyItem
 
         shiny_workorder_line.ls_workorder_line_id = self.workorder_line_id
         shiny_workorder_line.note = self.note
