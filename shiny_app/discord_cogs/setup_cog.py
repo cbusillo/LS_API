@@ -59,6 +59,8 @@ class SetupCog(commands.Cog):
                 print("Restarting server!!!")
                 await context.channel.send("Updating and restarting server!!!")
                 subprocess.run(["ssh", "127.0.0.1", "~/launch_shiny_app.sh"], check=False)
+            else:
+                await context.channel.send("No updates.  Doing Nothing.")
 
             await asyncio.sleep(2)
 
