@@ -233,7 +233,6 @@ class Item(BaseLSEntity):
         shiny_item.custom_sku = self.custom_sku
         shiny_item.manufacturer_sku = self.manufacturer_sku
         shiny_item.item_matrix_id = self.item_matrix_id
-        shiny_item.item_attributes = None
         shiny_item.create_time = self.time_stamp or start_time
         shiny_item.update_time = start_time
         shiny_item.update_from_ls_time = start_time
