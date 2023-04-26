@@ -1,65 +1,53 @@
 <div class="row">
     <div class="col-7">
-        <div class="container">
-            {% for workorder in object.workorders.all|dictsortreversed:"time_in" %}
-                <div class="row mb-3">
-                    <div class="col">
-                        <div class="card">
-                            <div class="card-body">
-                                <p class="card-title">{{ workorder.time_in }}</p>
-                                {% if workorder.note %}
-                                    <div class="border-bottom pb-2 mb-2">
-                                        <h6 class="mb-2">{{ workorder.note }}</h6>
-                                    </div>
-                                {% endif %}
-                                {% for workorder_item in workorder.workorder_items.all %}
-                                    <div class="border-bottom pb-2 mb-2">
-                                        <p class="card-text text-muted">
-                                            {{ workorder_item.item.description }}
-                                            {% if workorder_item.note %}
-                                                Item Note:
-                                                {{ workorder_item.note }}
-                                            {% endif %}
-                                        </p>
-                                    </div>
-                                {% endfor %}
-                                {% for workorder_line in workorder.workorder_lines.all %}
-                                    <div class="pb-2 {% if not forloop.last %}border-bottom mb-2{% endif %}">
-                                        <p class="card-text text-muted">
-                                            {{ workorder_line.item.description }}
-                                            {% if workorder_line.note %}
-                                                Item Note:
-                                                {{ workorder_line.note }}
-                                            {% endif %}
-                                        </p>
-                                    </div>
-                                {% endfor %}
-                            </div>
+        {% for workorder in object.workorders.all|dictsortreversed:"time_in" %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p class="card-title">{{ workorder.time_in }}</p>
+                    {% if workorder.note %}
+                        <div class="border-top py-2">
+                            <h6>{{ workorder.note }}</h6>
                         </div>
-                    </div>
+                    {% endif %}
+                    {% for workorder_item in workorder.workorder_items.all %}
+                        <div class="border-top py-2">
+                            <p class="card-text text-muted">
+                                {{ workorder_item.item.description }}
+                                {% if workorder_item.note %}
+                                    Item Note:
+                                    {{ workorder_item.note }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endfor %}
+                    {% for workorder_line in workorder.workorder_lines.all %}
+                        <div class="py-2 border-top">
+                            <p class="card-text text-muted">
+                                {{ workorder_line.item.description }}
+                                {% if workorder_line.note %}
+                                    Item Note:
+                                    {{ workorder_line.note }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
-        </div>
+            </div>
+        {% endfor %}
     </div>
     <div class="col-5">
-        <div class="container">
-            {% for serial in object.serials.all|dictsortreversed:"create_time" %}
-                {% if serial.serial_number %}
-                    <div class="row mb-3">
-                        <div class="col">
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-title">{{ serial.create_time }}</p>
-                                    <div class="border-bottom pb-2 mb-2">
-                                        <h6 class="mb-2">{{ serial.item.description }}</h6>
-                                    </div>
-                                    <h6 class="text-muted">{{ serial.serial_number }}</h6>
-                                </div>
-                            </div>
+        {% for serial in object.serials.all|dictsortreversed:"create_time" %}
+            {% if serial.serial_number %}
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <p class="card-title">{{ serial.create_time }}</p>
+                        <div class="border-top">
+                            <h6 class="py-2">{{ serial.item.description }}</h6>
                         </div>
+                        <h6 class="text-muted border-top">{{ serial.serial_number }}</h6>
                     </div>
-                {% endif %}
-            {% endfor %}
-        </div>
+                </div>
+            {% endif %}
+        {% endfor %}
     </div>
 </div>
