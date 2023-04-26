@@ -1,9 +1,5 @@
 """Views for workorders app"""
-from urllib.parse import parse_qs
-
-
 from django.http import JsonResponse
-
 
 from shiny_app.classes.ls_customer import Customer as LSCustomer
 from shiny_app.modules.light_speed import create_workorder, import_customers
@@ -19,11 +15,10 @@ def create_workorder_view(request):
     if customer_id:
         ls_customer_id = Customer.objects.get(id=customer_id).ls_customer_id
     else:
-        serialized_customer = parse_qs(request.POST.get("form"))
-        first_name = serialized_customer.get("first_name_input", [])[0]
-        last_name = serialized_customer.get("last_name_input", [])[0]
-        phone_number = serialized_customer.get("phone_number_input", [])[0]
-        email_address = serialized_customer.get("email_address_input", [])[0]
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        phone_number = request.POST.get("phone_number")
+        email_address = request.POST.get("email_address")
         ls_customer = LSCustomer(
             first_name=first_name,
             last_name=last_name,
