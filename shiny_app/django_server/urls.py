@@ -26,6 +26,7 @@ urlpatterns = [
     path("", RedirectView.as_view(url="label_printer/"), name="home"),
     path("admin/", admin.site.urls, name="admin"),
     path("accounts/", include("django.contrib.auth.urls")),
+    path("favicon.ico/", RedirectView.as_view(url="/static/favicons/favicon.ico")),
 ]
 
 for app in settings.SHINY_INSTALLED_APPS:
