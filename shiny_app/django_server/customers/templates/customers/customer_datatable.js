@@ -11,6 +11,7 @@ $(document).ready(function () {
             autoWidth: false,
             full_row_select: false,
             scrollX: false,
+            dom: 'rt<"bottom"iflp><"clear">',
 
             initComplete: function () {
                 const createWorkorderColumnIndex = $('table thead tr th').length;
@@ -46,6 +47,7 @@ $(document).ready(function () {
                 } else {
                     createWorkorderButtonNewCustomer.html("")
                 }
+
             }
 
         }, {
