@@ -15,10 +15,10 @@ then
         then
             continue
         fi
-        python shiny_app/modules/django_server.py makemigrations `basename $directory`
+        python run_django.py makemigrations `basename $directory`
     done
 fi
 
-python shiny_app/modules/django_server.py makemigrations
-python shiny_app/modules/django_server.py migrate
+python run_django.py makemigrations
+python run_django.py migrate
 

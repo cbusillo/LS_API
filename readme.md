@@ -9,6 +9,6 @@ python3.11 install poetry
 git clone https://github.com/cbusillo/Shiny_App
 cd Shiny_App
 poetry shell
-python shiny_app/modules/django_server.py migrate
+python run_django.py migrate
 pip install seleniumbase #dep conflict poetry refuses to install
 ```
