@@ -241,8 +241,6 @@ class WorkorderLine(BaseLSEntity):
         shiny_workorder_line.discount_amount = self.discount_amount
         shiny_workorder_line.discount_percent = self.discount_percent
         shiny_workorder_line.workorder = ShinyWorkorder.objects.get(ls_workorder_id=self.workorder_id)
-        item = ShinyItem.objects.get(ls_item_id=self.item_id)
-        if isinstance(item, ShinyItem):
-            shiny_workorder_line.item = item
+        shiny_workorder_line.item = ShinyItem.objects.get(ls_item_id=self.item_id)  # pyright: reportGeneralTypeIssues=false
 
         return None
