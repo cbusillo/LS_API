@@ -1,5 +1,7 @@
 from ajax_datatable.views import AjaxDatatableView
 from django.urls import reverse
+from django.db.models.functions import Lower
+from django.db import models
 
 from .models import Customer
 
@@ -34,6 +36,21 @@ class CustomerTable(AjaxDatatableView):
             "orderable": False,
         },
     ]
+
+    def sort_queryset(self, params, qs):
+        if len(params["orders"]):
+            order_modes = []
+            for order in params["orders"]:
+                order_mode = order.get_order_mode()
+                if isinstance(order.column_link._model_column.model_field, models.CharField):  # pylint: disable=protected-access
+                    if order_mode[:1] == "-":
+                        order_modes.append(Lower(order_mode[1:]).desc())
+                    else:
+                        order_modes.append(Lower(order_mode))
+                else:
+                    order_modes.append(order_mode)
+            qs = qs.order_by(*order_modes)
+        return qs
 
     def get_initial_queryset(self, request=None):
         queryset = self.model.objects.filter(archived=False)
