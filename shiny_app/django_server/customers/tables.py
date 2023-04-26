@@ -1,3 +1,4 @@
+"""backend for datatable of customers""" ""
 from ajax_datatable.views import AjaxDatatableView
 from django.urls import reverse
 from django.db.models.functions import Lower
@@ -7,6 +8,8 @@ from .models import Customer
 
 
 class CustomerTable(AjaxDatatableView):
+    """backend for datatable of customers"""
+
     model = Customer
     initial_order = [["update_time", "desc"]]
     length_menu = [[10, 20, 50, 100, -1], [10, 20, 50, 100, "all"]]
@@ -64,7 +67,10 @@ class CustomerTable(AjaxDatatableView):
 
     def customize_row(self, row, obj):
         create_workorder_url = reverse("workorders:create_workorder")
-        row[
-            "create_workorder_button"
-        ] = f'<button class="btn btn-secondary btn-xs create-workorder-btn" data-customer-id="{obj.id}" data-url="{create_workorder_url}">New</button>'
+        button = (
+            f'<button class="btn btn-secondary btn-xs create-workorder-btn" '
+            f'data-customer-id="{obj.id}" '
+            f'data-url="{create_workorder_url}">New</button>'
+        )
+        row["create_workorder_button"] = button
         return row
