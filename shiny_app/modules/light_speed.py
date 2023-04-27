@@ -223,30 +223,15 @@ def import_customers():
     """temp function to import customers from LS"""
     with transaction.atomic():
         LSCustomer.shiny_model_from_ls(ShinyCustomer)
+        LSSerial.shiny_model_from_ls(ShinySerial)
 
 
 def import_workorders():
     """temp function to import workorders from LS"""
     with transaction.atomic():
         LSWorkorder.shiny_model_from_ls(ShinyWorkorder)
-
-
-def import_serials():
-    """temp function to import serials from LS"""
-    with transaction.atomic():
-        LSSerial.shiny_model_from_ls(ShinySerial)
-
-
-def import_workorder_items():
-    """temp function to import workorder items from LS"""
-    with transaction.atomic():
-        LSWorkorderItem.shiny_model_from_ls(ShinyWorkorderItem)
-
-
-def import_workorder_lines():
-    """temp function to import workorder lines from LS"""
-    with transaction.atomic():
         LSWorkorderLine.shiny_model_from_ls(ShinyWorkorderLine)
+        LSWorkorderItem.shiny_model_from_ls(ShinyWorkorderItem)
 
 
 def import_all():
@@ -254,9 +239,6 @@ def import_all():
     import_items()
     import_customers()
     import_workorders()
-    import_workorder_items()
-    import_workorder_lines()
-    import_serials()
 
 
 def delete_all(delete_cache: Optional[bool] = False):
