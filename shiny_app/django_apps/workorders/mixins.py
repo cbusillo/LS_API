@@ -32,4 +32,4 @@ class ParameterizedChangeListMixin:
         if should_redirect:
             query_string = urlencode(query_params)
             return HttpResponseRedirect(f"{request.path}?{query_string}")
-        return super().changelist_view(request, extra_context)  # pyright: reportGeneralTypeIssues=false
+        return super().changelist_view(request, extra_context)  # pyright: ignore[reportGeneralTypeIssues]

@@ -82,7 +82,7 @@ class Client(requests.Session):
                 raise TimeoutError
             if response_code == 404:
                 return None
-        return request_response  # pyright: reportUnboundVariable=false
+        return request_response  # pyright: ignore[reportUnboundVariable]
 
     def get_entities_from_api(self, url: str, key_name: str, params: Optional[dict] = None) -> Generator[Self, None, None]:
         """Iterate over all items in the API with caching"""
@@ -294,5 +294,5 @@ class BaseLSEntity(metaclass=BaseLSEntityMeta):
         except model.DoesNotExist:
             return default_time
         if hasattr(latest_ls_update_time, "update_from_ls_time"):
-            return latest_ls_update_time.update_from_ls_time  # pyright: reportGeneralTypeIssues=false
+            return latest_ls_update_time.update_from_ls_time  # pyright: ignore[reportGeneralTypeIssues]
         return default_time

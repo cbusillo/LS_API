@@ -49,7 +49,7 @@ class Vacuum(HomeAssistant):
         ha_domain = self.client.get_domain(self.domain)
         if not isinstance(ha_domain, Domain):
             return "domain not found"
-        ha_domain.start(entity_id=self.entity_id)
+        ha_domain.start(entity_id=self.entity_id)  # pyright: ignore[reportOptionalCall]
         return "starting"
 
     def stop(self) -> str:
@@ -57,7 +57,7 @@ class Vacuum(HomeAssistant):
         ha_domain = self.client.get_domain(self.domain)
         if not isinstance(ha_domain, Domain):
             return "domain not found"
-        ha_domain.stop(entity_id=self.entity_id)
+        ha_domain.stop(entity_id=self.entity_id)  # pyright: ignore[reportOptionalCall]
         return "stopping"
 
     def go_home(self) -> str:
@@ -65,7 +65,7 @@ class Vacuum(HomeAssistant):
         ha_domain = self.client.get_domain(self.domain)
         if not isinstance(ha_domain, Domain):
             return "domain not found"
-        ha_domain.return_to_base(entity_id=self.entity_id)
+        ha_domain.return_to_base(entity_id=self.entity_id)  # pyright: ignore[reportOptionalCall]
         return "going home"
 
 
@@ -81,7 +81,7 @@ class InputBoolean(HomeAssistant):
         ha_domain = self.client.get_domain(self.domain)
         if not isinstance(ha_domain, Domain):
             return "domain not found"
-        ha_domain.turn_on(entity_id=self.entity_id)
+        ha_domain.turn_on(entity_id=self.entity_id)  # pyright: ignore[reportOptionalCall]
         return "Turning on"
 
     def turn_off(self) -> str:
@@ -89,7 +89,7 @@ class InputBoolean(HomeAssistant):
         ha_domain = self.client.get_domain(self.domain)
         if not isinstance(ha_domain, Domain):
             return "domain not found"
-        ha_domain.turn_off(entity_id=self.entity_id)
+        ha_domain.turn_off(entity_id=self.entity_id)  # pyright: ignore[reportOptionalCall]
         return "Turning off"
 
     def toggle(self) -> str:
@@ -97,7 +97,7 @@ class InputBoolean(HomeAssistant):
         ha_domain = self.client.get_domain(self.domain)
         if not isinstance(ha_domain, Domain):
             return "domain not found"
-        ha_domain.toggle(entity_id=self.entity_id)
+        ha_domain.toggle(entity_id=self.entity_id)  # pyright: ignore[reportOptionalCall]
         return "Toggling"
 
 
@@ -113,7 +113,7 @@ class Alarm(HomeAssistant):
         ha_domain = self.client.get_domain(self.domain)
         if not isinstance(ha_domain, Domain):
             return "domain not found"
-        ha_domain.alarm_arm_away(entity_id=self.entity_id)
+        ha_domain.alarm_arm_away(entity_id=self.entity_id)  # pyright: ignore[reportOptionalCall]
         return "arming"
 
     def disarm(self) -> str:
@@ -121,7 +121,7 @@ class Alarm(HomeAssistant):
         ha_domain = self.client.get_domain(self.domain)
         if not isinstance(ha_domain, Domain):
             return "domain not found"
-        ha_domain.alarm_disarm(entity_id=self.entity_id)
+        ha_domain.alarm_disarm(entity_id=self.entity_id)  # pyright: ignore[reportOptionalCall]
         return "disarming"
 
 
@@ -137,7 +137,7 @@ class Lock(HomeAssistant):
         ha_domain = self.client.get_domain(self.domain)
         if not isinstance(ha_domain, Domain):
             return "domain not found"
-        ha_domain.lock(entity_id=self.entity_id)
+        ha_domain.lock(entity_id=self.entity_id)  # pyright: ignore[reportOptionalCall]
         return "locking"
 
     def unlock(self) -> str:
@@ -145,7 +145,7 @@ class Lock(HomeAssistant):
         ha_domain = self.client.get_domain(self.domain)
         if not isinstance(ha_domain, Domain):
             return "domain not found"
-        ha_domain.unlock(entity_id=self.entity_id)
+        ha_domain.unlock(entity_id=self.entity_id)  # pyright: ignore[reportOptionalCall]
         return "unlocking"
 
 
@@ -169,7 +169,7 @@ class Button(HomeAssistant):
         ha_domain = self.client.get_domain(self.domain)
         if not isinstance(ha_domain, Domain):
             return "domain not found"
-        ha_domain.press(entity_id=self.entity_id)  # pyright: reportOptionalCall=false
+        ha_domain.press(entity_id=self.entity_id)  # pyright: ignore[reportOptionalCall]
         return "starting"
 
 

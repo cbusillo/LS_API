@@ -48,7 +48,7 @@ class CameraConsumer(WebsocketConsumer):
         extracted_text = self.get_text_from_image(cv_image)
         cleaned_text = self.clean_serial_text(extracted_text)
 
-        self.send_text(cleaned_text)
+        # self.send_text(cleaned_text)
         self.send_image(cv_image)
         finish_time = time.time()
         time_taken = finish_time - start_time
@@ -81,7 +81,7 @@ class CameraConsumer(WebsocketConsumer):
         image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
 
         image_gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-        image_denoise = cv2.fastNlMeansDenoising(image_gray, None, 10, 7, 21)  # pyright: reportGeneralTypeIssues=false
+        image_denoise = cv2.fastNlMeansDenoising(image_gray, None, 10, 7, 21)  # pyright: ignore[reportGeneralTypeIssues]
 
         image_edges = cv2.Canny(image_denoise, 100, 200)
         return image_edges
