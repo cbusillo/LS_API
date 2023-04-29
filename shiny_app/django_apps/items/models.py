@@ -1,7 +1,6 @@
 """Shiny Item class."""
 from typing import TYPE_CHECKING
 from django.db import models
-from django.db.models.query import QuerySet
 
 if TYPE_CHECKING:
     from ..customers.models import Customer
@@ -28,7 +27,7 @@ class Item(models.Model):
     update_from_ls_time = models.DateTimeField(null=True, db_index=True)
     item_matrix_id = models.IntegerField(null=True)
     sizes = models.TextField(max_length=300, null=True)
-    serials = QuerySet["Serial"]
+    serials = models.QuerySet["Serial"]
 
     def __str__(self) -> str:
         return f"{self.ls_item_id} - {self.description}"
