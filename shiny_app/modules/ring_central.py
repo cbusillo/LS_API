@@ -13,6 +13,7 @@ def get_user_from_host(hostname: str) -> str:
         "secureerase": "tech",
         "cornerwhinymac2": "home",
         "counter-right": "home",
+        "countershinymac": "home",
     }
 
     username = host_to_user[hostname.lower()]
