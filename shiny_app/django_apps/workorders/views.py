@@ -1,6 +1,6 @@
 """Views for workorders app"""
+from time import sleep
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
 from shiny_app.classes.ls_customer import Customer as LSCustomer
 from shiny_app.modules.light_speed import create_workorder, import_customers
 
@@ -26,7 +26,9 @@ def create_workorder_view(request):
             emails=[{"email_type": "Primary", "address": email_address}],
         )
         ls_customer_id = ls_customer.create()
-    import_customers()
+        sleep(0.5)
+        import_customers()
+
     if ls_customer_id:
         workorder_id = create_workorder(ls_customer_id)
         return JsonResponse({"workorder_id": workorder_id})
