@@ -53,7 +53,7 @@ class Sale(BaseLSEntity):
             "voided": data_json.get("voided", "").lower() == "true",
             "tax_rate": Decimal(data_json.get("taxRate", 0)),
             "customer_id": data_json.get("customerID"),
-            "note": data_json.get("note"),
+            "note": data_json.get("Note"),
         }
 
         return cls(**sale_json_transformed)
