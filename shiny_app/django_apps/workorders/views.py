@@ -2,7 +2,7 @@
 from time import sleep
 from django.http import JsonResponse
 from shiny_app.classes.ls_customer import Customer as LSCustomer
-from shiny_app.modules.light_speed import create_workorder, import_customers
+from shiny_app.modules.light_speed import create_workorder, import_all
 
 from ..customers.models import Customer
 
@@ -27,7 +27,7 @@ def create_workorder_view(request):
         )
         ls_customer_id = ls_customer.create()
         sleep(0.5)
-        import_customers()
+        import_all()
 
     if ls_customer_id:
         workorder_id = create_workorder(ls_customer_id)

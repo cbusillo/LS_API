@@ -21,7 +21,7 @@ def home(request: WSGIRequest, module_function_name: str = ""):
         "shiny_app.modules.light_speed|update_item_price": "Update iPhone/iPad Prices",
         "shiny_app.modules.light_speed|import_items": "Import Items",
         "shiny_app.modules.light_speed|import_customers": "Import Customers",
-        "shiny_app.modules.light_speed|import_workorders": "Import Workorders",
+        "shiny_app.modules.light_speed|import_sales": "Import Sales",
         "shiny_app.modules.light_speed|import_all": "Import All",
         "shiny_app.modules.light_speed|delete_all": "Delete All",
         "shiny_app.modules.scroll|run": "Scroll",
@@ -53,7 +53,6 @@ def run_function(function_to_exec, module_function_name):
     send_message(f"starting {module_function_name}.{function_to_exec}")
     function_to_exec()
     running_functions[module_function_name] = False
-    #     sse.publish({"message": f"{status}Finished!"}, type='status')
 
 
 def send_message(message: str) -> None:

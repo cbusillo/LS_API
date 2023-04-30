@@ -72,8 +72,7 @@ class Workorder(BaseLSEntity):
 
     def shiny_workorder_from_ls(self, shiny_workorder: "ShinyWorkorder", start_time: datetime):
         """Convert LS Workorder to Shiny Workorder"""
-        # pylint: disable=import-outside-toplevel
-        from shiny_app.django_apps.customers.models import Customer as ShinyCustomer
+        from shiny_app.django_apps.customers.models import Customer as ShinyCustomer  # pylint: disable=import-outside-toplevel
 
         shiny_workorder.ls_workorder_id = self.workorder_id
         shiny_workorder.time_in = self.time_in
@@ -129,9 +128,6 @@ class WorkorderItem(BaseLSEntity):
 
         if not isinstance(data_json, dict):
             raise ValueError("WorkorderItem must be a dict: " + str(data_json))
-
-        if data_json.get("workorderID") == "23982":
-            pass
 
         workorder_item_json_transformed = {
             "workorder_item_id": cls.safe_int(data_json.get("workorderItemID")),
