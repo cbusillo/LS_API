@@ -34,6 +34,29 @@
                 </div>
             </div>
         {% endfor %}
+        {% for sale in object.sales.all|dictsortreversed:"create_time" %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p class="card-title">{{ sale.create_time }}</p>
+                    {% if sale.note %}
+                        <div class="border-top py-2">
+                            <h6>{{ sale.note }}</h6>
+                        </div>
+                    {% endif %}
+                    {% for sale_line in sale.sale_lines.all %}
+                        <div class="border-top py-2">
+                            <p class="card-text text-muted">
+                                {{ sale_line.item.description }}
+                                {% if sale_line.note %}
+                                    Item Note:
+                                    {{ sale_line.note }}
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
     </div>
     <div class="col-5">
         {% for serial in object.serials.all|dictsortreversed:"create_time" %}

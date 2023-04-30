@@ -29,8 +29,10 @@ from shiny_app.classes.ls_workorder import (
 )
 from shiny_app.classes.ls_customer import Customer as LSCustomer
 from shiny_app.classes.ls_serial import Serialized as LSSerial
+from shiny_app.classes.ls_sale import Sale as LSSale, SaleLine as LSSaleLine
 
-from shiny_app.django_apps.items.models import Item as ShinyItem
+from shiny_app.django_apps.items.models import Item as ShinyItem, Serial as ShinySerial
+
 from shiny_app.django_apps.customers.models import Customer as ShinyCustomer
 
 from shiny_app.django_apps.workorders.models import (
@@ -38,7 +40,10 @@ from shiny_app.django_apps.workorders.models import (
     WorkorderItem as ShinyWorkorderItem,
     WorkorderLine as ShinyWorkorderLine,
 )
-from shiny_app.django_apps.items.models import Serial as ShinySerial
+
+
+from shiny_app.django_apps.sales.models import Sale as ShinySale, SaleLine as ShinySaleLine
+
 from shiny_app.django_apps.functions.views import send_message
 
 driver = None
@@ -119,11 +124,11 @@ def create_workorder(customer_id: int) -> int | None:
 def update_item_price():
     """ "//device key": ["current model?", "year", "basePrice", "cellPrice", "store URL"]"""
 
-    with open(f"{Config.SCRIPT_DIR}/config/devices.json", encoding="utf8") as file:
+    with open(f"{Config.SCRIPT_DIR}/config/devices.json", encoding="utf8", mode="r") as file:
         devices = json.load(file)
 
     # "//max age": "price multiplier"
-    with open(f"{Config.SCRIPT_DIR}/config/age.json", encoding="utf8") as file:
+    with open(f"{Config.SCRIPT_DIR}/config/age.json", encoding="utf8", mode="r") as file:
         age_price = json.load(file)
 
     # Apple URL to load pricing from
@@ -234,11 +239,19 @@ def import_workorders():
         LSWorkorderItem.shiny_model_from_ls(ShinyWorkorderItem)
 
 
+def import_sales():
+    """temp function to import sales from LS"""
+    with transaction.atomic():
+        LSSale.shiny_model_from_ls(ShinySale)
+        LSSaleLine.shiny_model_from_ls(ShinySaleLine)
+
+
 def import_all():
     """Import everything from LS, use to create db"""
     import_items()
     import_customers()
     import_workorders()
+    import_sales()
 
 
 def delete_all(delete_cache: Optional[bool] = False):

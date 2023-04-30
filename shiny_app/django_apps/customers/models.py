@@ -12,6 +12,7 @@ from shiny_app.classes.ls_customer import Customer as LSCustomer
 if TYPE_CHECKING:
     from ..workorders.models import Workorder
     from ..items.models import Serial
+    from ..sales.models import Sale
 
 
 class Customer(models.Model):
@@ -35,6 +36,7 @@ class Customer(models.Model):
     emails: QuerySet["Email"]
     workorders: QuerySet["Workorder"]
     serials: QuerySet["Serial"]
+    sales: QuerySet["Sale"]
 
     def save(self, *args, **kwargs):
         """Save customer"""
