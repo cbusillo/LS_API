@@ -273,8 +273,10 @@ class BaseLSEntity(metaclass=BaseLSEntityMeta):
         ls_entities = list(cls.get_entities(date_filter=date_filter))
         start_time = timezone.now()
         if cls.client.use_cache:
-            with open(Config.CONFIG_SECRET_DIR / "cache" / "update_time", "r", encoding="utf-8") as file:
-                start_time = datetime.strptime(file.read(), "%d-%b-%Y (%H:%M:%S.%f)")
+            update_time_file = Config.CONFIG_SECRET_DIR / "cache" / "update_time"
+            if not update_time_file.exists():
+                with open(Config.CONFIG_SECRET_DIR / "cache" / "update_time", "r", encoding="utf-8") as file:
+                    start_time = datetime.strptime(file.read(), "%d-%b-%Y (%H:%M:%S.%f)")
 
         # Use 4 threads for parallel processing
         pool = ThreadPool(4)
