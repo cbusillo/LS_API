@@ -186,6 +186,8 @@ def update_item_price():
                             continue
                         if "12.9" in device_name and "12.9" not in product["name"]:
                             continue
+                        if "mini" in product["name"] and "mini" not in device_name:
+                            continue
 
                         if "cell" in item.description.lower():
                             if "cell" in product["name"].lower():
