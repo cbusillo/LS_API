@@ -239,7 +239,7 @@ class BaseLSEntity(metaclass=BaseLSEntityMeta):
             raise TypeError("cls must be a dataclass")
         allowed_kwargs = {key: value for key, value in kwargs.items() if key in [field.name for field in fields(cls)]}
 
-        return cls(**allowed_kwargs)
+        return cls(**allowed_kwargs)  # type: ignore
 
     @classmethod
     def shiny_model_from_ls(cls, model: type[models.Model], date_filter: datetime | None = None):
