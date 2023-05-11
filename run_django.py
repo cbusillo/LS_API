@@ -26,7 +26,7 @@ def start_django_server():
                     local_file.write(remote_file)
     path = "/usr/local/bin:/opt/homebrew/bin/"
     print(subprocess.run(["pkill", "-f", "stunnel"], check=False))
-    print(subprocess.Popen(["/usr/bin/env", "-P", path, "poetry", "run", "python", "manage_django.py", "migrate"], shell=False))
+    print(subprocess.Popen(["./migrations.sh"], shell=False))
 
     print(subprocess.Popen(["/usr/bin/env", "-P", path, "stunnel", "shiny_app/config/stunnel.ini"], shell=False))
     main()

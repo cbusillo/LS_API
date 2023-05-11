@@ -1,3 +1,4 @@
+"""Admin for items app.""" ""
 from django.contrib import admin
 from django.db import models
 from django.forms import Textarea
@@ -6,6 +7,8 @@ from .models import Item, Serial
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
+    """Admin for items."""
+
     list_display = ("ls_item_id", "description", "price", "archived", "serialized", "manufacturer_sku")
     list_filter = ("archived", "item_type", "serialized")
     search_fields = ("ls_item_id", "description", "custom_sku", "manufacturer_sku")
@@ -13,6 +16,8 @@ class ItemAdmin(admin.ModelAdmin):
 
 @admin.register(Serial)
 class SerialAdmin(admin.ModelAdmin):
+    """Admin for serials."""
+
     list_display = ("id", "value_1", "value_2", "serial_number", "description", "customer", "item")
     search_fields = (
         "value_1",

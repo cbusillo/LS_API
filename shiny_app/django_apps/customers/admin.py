@@ -1,3 +1,4 @@
+"""Admin configuration for customers app.""" ""
 from django.contrib import admin
 from django.db import models
 from django.forms import Textarea
@@ -7,16 +8,22 @@ from ..items.models import Serial
 
 
 class EmailInline(admin.TabularInline):
+    """Inline for emails."""
+
     model = Email
     extra = 1
 
 
 class PhoneInline(admin.TabularInline):
+    """Inline for phones."""
+
     model = Phone
     extra = 1
 
 
 class WorkorderInline(admin.TabularInline):
+    """Inline for workorders."""
+
     model = Workorder
     extra = 0
     fields = ("id", "status", "note", "time_in", "total")
@@ -24,6 +31,8 @@ class WorkorderInline(admin.TabularInline):
 
 
 class SerialInline(admin.TabularInline):
+    """Inline for serials."""
+
     model = Serial
     extra = 0
     fields = ("id", "value_1", "value_2", "serial_number", "description", "customer", "item")
@@ -36,6 +45,8 @@ class SerialInline(admin.TabularInline):
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
+    """Admin for customers."""
+
     inlines = [EmailInline, PhoneInline, WorkorderInline, SerialInline]
     list_display = (
         "id",
@@ -66,6 +77,7 @@ class CustomerAdmin(admin.ModelAdmin):
     )
 
     def mobile_number(self, obj):
+        """Return mobile number."""
         return obj.mobile_number
 
     mobile_number.short_description = "Mobile Number"
