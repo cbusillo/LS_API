@@ -162,6 +162,7 @@ def update_item_price():
         ] in devices.items():
             # iterate through devices.json look for matching name look for base price or cell price
             if device_name in item.description:
+                apple_price = 0
                 if "cell" in item.description.lower() and device_cell_price > 0:
                     device_base_price = device_cell_price
                 # use device.json age to calculate from current
@@ -179,7 +180,7 @@ def update_item_price():
 
                     # Iterage through web prices and try to find match on current item.
                     # Use deviceBasePrice to subtract from new price.  Detect if cellular
-                    apple_price = 0
+
                     for product in json_price["data"]["products"]:
                         if size.lower() not in product["name"].lower():
                             continue
@@ -201,6 +202,8 @@ def update_item_price():
                 output = (
                     f"{item.description} Size:{size_mult} Age:{device_age}" f" Base:{device_base_price} Item Price: {device_price}"
                 )
+                if device_current:
+                    output += f" Apple Price: {apple_price}"
                 logging.info(output)
                 send_message(output)
                 # load new price into all three LS item prices in Item object
