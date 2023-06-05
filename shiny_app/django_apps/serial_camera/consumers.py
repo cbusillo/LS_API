@@ -66,7 +66,7 @@ class CameraConsumer(WebsocketConsumer):
     def clean_serial_text(self, ocr_words):
         """Clean the serial text"""
         serial_text = {}
-        for confidence, word in zip(ocr_words["conf"], ocr_words["text"]):
+        for confidence, word in zip(ocr_words["conf"], ocr_words["text"]):  # type: ignore
             word = word.replace(":", "").strip()
             if confidence < self.confidence_level or len(word) < 8:
                 continue
