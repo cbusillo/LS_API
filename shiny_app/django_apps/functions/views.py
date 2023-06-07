@@ -9,6 +9,7 @@ from channels.layers import get_channel_layer
 from channels_redis.core import RedisChannelLayer
 from django.core.handlers.wsgi import WSGIRequest
 from django.shortcuts import redirect, render
+from django.core.exceptions import ImproperlyConfigured
 
 # from django_eventstream import send_event
 from shiny_app.django_server.settings import running_functions
@@ -57,12 +58,15 @@ def run_function(function_to_exec, module_function_name):
 
 def send_message(message: str) -> None:
     """Pass Event message to browser"""
-    channel_layer = get_channel_layer()
-    if not isinstance(channel_layer, RedisChannelLayer):
-        return
-    message = f"{datetime.now().strftime('%H:%M:%S')} - {message}"
-    async_to_sync(channel_layer.group_send)("updates", {"type": "status", "message": message})
-    logging.info("updates channel message: %s", message)
+    try:
+        channel_layer = get_channel_layer()
+        if not isinstance(channel_layer, RedisChannelLayer):
+            return
+        message = f"{datetime.now().strftime('%H:%M:%S')} - {message}"
+        async_to_sync(channel_layer.group_send)("updates", {"type": "status", "message": message})
+        logging.info("updates channel message: %s", message)
+    except ImproperlyConfigured:
+        logging.info("updates channel not configured")
 
 
 def reset_running_functions():

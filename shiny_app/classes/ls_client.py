@@ -180,8 +180,8 @@ class BaseLSEntity(metaclass=BaseLSEntityMeta):
         """Get one entity"""
         if params is None:
             params = {}
-        params.update(cls.class_params)
         params.update(cls.base_class_params)
+        params.update(cls.class_params)
         key_name = cls.__name__
         url = f"{key_name}.json"
         if entity_id:
