@@ -2,6 +2,12 @@ set phone_number to "{phone_number}"
 set message to "{message}"
 set found to true
 
+-- Determine cliclick path
+set cliclick_path to "/usr/local/bin/cliclick"
+if (do shell script "test -e " & cliclick_path & " && echo yes || echo no") is "no" then
+    set cliclick_path to "/opt/homebrew/bin/cliclick"
+end if
+
 tell application "RingCentral for Mac"
     launch
     activate
@@ -13,7 +19,7 @@ tell application "System Events"
                 tell checkbox 1
                     set {xPosition, yPosition} to position
                     set {xSize, ySize} to size
-                    do shell script "/usr/local/bin/cliclick c:" & xPosition + (xSize div 2) & "," & yPosition + (ySize div 2)
+                    do shell script cliclick_path & " c:" & xPosition + (xSize div 2) & "," & yPosition + (ySize div 2)
                     delay 0.1
                 end tell
             end tell
@@ -33,7 +39,7 @@ tell application "System Events"
                 if found is true
                     set {xPosition, yPosition} to position
                     set {xSize, ySize} to size
-                    do shell script "/usr/local/bin/cliclick c:" & xPosition + (xSize div 2) & "," & yPosition + (ySize div 2)
+                    do shell script cliclick_path & " c:" & xPosition + (xSize div 2) & "," & yPosition + (ySize div 2)
                 end if
             end tell
             if found is false

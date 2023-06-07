@@ -274,7 +274,7 @@ class BaseLSEntity(metaclass=BaseLSEntityMeta):
         start_time = timezone.now()
         if cls.client.use_cache:
             update_time_file = Config.CONFIG_SECRET_DIR / "cache" / "update_time"
-            if not update_time_file.exists():
+            if update_time_file.exists():
                 with open(Config.CONFIG_SECRET_DIR / "cache" / "update_time", "r", encoding="utf-8") as file:
                     start_time = datetime.strptime(file.read(), "%d-%b-%Y (%H:%M:%S.%f)")
 
