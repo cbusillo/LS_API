@@ -17,7 +17,7 @@ class LightSpeedCog(commands.Cog):
     async def ls_price_lookup_command(self, context: discord.Interaction, search: str):
         """Look up price in Lightspeed"""
         await context.response.defer()
-        items = Item.get_items_by_desciption(descriptions=search)
+        items = Item.get_items_by_desciption(descriptions=search, archived=False)
         if len(items) == 0:
             await context.followup.send("No results")
             return

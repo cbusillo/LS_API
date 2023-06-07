@@ -175,7 +175,7 @@ class Item(BaseLSEntity):
         return cls(**item_json_transformed)
 
     @classmethod
-    def get_items_by_desciption(cls, descriptions: str | list[str]) -> list[Self]:
+    def get_items_by_desciption(cls, descriptions: str | list[str], archived: bool = True) -> list[Self]:
         """Return LS Item by searching description using OR and then filtering for all words"""
         if not isinstance(descriptions, list):
             descriptions = shlex.split(descriptions)
@@ -186,6 +186,9 @@ class Item(BaseLSEntity):
         params = cls.base_class_params
         params.update(cls.class_params)
         params["or"] = description
+        if not archived:
+            params["archived"] = "false"
+
         for item in cls.get_entities_json(params=params):
             item_list.append(Item.from_json(item))
 
