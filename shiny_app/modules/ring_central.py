@@ -11,6 +11,7 @@ def get_user_from_host(hostname: str) -> str:
         "chris-mbp": "cbusillo",
         "localhost": "cbusillo",
         "secureerase": "tech",
+        "secureerase.local": "tech",
         "cornerwhinymac2": "home",
         "counter-right": "home",
         "counter-left": "home",
