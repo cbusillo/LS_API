@@ -7,6 +7,7 @@ from shiny_app.classes.config import Config
 
 def get_user_from_host(hostname: str) -> str:
     """return user and hostname from current remote ip"""
+    logging.info(hostname)
     host_to_user = {
         "chris-mbp": "cbusillo",
         "localhost": "cbusillo",
