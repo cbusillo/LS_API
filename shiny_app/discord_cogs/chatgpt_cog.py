@@ -146,7 +146,7 @@ class ChatGPTCog(commands.Cog):
             chat_messages = [{"role": "user", "content": each_prompt} for each_prompt in self.user_threads[message.author.id]]
             # self.user_threads[message.author.id]
             response = await ChatCompletion.acreate(
-                model="gpt-4",
+                model="gpt-3.5-turbo",
                 messages=chat_messages,
                 api_key=Config.OPENAI_API_KEY,
                 temperature=0.5,
