@@ -9,7 +9,8 @@ def get_user_from_host(hostname: str) -> str:
     """return user and hostname from current remote ip"""
     print(hostname)
     host_to_user = {
-        "chris-mbp": "cbusillo",
+        "chris-mbp": "cbusillo", 
+        "chris-mbp-2": "cbusillo",
         "localhost": "cbusillo",
         "secureerase": "tech",
         "secureerase.local": "tech",
