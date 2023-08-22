@@ -46,13 +46,13 @@ from shiny_app.django_apps.sales.models import Sale as ShinySale, SaleLine as Sh
 
 from shiny_app.django_apps.functions.views import send_message
 
-driver = None
-if os.environ.get("RUN_MAIN", None) == "true":
-    os.system("killall -u cbusillo 'Google Chrome'")
-    if "imagingserver" in platform.node().lower():
-        driver = Driver(headless=True, uc=True)
-    else:
-        driver = Driver(headless=True, uc=True)
+# driver = None
+# if os.environ.get("RUN_MAIN", None) == "true":
+#     os.system("killall -u cbusillo 'Google Chrome'")
+#     if "imagingserver" in platform.node().lower():
+#         driver = Driver(headless=True, uc=True)
+#     else:
+#         driver = Driver(headless=True, uc=True)
 
 
 @lru_cache
