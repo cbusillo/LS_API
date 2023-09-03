@@ -43,7 +43,9 @@ class ChatGPTCog(commands.Cog):
             await self.generate_prompt(message)
 
     @commands.Cog.listener("on_message_edit")
-    async def chatgpt_listener_edit(self, _before_message: discord.Message, after_message: discord.Message):
+    async def chatgpt_listener_edit(
+        self, _before_message: discord.Message, after_message: discord.Message
+    ):
         """On message edit, check user and sent to ChatGPT"""
         if await self.check_user(after_message) is True:
             await self.generate_prompt(after_message)
@@ -60,7 +62,9 @@ class ChatGPTCog(commands.Cog):
         elif "imagingserver" not in platform.node().lower():
             return False
 
-        if isinstance(self.bot.user, discord.ClientUser) and self.bot.user.mentioned_in(message):
+        if isinstance(self.bot.user, discord.ClientUser) and self.bot.user.mentioned_in(
+            message
+        ):
             if isinstance(message.author, discord.User):
                 return False
             if any(role.name == "left nut" for role in message.author.roles):
@@ -111,7 +115,12 @@ class ChatGPTCog(commands.Cog):
         async with message.channel.typing():
             ai_response: str = await self.get_chatgpt_message(message=message)
             if run_code:
-                ai_response = ai_response.replace("```python", "").replace("```py", "").replace("```", "").replace("`", "")
+                ai_response = (
+                    ai_response.replace("```python", "")
+                    .replace("```py", "")
+                    .replace("```", "")
+                    .replace("`", "")
+                )
                 ai_response = f"```py\nrun\n{ai_response}\n```"
 
             await wrap_reply_lines(ai_response, message=message)
@@ -121,7 +130,11 @@ class ChatGPTCog(commands.Cog):
         print(f"Sending message: {prompt} to WALL-E")
         try:
             response = await Image.acreate(
-                prompt=prompt, n=1, size="1024x1024", response_format="url", api_key=Config.OPENAI_API_KEY
+                prompt=prompt,
+                n=1,
+                size="1024x1024",
+                response_format="url",
+                api_key=Config.OPENAI_API_KEY,
             )
         except error.InvalidRequestError as exception:
             await message.channel.send(str(exception))
@@ -143,10 +156,13 @@ class ChatGPTCog(commands.Cog):
         """Send message prompt to chatgpt and send text"""
         print(f"Sending message: {str(self.user_threads[message.author.id]).strip()}")
         try:
-            chat_messages = [{"role": "user", "content": each_prompt} for each_prompt in self.user_threads[message.author.id]]
+            chat_messages = [
+                {"role": "user", "content": each_prompt}
+                for each_prompt in self.user_threads[message.author.id]
+            ]
             # self.user_threads[message.author.id]
             response = await ChatCompletion.acreate(
-                model="gpt-3.5-turbo",
+                model="gpt-4",
                 messages=chat_messages,
                 api_key=Config.OPENAI_API_KEY,
                 temperature=0.5,
