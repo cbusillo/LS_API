@@ -147,7 +147,7 @@ class ChatGPTCog(commands.Cog):
         """Send message prompt to chatgpt and send text"""
         model = "gpt-3.5-turbo"
         if any(["GPT-4" in message for message in self.user_threads[message.author.id]]):
-            model = "gpt-4-0613-test"
+            model = "gpt-4"
         print(f"Sending message: {str(self.user_threads[message.author.id]).strip()} using model {model}")
         try:
             chat_messages = [{"role": "user", "content": each_prompt} for each_prompt in self.user_threads[message.author.id]]
