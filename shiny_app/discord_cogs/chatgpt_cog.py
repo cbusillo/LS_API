@@ -109,7 +109,7 @@ class ChatGPTCog(commands.Cog):
             self.user_threads[message.author.id] = [prompt]
 
         async with message.channel.typing():
-            ai_response: str = await self.get_chatgpt_message(message=message)
+            ai_response: str = await self.get_chatgpt_message(sending_message=message)
             if run_code:
                 ai_response = ai_response.replace("```python", "").replace("```py", "").replace("```", "").replace("`", "")
                 ai_response = f"```py\nrun\n{ai_response}\n```"
@@ -143,17 +143,19 @@ class ChatGPTCog(commands.Cog):
         # Send the message
         await message.channel.send(embed=embed)
 
-    async def get_chatgpt_message(self, message: discord.Message) -> str:
+    async def get_chatgpt_message(self, sending_message: discord.Message) -> str:
         """Send message prompt to chatgpt and send text"""
         model = "gpt-3.5-turbo"
-        if any(["GPT-4" in message for message in self.user_threads[message.author.id]]):
+        if any(["GPT-4" in message for message in self.user_threads[sending_message.author.id]]):
             model = "gpt-4"
-            for message in self.user_threads[message.author.id]:
+            for message in self.user_threads[sending_message.author.id]:
                 if "GPT-4" in message:
-                    self.user_threads[message.author.id].remove(message)
-        print(f"Sending message: {str(self.user_threads[message.author.id]).strip()} using model {model}")
+                    self.user_threads[sending_message.author.id].remove("GPT-4")
+        print(f"Sending message: {str(self.user_threads[sending_message.author.id]).strip()} using model {model}")
         try:
-            chat_messages = [{"role": "user", "content": each_prompt} for each_prompt in self.user_threads[message.author.id]]
+            chat_messages = [
+                {"role": "user", "content": each_prompt} for each_prompt in self.user_threads[sending_message.author.id]
+            ]
             # self.user_threads[message.author.id]
             response = await ChatCompletion.acreate(
                 model=model,
@@ -162,10 +164,10 @@ class ChatGPTCog(commands.Cog):
                 temperature=0.5,
             )
         except error.InvalidRequestError as exception:
-            await message.channel.send(str(exception))
+            await sending_message.channel.send(str(exception))
             return ""
         except error.RateLimitError as exception:
-            await message.channel.send(str(exception))
+            await sending_message.channel.send(str(exception))
             return ""
         if not isinstance(response, openai_object.OpenAIObject):
             return ""
