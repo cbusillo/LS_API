@@ -150,7 +150,7 @@ class ChatGPTCog(commands.Cog):
             model = "gpt-4"
             for message in self.user_threads[sending_message.author.id]:
                 if "GPT-4" in message:
-                    self.user_threads[sending_message.author.id].remove("GPT-4")
+                    self.user_threads[sending_message.author.id].replace("GPT-4", "")
         print(f"Sending message: {str(self.user_threads[sending_message.author.id]).strip()} using model {model}")
         try:
             chat_messages = [
