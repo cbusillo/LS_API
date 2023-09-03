@@ -146,9 +146,8 @@ class ChatGPTCog(commands.Cog):
     async def get_chatgpt_message(self, message: discord.Message) -> str:
         """Send message prompt to chatgpt and send text"""
         model = "gpt-3.5-turbo"
-        print(f"{self.user_threads=}")
         if any(["GPT-4" in message for message in self.user_threads[message.author.id]]):
-            model = "gpt-4"
+            model = "gpt-4-0613"
         print(f"Sending message: {str(self.user_threads[message.author.id]).strip()} using model {model}")
         try:
             chat_messages = [{"role": "user", "content": each_prompt} for each_prompt in self.user_threads[message.author.id]]
